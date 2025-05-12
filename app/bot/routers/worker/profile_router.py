@@ -4,10 +4,11 @@ from aiogram.filters import Command
 
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import ProfileCallback, profile_keyboard
+from app.bot.kbds.inline_kbds import ProfileCallback, LanguageCallback,lang_select_kbd, profile_keyboard
+from app.bot.kbds.markup_kbds import MainKeyboard
 from app.db.models import User
-from app.db.dao import ToolDAO
-from app.db.schemas import ToolFilterModel
+from app.db.dao import ToolDAO, UserDAO
+from app.db.schemas import ToolFilterModel,UserFilterModel
 from app.db.database import async_session_maker
 
 profile_router = Router()
@@ -69,3 +70,16 @@ async def process_tools_btn(callback: CallbackQuery, user_info:User):
                     text=tool_text,
                     parse_mode="MarkdownV2"
                 )
+
+@profile_router.callback_query(ProfileCallback.filter(action = 'language'), UserInfo())
+async def process_change_lang_btn(callback: CallbackQuery, user_info:User):
+    await callback.message.answer(get_text('language_select'), reply_markup=lang_select_kbd(lang=user_info.language))
+
+@profile_router.callback_query(LanguageCallback.filter(), UserInfo())
+async def process_change_lang_inline(callback: CallbackQuery,callback_data:LanguageCallback, user_info:User):
+    await callback.message.delete()
+    async with async_session_maker() as session:
+        user_info.language = callback_data.lang
+        await UserDAO.update(session, filters=UserFilterModel(telegram_id=user_info.telegram_id), values=UserFilterModel.model_validate(user_info.to_dict()))
+    await callback.message.answer(get_text('lang_has_changed'),reply_markup=MainKeyboard.build_main_kb(role=user_info.role, lang=user_info.language))
+

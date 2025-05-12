@@ -65,7 +65,7 @@ class MainKeyboard:
         }
     
     @staticmethod
-    def build_admin_main_kb(role:User.Role, lang:str) -> ReplyKeyboardMarkup:
+    def build_main_kb(role:User.Role, lang:str) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardBuilder()
         match role:
             case User.Role.worker:
