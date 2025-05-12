@@ -25,3 +25,19 @@ class UserFilterModel(BaseModel):
 class UserDocumentModel(BaseModel):
     file_id:int
     user_id:int
+
+class ToolModel(BaseModel):
+    name: str
+    description: str | None = None
+    file_id: str | None = None
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+class ToolFilterModel(BaseModel):
+    id: int | None = None
+    name: str | None = None
+    description: str | None = None
+    file_id: str | None = None
+    user_id: int | None = None

@@ -43,7 +43,7 @@ class User(Base):
 class Tool(Base):
     __tablename__ = "tools"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(Integer,primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     file_id: Mapped[str] = mapped_column(String(255), nullable=True)

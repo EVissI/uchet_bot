@@ -1,8 +1,9 @@
 ﻿import asyncio
 from app.bot.routers.main_router import main_router
-from app.config import setup_logger
 
+from app.config import setup_logger
 setup_logger("bot")
+
 from loguru import logger
 from app.db.models import User
 from app.config import bot, admins, dp

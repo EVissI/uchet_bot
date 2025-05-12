@@ -1,0 +1,71 @@
+﻿from aiogram import Router, F
+from aiogram.types import Message, CallbackQuery
+from aiogram.filters import Command
+
+from app.bot.common.texts import get_all_texts, get_text
+from app.bot.filters.user_info import UserInfo
+from app.bot.kbds.inline_kbds import ProfileCallback, profile_keyboard
+from app.db.models import User
+from app.db.dao import ToolDAO
+from app.db.schemas import ToolFilterModel
+from app.db.database import async_session_maker
+
+profile_router = Router()
+
+@profile_router.message(Command("profile"))
+async def show_profile(message: Message):
+    await message.answer("Your profile information")
+
+
+@profile_router.message(F.text.in_(get_all_texts('profile')), UserInfo())
+async def process_profile_callback(message:Message, user_info:User):
+    profile_text = get_text(
+            'profile_info',
+            lang=user_info.language,
+            telegram_id=user_info.telegram_id,
+            username=user_info.username,
+            full_name=user_info.full_name,
+            phone=user_info.phone,
+            role=user_info.role.value
+        )
+    await message.answer(
+            text=profile_text,
+            parse_mode="MarkdownV2",
+            reply_markup=profile_keyboard(lang=user_info.language)
+        )
+    
+@profile_router.callback_query(ProfileCallback.filter(action = 'tools'), UserInfo())
+async def process_tools_btn(callback: CallbackQuery, user_info:User):
+    async with async_session_maker() as session:
+        tools = await ToolDAO.find_all(session, ToolFilterModel(user_id=user_info.telegram_id))
+        
+        if not tools:
+            await callback.message.answer(
+                get_text('no_tools', lang=user_info.language)
+            )
+            return
+        
+        await callback.message.answer(
+            text=get_text('tools_list_header', lang=user_info.language),
+            parse_mode="MarkdownV2"
+        )
+        
+        for tool in tools:
+            tool_text = get_text(
+                'tool_item',
+                lang=user_info.language,
+                name=tool.name,
+                description=tool.description or get_text('no_description', user_info.language)
+            )
+            
+            if tool.file_id:
+                await callback.message.answer_photo(
+                    photo=tool.file_id,
+                    caption=tool_text,
+                    parse_mode="MarkdownV2"
+                )
+            else:
+                await callback.message.answer(
+                    text=tool_text,
+                    parse_mode="MarkdownV2"
+                )
