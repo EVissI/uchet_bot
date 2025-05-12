@@ -13,10 +13,10 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
     AsyncSession,
 )
-# from app.config import settings
+from app.config import settings
 
-# # engine = create_async_engine(url=str(settings.DB_URL))
-# async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
+engine = create_async_engine(url=str(settings.DB_URL))
+async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
 
 
 class Base(AsyncAttrs, DeclarativeBase):

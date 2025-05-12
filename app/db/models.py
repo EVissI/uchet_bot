@@ -35,8 +35,22 @@ class User(Base):
     role: Mapped[Role] = mapped_column(String(20), nullable=False, default=Role.worker)
     can_use_bot: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    documents:Mapped['UserDocument'] = relationship("UserDocument", back_populates="user", cascade="all, delete")
-    objects:Mapped['ObjectMember'] = relationship("ObjectMember", back_populates="user")
+    documents:Mapped[list['UserDocument']] = relationship("UserDocument", back_populates="user", cascade="all, delete")
+    object:Mapped['ObjectMember'] = relationship("ObjectMember", back_populates="user")
+    tool:Mapped['Tool'] = relationship("Tool", back_populates="user")
+
+
+class Tool(Base):
+    __tablename__ = "tools"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=True)
+    file_id: Mapped[str] = mapped_column(String(255), nullable=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
+
+    user: Mapped['User'] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"))
+
 
 class UserDocument(Base):
     __tablename__ = "documents"
@@ -57,8 +71,8 @@ class Object(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id"))
 
-    documents:Mapped['ObjectDocument'] = relationship("ObjectDocument", back_populates="object", cascade="all, delete")
-    members:Mapped['ObjectMember'] = relationship("ObjectMember", back_populates="object", cascade="all, delete")
+    documents:Mapped[list['ObjectDocument']] = relationship("ObjectDocument", back_populates="object", cascade="all, delete")
+    members:Mapped[list['ObjectMember']] = relationship("ObjectMember", back_populates="object", cascade="all, delete")
     creator:Mapped['User'] = relationship("User", foreign_keys=[creator_id])
 
 class ObjectDocument(Base):
@@ -94,3 +108,14 @@ class Material(Base):
     file_id: Mapped[str] = mapped_column(String(255), nullable=True)
     storage_location: Mapped[str] = mapped_column(String(255), nullable=True)
     message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+
+class Сhecks(Base):
+    __tablename__ = "checks"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    file_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
+    date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+
+    user:Mapped['User'] = relationship("User", back_populates="documents")
