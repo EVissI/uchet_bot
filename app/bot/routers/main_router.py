@@ -7,7 +7,7 @@ from app.bot.common.states import RegistrationStates
 from app.bot.common.texts import get_text
 from app.bot.common.utils import generate_math_example
 from app.bot.kbds.inline_kbds import LanguageCallback,CheckUsernameCallback, check_username_kbd, lang_select_kbd
-from app.bot.kbds.markup_kbds import get_share_contact_keyboard, stop_kb
+from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, stop_kb
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
@@ -141,11 +141,11 @@ async def verify_answer(message: Message, state: FSMContext):
                 new_user = UserModel(
                     telegram_id=message.from_user.id,
                     username=message.from_user.username,
+                    language=lang,
                     user_enter_fio=data.get('fio'),
                     phone_number=data.get('phone'),
                     role=User.Role.worker,
                     can_use_bot=True,
-                    last_message_id=message.message_id
                 )
                 await UserDAO.add(session, new_user)
             for document in documents:
@@ -153,7 +153,7 @@ async def verify_answer(message: Message, state: FSMContext):
                     file_id=document,
                     user_id=message.from_user.id
                 ))
-            await message.answer(get_text('verification_success', lang=lang))
+            await message.answer(get_text('verification_success', lang=lang),reply_markup=MainKeyboard.build_main_kb(role=new_user.role,lang=new_user.la))
             await state.clear()
         else:
             example, answer = generate_math_example()

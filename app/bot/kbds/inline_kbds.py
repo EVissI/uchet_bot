@@ -44,15 +44,15 @@ def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
     """
     kb = InlineKeyboardBuilder()
     kb.button(
-        text=get_text('tools_list', lang),
+        text=get_text('tools_list_btn', lang),
         callback_data=ProfileCallback(action='tools').pack()
     )
     kb.button(
-        text=get_text('language_select', lang),
+        text=get_text('language_select_btn', lang),
         callback_data=ProfileCallback(action='language').pack()
     )
     kb.button(
-        text=get_text('rules', lang),
+        text=get_text('rules_btn', lang),
         callback_data=ProfileCallback(action='rules').pack()
     )
     kb.adjust(1)

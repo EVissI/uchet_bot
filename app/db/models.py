@@ -29,9 +29,6 @@ class User(Base):
     language: Mapped[str] = mapped_column(String(10), nullable=False, default="ru")
     phone_number: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
     user_enter_fio: Mapped[str] = mapped_column(String(60), nullable=False)
-    last_message_id: Mapped[Optional[int]] = mapped_column(
-        BigInteger, nullable=True, default=None
-    )
     role: Mapped[Role] = mapped_column(String(20), nullable=False, default=Role.worker)
     can_use_bot: Mapped[bool] = mapped_column(Boolean, default=False)
 

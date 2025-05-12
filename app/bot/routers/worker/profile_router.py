@@ -83,3 +83,6 @@ async def process_change_lang_inline(callback: CallbackQuery,callback_data:Langu
         await UserDAO.update(session, filters=UserFilterModel(telegram_id=user_info.telegram_id), values=UserFilterModel.model_validate(user_info.to_dict()))
     await callback.message.answer(get_text('lang_has_changed'),reply_markup=MainKeyboard.build_main_kb(role=user_info.role, lang=user_info.language))
 
+@profile_router.callback_query(ProfileCallback.filter(action = 'rule'), UserInfo())
+async def process_rule_btn(callback: CallbackQuery, user_info:User):
+    await callback.answer(get_text('rules',lang=user_info.language))
