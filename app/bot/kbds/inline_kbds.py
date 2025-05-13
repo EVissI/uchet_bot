@@ -14,6 +14,10 @@ class CheckUsernameCallback(CallbackData, prefix='check_username'):
 class ProfileCallback(CallbackData, prefix='profile'):
     action: str  
 
+class ObjectActionCallback(CallbackData, prefix='object'):
+    action: str 
+    object_id: int
+
 def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     """
     Returns an inline keyboard for language selection.
@@ -25,6 +29,7 @@ def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb.adjust(1)
     return kb
 
+
 def check_username_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     """
     Returns an inline keyboard for checking username.
@@ -34,6 +39,7 @@ def check_username_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb.button(text=get_text('create_username'), callback_data=CheckUsernameCallback(action='create').pack())
     kb.adjust(1)
     return kb
+
 
 def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
     """
@@ -57,3 +63,27 @@ def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
     )
     kb.adjust(1)
     return kb
+
+
+def object_keyboard(object_id: int, lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    buttons = [
+        ('navigate', 'navigation_btn'),
+        ('docs', 'documentation_btn'),
+        ('notify', 'notify_object_btn'),
+        ('photo', 'object_photo_btn'),
+        ('checks', 'object_checks_btn')
+    ]
+    
+    for action, text_code in buttons:
+        kb.button(
+            text=get_text(text_code, lang),
+            callback_data=ObjectActionCallback(
+                action=action,
+                object_id=object_id
+            ).pack()
+        )
+    
+    kb.adjust(2, 2, 1)
+    return kb.as_markup()

@@ -32,9 +32,10 @@ class User(Base):
     role: Mapped[Role] = mapped_column(String(20), nullable=False, default=Role.worker)
     can_use_bot: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    documents:Mapped[list['UserDocument']] = relationship("UserDocument", back_populates="user", cascade="all, delete")
-    object:Mapped['ObjectMember'] = relationship("ObjectMember", back_populates="user")
-    tool:Mapped['Tool'] = relationship("Tool", back_populates="user")
+    objects: Mapped[list['ObjectMember']] = relationship("ObjectMember", back_populates="user")
+    tools: Mapped[list['Tool']] = relationship("Tool", back_populates="user")
+    checks: Mapped[list['Check']] = relationship("Check", back_populates="user")
+    object_checks: Mapped[list['ObjectCheck']] = relationship("ObjectCheck", back_populates="user")
 
 
 class Tool(Base):
@@ -46,7 +47,7 @@ class Tool(Base):
     file_id: Mapped[str] = mapped_column(String(255), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
 
-    user: Mapped['User'] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"))
+    user: Mapped['User'] = relationship("User", back_populates="tool") 
 
 
 class UserDocument(Base):
@@ -70,6 +71,7 @@ class Object(Base):
 
     documents:Mapped[list['ObjectDocument']] = relationship("ObjectDocument", back_populates="object", cascade="all, delete")
     members:Mapped[list['ObjectMember']] = relationship("ObjectMember", back_populates="object", cascade="all, delete")
+    object_checks:Mapped[list['ObjectCheck']]  = relationship("ObjectCheck", back_populates="object", cascade="all, delete")
     creator:Mapped['User'] = relationship("User", foreign_keys=[creator_id])
 
 class ObjectDocument(Base):
@@ -106,13 +108,24 @@ class Material(Base):
     storage_location: Mapped[str] = mapped_column(String(255), nullable=True)
     message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
 
-class Сhecks(Base):
+class Check(Base):
     __tablename__ = "checks"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+ 
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     file_id: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
-    date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
     amount: Mapped[float] = mapped_column(nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
 
-    user:Mapped['User'] = relationship("User", back_populates="documents")
+    user: Mapped['User'] = relationship("User", back_populates="checks")
+
+class ObjectCheck(Base):
+    __tablename__ = 'object_checks'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    file_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    object_id: Mapped[int] = mapped_column(ForeignKey("objects.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
+
+    user:Mapped['User'] = relationship("User", back_populates="object_checks")
+    object:Mapped['Object'] = relationship("Object", back_populates="object_checks")

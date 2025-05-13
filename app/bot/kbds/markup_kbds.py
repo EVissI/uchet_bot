@@ -52,7 +52,7 @@ def stop_kb(lang:str = 'ru') -> ReplyKeyboardMarkup:
     return keyboard
 
 class MainKeyboard:
-    __worker_kb_texts_list = ['profile','my_objects', 'material_remainder','material_order', 'info']
+    __worker_kb_texts_list = ['profile_btn','my_objects_btn', 'material_remainder_btn','material_order_btn', 'info_btn']
 
     @staticmethod
     def get_worker_kb_texts(lang: str = 'ru') -> dict:

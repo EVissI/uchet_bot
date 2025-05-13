@@ -18,7 +18,7 @@ async def show_profile(message: Message):
     await message.answer("Your profile information")
 
 
-@profile_router.message(F.text.in_(get_all_texts('profile')), UserInfo())
+@profile_router.message(F.text.in_(get_all_texts('profile_btn')), UserInfo())
 async def process_profile_callback(message:Message, user_info:User):
     profile_text = get_text(
             'profile_info',
