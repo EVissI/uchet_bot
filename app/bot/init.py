@@ -13,25 +13,25 @@ from app.db.schemas import UserFilterModel
 from aiogram.types import BotCommand, BotCommandScopeDefault, BotCommandScopeChat
 
 
-async def set_commands():
-    commands = [
-        BotCommand(command="user_command", description="комманда юзера"),
-    ]
-    await bot.set_my_commands(commands, scope=BotCommandScopeDefault())
+# async def set_commands():
+#     commands = [
+#         BotCommand(command="user_command", description="комманда юзера"),
+#     ]
+#     await bot.set_my_commands(commands, scope=BotCommandScopeDefault())
 
-    async with async_session_maker() as session:
-        admins:list[User] = await UserDAO.find_all(session,filters=UserFilterModel(role=User.Role.admin))
+#     async with async_session_maker() as session:
+#         admins:list[User] = await UserDAO.find_all(session,filters=UserFilterModel(role=User.Role.admin))
 
-    commands.append(BotCommand(command="admin_command", description="комманда админа"))
+#     commands.append(BotCommand(command="admin_command", description="комманда админа"))
 
-    # Устанавливаем команды для каждого админа отдельно
-    for admin in admins:
-        await bot.set_my_commands(commands, scope=BotCommandScopeChat(chat_id=admin.telegram_id))
+#     # Устанавливаем команды для каждого админа отдельно
+#     for admin in admins:
+#         await bot.set_my_commands(commands, scope=BotCommandScopeChat(chat_id=admin.telegram_id))
 
 
 
 async def start_bot():
-    await set_commands()
+    # await set_commands()
     for admin_id in admins:
         try:
             await bot.send_message(admin_id, f"Я запущен🥳.")

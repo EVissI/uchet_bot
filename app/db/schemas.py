@@ -25,7 +25,7 @@ class UserFilterModel(BaseModel):
     can_use_bot: Optional[bool] = None
 
 class UserDocumentModel(BaseModel):
-    file_id:int
+    file_id:str
     user_id:int
 
 class ToolModel(BaseModel):

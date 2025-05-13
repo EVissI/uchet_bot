@@ -35,19 +35,23 @@ class ObjectDAO(BaseDAO):
 class ObjectDocumentDAO(BaseDAO):
     model = ObjectDocument
 
-    async def find_object_documents(self, session: AsyncSession, object_id: int) -> list[ObjectDocument]:
+    @staticmethod
+    async def find_user_objects(session: AsyncSession, user_id: int) -> list[Object]:
         """
-        Find all documents for specific object
+        Find all active objects assigned to user
         Args:
             session: AsyncSession
-            object_id: ID of the object
+            user_id: Telegram ID of the user
         Returns:
-            list[ObjectDocument]: List of object documents
+            list[Object]: List of objects assigned to user
         """
         stmt = (
-            select(self.model)
-            .where(self.model.object_id == object_id)
-            .order_by(self.model.document_type)
+            select(Object)
+            .join(ObjectMember, Object.id == ObjectMember.object_id)
+            .where(
+                ObjectMember.user_id == user_id,
+                Object.is_active == True
+            )
         )
         result = await session.execute(stmt)
         return result.scalars().all()
@@ -55,7 +59,7 @@ class ObjectDocumentDAO(BaseDAO):
 class ObjectMemberDAO(BaseDAO):
     model = ObjectMember
 
-    async def find_user_objects(self, session: AsyncSession, user_id: int) -> list[Object]:
+    async def find_user_objects(session: AsyncSession, user_id: int) -> list[Object]:
         """
         Find all active objects assigned to user
         Args:
@@ -76,7 +80,7 @@ class ObjectMemberDAO(BaseDAO):
         return result.scalars().all()
     
 
-    async def find_object_members(self, session: AsyncSession, object_id: int) -> list[User]:
+    async def find_object_members(session: AsyncSession, object_id: int) -> list[User]:
         """
         Find all users assigned to specific object
         Args:

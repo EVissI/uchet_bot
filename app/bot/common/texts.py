@@ -1,4 +1,7 @@
-﻿def get_text(text_code:str, lang:str = 'ru',**kwargs) -> str:
+﻿from app.bot.common.utils import escape_markdown
+
+
+def get_text(text_code:str, lang:str = 'ru',**kwargs) -> str:
     text = ''
     match lang:
         case 'ru':
@@ -9,7 +12,12 @@
             text = TEXTS_TRANSLITE['tg'].get(text_code,text_code)
         case _:
             text = TEXTS_TRANSLITE['ru'].get(text_code,text_code)
-    return text.format(**kwargs)
+    escaped_kwargs = {
+        key: escape_markdown(value) 
+        for key, value in kwargs.items()
+    }
+    
+    return text.format(**escaped_kwargs)
 
 
 def get_all_texts(text_code: str) ->list[str]:

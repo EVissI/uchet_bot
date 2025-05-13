@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 
 from app.bot.common.texts import get_all_texts, get_text
+from app.bot.common.utils import escape_markdown
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import ProfileCallback, LanguageCallback,lang_select_kbd, profile_keyboard
 from app.bot.kbds.markup_kbds import MainKeyboard
@@ -21,14 +22,14 @@ async def show_profile(message: Message):
 @profile_router.message(F.text.in_(get_all_texts('profile_btn')), UserInfo())
 async def process_profile_callback(message:Message, user_info:User):
     profile_text = get_text(
-            'profile_info',
-            lang=user_info.language,
-            telegram_id=user_info.telegram_id,
-            username=user_info.username,
-            full_name=user_info.full_name,
-            phone=user_info.phone,
-            role=user_info.role.value
-        )
+        'profile_info',
+        lang=user_info.language,
+        telegram_id=user_info.telegram_id,
+        username=escape_markdown(user_info.username),
+        full_name=escape_markdown(user_info.user_enter_fio),
+        phone=escape_markdown(user_info.phone_number),
+        role=escape_markdown(user_info.role)
+    )
     await message.answer(
             text=profile_text,
             parse_mode="MarkdownV2",
@@ -85,6 +86,6 @@ async def process_change_lang_inline(callback: CallbackQuery,callback_data:Langu
     await callback.message.answer(get_text('lang_has_changed'),reply_markup=MainKeyboard.build_main_kb(role=user_info.role, lang=user_info.language))
 
 
-@profile_router.callback_query(ProfileCallback.filter(F.action == 'rule'), UserInfo())
+@profile_router.callback_query(ProfileCallback.filter(F.action == 'rules'), UserInfo())
 async def process_rule_btn(callback: CallbackQuery, user_info:User):
-    await callback.answer(get_text('rules',lang=user_info.language))
+    await callback.message.answer(get_text('rules',lang=user_info.language))

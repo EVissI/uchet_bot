@@ -19,7 +19,7 @@ async def process_my_objects(message: Message, user_info: User):
     """Handler for displaying user's objects"""
     
     async with async_session_maker() as session:
-        objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
+        objects = await ObjectMemberDAO.find_user_objects(session=session, user_id=user_info.telegram_id)
         
         if not objects:
             await message.answer(
@@ -92,7 +92,7 @@ async def process_notification_message(message: Message, state: FSMContext, user
     notification_text = get_text(
         'notification_format',
         user_info.language,
-        object_id= object_id,
+        object_id=object_id,
         sender_name=user_info.user_enter_fio,
         username=f"@{user_info.username}" if user_info.username else "нет username",
         message=message.text

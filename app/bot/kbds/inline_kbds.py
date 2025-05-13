@@ -27,7 +27,7 @@ def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb.button(text=get_text('az',lang), callback_data=LanguageCallback(lang='az').pack())
     kb.button(text=get_text('tg',lang), callback_data=LanguageCallback(lang='tg').pack())
     kb.adjust(1)
-    return kb
+    return kb.as_markup()
 
 
 def check_username_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
@@ -38,7 +38,7 @@ def check_username_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb.button(text=get_text('check'), callback_data=CheckUsernameCallback(action='check').pack())
     kb.button(text=get_text('create_username'), callback_data=CheckUsernameCallback(action='create').pack())
     kb.adjust(1)
-    return kb
+    return kb.as_markup()
 
 
 def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
@@ -62,7 +62,7 @@ def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
         callback_data=ProfileCallback(action='rules').pack()
     )
     kb.adjust(1)
-    return kb
+    return kb.as_markup()
 
 
 def object_keyboard(object_id: int, lang: str) -> InlineKeyboardMarkup:

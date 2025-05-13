@@ -12,7 +12,7 @@ from sqlalchemy import (
     String,
 )
 from typing import Optional
-from db.database import Base
+from app.db.database import Base
 
 
 class User(Base):
@@ -25,9 +25,9 @@ class User(Base):
         buyer = "закупщик"
 
     telegram_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, unique=True)
-    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String(50), nullable=False)
     language: Mapped[str] = mapped_column(String(10), nullable=False, default="ru")
-    phone_number: Mapped[str] = mapped_column(String(20), unique=True, nullable=False)
+    phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
     user_enter_fio: Mapped[str] = mapped_column(String(60), nullable=False)
     role: Mapped[Role] = mapped_column(String(20), nullable=False, default=Role.worker)
     can_use_bot: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -37,6 +37,7 @@ class User(Base):
     checks: Mapped[list['Check']] = relationship("Check", back_populates="user")
     object_checks: Mapped[list['ObjectCheck']] = relationship("ObjectCheck", back_populates="user")
     object_photos: Mapped[list['ObjectPhoto']] = relationship("ObjectPhoto", back_populates="user")
+    documents: Mapped[list['UserDocument']] = relationship("UserDocument", back_populates="user") 
 
 class Tool(Base):
     __tablename__ = "tools"
@@ -47,7 +48,7 @@ class Tool(Base):
     file_id: Mapped[str] = mapped_column(String(255), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
 
-    user: Mapped['User'] = relationship("User", back_populates="tool") 
+    user: Mapped['User'] = relationship("User", back_populates="tools")
 
 
 class UserDocument(Base):
@@ -65,7 +66,6 @@ class Object(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    invite_link: Mapped[Optional[str]] = mapped_column(String(100), unique=True, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id"))
 

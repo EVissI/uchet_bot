@@ -20,3 +20,12 @@ def generate_math_example() -> Tuple[str, int]:
             answer = a * b
             
     return example, answer
+
+def escape_markdown(text: str) -> str:
+    """Escape special characters for MarkdownV2"""
+    if not isinstance(text, str):
+        text = str(text)
+    chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
+    for char in chars:
+        text = text.replace(char, f'\{char}')
+    return text

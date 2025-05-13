@@ -25,8 +25,7 @@ class RoleFilter(BaseFilter):
         user_id = event.from_user.id
         
         async with async_session_maker() as session:
-            dao = UserDAO(session)
-            user = await dao.get_by_telegram_id(user_id)
+            user = await UserDAO.find_by_telegram_id(session,user_id)
             
             if not user:
                 return False
