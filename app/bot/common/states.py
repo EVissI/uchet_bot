@@ -8,3 +8,15 @@ class RegistrationStates(StatesGroup):
     documents = State()
     instructions = State()
     verification = State()
+
+class NotifyObjectStates(StatesGroup):
+    waiting_message = State()
+
+class ObjectPhotoStates(StatesGroup):
+    waiting_photo = State()
+    waiting_description = State()
+
+class ObjectCheckStates(StatesGroup):
+    waiting_photo = State()
+    waiting_description = State()
+    waiting_amount = State()

@@ -36,7 +36,7 @@ class User(Base):
     tools: Mapped[list['Tool']] = relationship("Tool", back_populates="user")
     checks: Mapped[list['Check']] = relationship("Check", back_populates="user")
     object_checks: Mapped[list['ObjectCheck']] = relationship("ObjectCheck", back_populates="user")
-
+    object_photos: Mapped[list['ObjectPhoto']] = relationship("ObjectPhoto", back_populates="user")
 
 class Tool(Base):
     __tablename__ = "tools"
@@ -72,7 +72,18 @@ class Object(Base):
     documents:Mapped[list['ObjectDocument']] = relationship("ObjectDocument", back_populates="object", cascade="all, delete")
     members:Mapped[list['ObjectMember']] = relationship("ObjectMember", back_populates="object", cascade="all, delete")
     object_checks:Mapped[list['ObjectCheck']]  = relationship("ObjectCheck", back_populates="object", cascade="all, delete")
-    creator:Mapped['User'] = relationship("User", foreign_keys=[creator_id])
+    photos: Mapped[list['ObjectPhoto']] = relationship("ObjectPhoto", back_populates="object", cascade="all, delete")
+
+class ObjectPhoto(Base):
+    __tablename__ = "object_photos"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    file_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    object_id: Mapped[int] = mapped_column(ForeignKey("objects.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
+
+    user: Mapped['User'] = relationship("User", back_populates="object_photos")
+    object: Mapped['Object'] = relationship("Object", back_populates="photos")
 
 class ObjectDocument(Base):
     __tablename__ = "object_documents"
@@ -124,6 +135,7 @@ class ObjectCheck(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     file_id: Mapped[str] = mapped_column(String(255), nullable=False)
     amount: Mapped[float] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=True)
     object_id: Mapped[int] = mapped_column(ForeignKey("objects.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
 

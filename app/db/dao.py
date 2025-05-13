@@ -7,7 +7,7 @@ from app.db.base import BaseDAO
 from app.db.models import (
     User, UserDocument, Tool, Object, 
     ObjectDocument, ObjectMember, Material,
-    Check, ObjectCheck
+    Check, ObjectCheck, ObjectPhoto
 )
 
 from app.db.schemas import TelegramIDModel
@@ -35,6 +35,23 @@ class ObjectDAO(BaseDAO):
 class ObjectDocumentDAO(BaseDAO):
     model = ObjectDocument
 
+    async def find_object_documents(self, session: AsyncSession, object_id: int) -> list[ObjectDocument]:
+        """
+        Find all documents for specific object
+        Args:
+            session: AsyncSession
+            object_id: ID of the object
+        Returns:
+            list[ObjectDocument]: List of object documents
+        """
+        stmt = (
+            select(self.model)
+            .where(self.model.object_id == object_id)
+            .order_by(self.model.document_type)
+        )
+        result = await session.execute(stmt)
+        return result.scalars().all()
+
 class ObjectMemberDAO(BaseDAO):
     model = ObjectMember
 
@@ -57,6 +74,29 @@ class ObjectMemberDAO(BaseDAO):
         )
         result = await session.execute(stmt)
         return result.scalars().all()
+    
+
+    async def find_object_members(self, session: AsyncSession, object_id: int) -> list[User]:
+        """
+        Find all users assigned to specific object
+        Args:
+            session: AsyncSession
+            object_id: ID of the object
+        Returns:
+            list[User]: List of users assigned to object
+        """
+        stmt = (
+            select(User)
+            .join(ObjectMember, User.telegram_id == ObjectMember.user_id)
+            .where(
+                ObjectMember.object_id == object_id,
+                User.can_use_bot == True
+            )
+            .order_by(User.user_enter_fio)
+        )
+        result = await session.execute(stmt)
+        return result.scalars().all()
+    
 
 class MaterialDAO(BaseDAO):
     model = Material
@@ -66,3 +106,6 @@ class CheckDAO(BaseDAO):
 
 class ObjectCheckDAO(BaseDAO):
     model = ObjectCheck
+
+class ObjectPhotoDAO(BaseDAO):
+    model = ObjectPhoto

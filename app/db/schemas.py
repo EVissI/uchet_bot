@@ -91,6 +91,7 @@ class ObjectMemberFilterModel(BaseModel):
 class ObjectCheckModel(BaseModel):
     file_id: str
     amount: float
+    description:str
     object_id: int
     user_id: int
 
@@ -101,5 +102,22 @@ class ObjectCheckFilterModel(BaseModel):
     id: Optional[int] = None
     file_id: Optional[str] = None
     amount: Optional[float] = None
+    description:Optional[str] = None
+    object_id: Optional[int] = None
+    user_id: Optional[int] = None
+
+class ObjectPhotoModel(BaseModel):
+    file_id: str
+    description: Optional[str] = None
+    object_id: int
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+class ObjectPhotoFilterModel(BaseModel):
+    id: Optional[int] = None
+    file_id: Optional[str] = None
+    description: Optional[str] = None
     object_id: Optional[int] = None
     user_id: Optional[int] = None

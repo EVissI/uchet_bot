@@ -17,8 +17,10 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     ROOT_ADMIN_IDS: List[int]
 
-    TELEGRAM_GROUP_VIDEO_OTCHET:int
-
+    TELEGRAM_GROUP_ID_VIDEO_OTCHET: int
+    TELEGRAM_GROUP_ID_MATERIAL: int
+    TELEGRAM_GROUP_ID_CHEKS: int
+    TELEGRAM_GROUP_OBJECT_PHOTO: int
 
     DB_URL: str = 'sqlite+aiosqlite:///data/db.sqlite3'
 
