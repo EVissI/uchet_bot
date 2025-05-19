@@ -21,11 +21,10 @@ def generate_math_example() -> Tuple[str, int]:
             
     return example, answer
 
-def escape_markdown(text: str) -> str:
-    """Escape special characters for MarkdownV2"""
+def escape_html(text: str) -> str:
+    """Escape special characters for HTML"""
     if not isinstance(text, str):
         text = str(text)
-    chars = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!']
-    for char in chars:
-        text = text.replace(char, f'\{char}')
-    return text
+    return text.replace('&', '&amp;') \
+              .replace('<', '&lt;') \
+              .replace('>', '&gt;')

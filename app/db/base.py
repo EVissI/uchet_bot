@@ -239,3 +239,19 @@ class BaseDAO(Generic[T]):
             await session.rollback()
             logger.error(f"Ошибка при массовом обновлении: {e}")
             raise
+
+    @classmethod
+    async def delete_all(cls, session: AsyncSession, filters: BaseModel) -> int:
+        """Массовое удаление записей"""
+        filter_dict = filters.model_dump(exclude_unset=True)
+        logger.info(f"Удаление всех записей {cls.model.__name__}")
+        try:
+            query = sqlalchemy_delete(cls.model).filter_by(**filter_dict)
+            result = await session.execute(query)
+            await session.commit()
+            logger.info(f"Удаленно {result.rowcount} записей")
+            return result.rowcount
+        except SQLAlchemyError as e:
+            await session.rollback()
+            logger.error(f"Ошибка при массовом удалении: {e}")
+            raise

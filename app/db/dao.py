@@ -7,7 +7,7 @@ from app.db.base import BaseDAO
 from app.db.models import (
     User, UserDocument, Tool, Object, 
     ObjectDocument, ObjectMember, Material,
-    Check, ObjectCheck, ObjectPhoto
+    Check, ObjectCheck, ObjectPhoto,WorkerNotification,ForemanNotification,MaterialOrder
 )
 
 from app.db.schemas import TelegramIDModel
@@ -113,3 +113,12 @@ class ObjectCheckDAO(BaseDAO):
 
 class ObjectPhotoDAO(BaseDAO):
     model = ObjectPhoto
+
+class WorkerNotificationDAO(BaseDAO):
+    model = WorkerNotification
+
+class ForemanNotificationDAO(BaseDAO):
+    model = ForemanNotification
+
+class MaterialOrderDAO(BaseDAO):
+    model = MaterialOrder

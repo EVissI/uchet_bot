@@ -37,7 +37,6 @@ async def process_my_objects(message: Message, user_info: User):
             
             await message.answer(
                 text=object_text,
-                parse_mode="MarkdownV2",
                 reply_markup=object_keyboard(obj.id, user_info.language)
             )
     
@@ -64,7 +63,6 @@ async def process_object_docs(callback: CallbackQuery, callback_data: ObjectActi
             await callback.message.answer_photo(
                 photo=doc.file_id,
                 caption=doc_text,
-                parse_mode="MarkdownV2"
             )
 
 @my_object_router.callback_query(ObjectActionCallback.filter(F.action == 'notify'), UserInfo())
@@ -107,7 +105,6 @@ async def process_notification_message(message: Message, state: FSMContext, user
                     await message.bot.send_message(
                         chat_id=member.telegram_id,
                         text=notification_text,
-                        parse_mode="MarkdownV2"
                     )
                 except Exception as e:
                     continue  
@@ -157,12 +154,10 @@ async def process_photo_description(message: Message, state: FSMContext, user_in
         description=message.text
     )
     
-    # Send to photos group
     await message.bot.send_photo(
-        chat_id=settings.TELEGRAM_GROUP_OBJECT_PHOTO,
+        chat_id=settings.TELEGRAM_GROUP_ID_OBJECT_PHOTO,
         photo=data['photo_id'],
         caption=photo_text,
-        parse_mode="MarkdownV2"
     )
     async with async_session_maker() as session:
         await ObjectPhotoDAO.add(
@@ -248,7 +243,6 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
         chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
         photo=data['photo_id'],
         caption=check_text,
-        parse_mode="MarkdownV2"
     )
     
     async with async_session_maker() as session:

@@ -20,3 +20,12 @@ class ObjectCheckStates(StatesGroup):
     waiting_photo = State()
     waiting_description = State()
     waiting_amount = State()
+
+class MaterialRemainderStates(StatesGroup):
+    waiting_photo = State()
+    waiting_description = State()
+    waiting_location = State()
+
+class MaterialOrderStates(StatesGroup):
+    waiting_description = State()
+    waiting_date = State()

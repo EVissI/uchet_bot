@@ -1,6 +1,9 @@
-﻿from pydantic import BaseModel
+﻿from datetime import datetime
+from pydantic import BaseModel
 from typing import Optional
 from app.db.models import ObjectDocument
+from app.db.models import Tool
+
 
 class TelegramIDModel(BaseModel):
     telegram_id: int
@@ -32,6 +35,7 @@ class ToolModel(BaseModel):
     name: str
     description: Optional[str] = None
     file_id: Optional[str] = None
+    status: Tool.Status = Tool.Status.ACTIVE
     user_id: int
 
     class Config:
@@ -121,3 +125,35 @@ class ObjectPhotoFilterModel(BaseModel):
     description: Optional[str] = None
     object_id: Optional[int] = None
     user_id: Optional[int] = None
+
+class NotificationFilter(BaseModel):
+    message: Optional[str] = None
+    first_notification_time: Optional[datetime] = None
+    second_notification_time: Optional[datetime] = None
+
+class MaterialModel(BaseModel):
+    description:str 
+    file_id:str
+    storage_location:str
+    message_id:Optional[int] = None
+    
+    class Config:
+        from_attributes = True
+
+class MaterialFilter(BaseModel):
+    description:Optional[str] = None 
+    file_id:Optional[str] = None
+    storage_location:Optional[str] = None
+    message_id:Optional[int] = None
+
+class MaterialOrderModel(BaseModel):
+    description: str
+    delivery_date: str
+    message_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class MaterialOrderFilter(BaseModel):
+    id: Optional[int] = None
+    message_id: Optional[int] = None

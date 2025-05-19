@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     TELEGRAM_GROUP_ID_VIDEO_OTCHET: int
     TELEGRAM_GROUP_ID_MATERIAL: int
     TELEGRAM_GROUP_ID_CHEKS: int
-    TELEGRAM_GROUP_OBJECT_PHOTO: int
-
+    TELEGRAM_GROUP_ID_OBJECT_PHOTO: int
+    TELEGRAM_GROUP_ID_MATERIAL_ORDER: int
     DB_URL: str = 'sqlite+aiosqlite:///data/db.sqlite3'
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")

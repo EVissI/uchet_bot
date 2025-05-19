@@ -42,12 +42,18 @@ class User(Base):
 class Tool(Base):
     __tablename__ = "tools"
 
+    class Status(enum.Enum):
+            free = "свободный"
+            in_work = "занят"
+            repair = "в ремонте"
+
     id: Mapped[int] = mapped_column(Integer,primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     file_id: Mapped[str] = mapped_column(String(255), nullable=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)
-
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=True)
+    status:Mapped[Status] = mapped_column(String(20), nullable=False, default=Status.free)
+    
     user: Mapped['User'] = relationship("User", back_populates="tools")
 
 
@@ -141,3 +147,27 @@ class ObjectCheck(Base):
 
     user:Mapped['User'] = relationship("User", back_populates="object_checks")
     object:Mapped['Object'] = relationship("Object", back_populates="object_checks")
+
+class WorkerNotification(Base):
+    __tablename__ = 'worker_notification'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+
+    message: Mapped[str]
+    first_notification_time: Mapped[datetime]
+    second_notification_time: Mapped[datetime]
+
+class ForemanNotification(Base):
+    __tablename__ = 'foreman_notification'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+
+    message: Mapped[str]
+    first_notification_time: Mapped[datetime]
+    second_notification_time: Mapped[datetime]
+
+class MaterialOrder(Base):
+    __tablename__ = "material_orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+    delivery_date: Mapped[str] = mapped_column(String(20), nullable=False)
+    message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
