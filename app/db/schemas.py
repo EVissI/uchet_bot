@@ -87,6 +87,27 @@ class ObjectMemberModel(BaseModel):
     class Config:
         from_attributes = True
 
+class CheclModel(BaseModel):
+    file_id: str
+    amount: float
+    description: str
+    own_expense: bool = False
+
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+class CheckFilterModel(BaseModel):
+    id: Optional[int] = None
+
+    file_id: Optional[str] = None
+    amount: Optional[float] = None
+    description: Optional[str] = None
+    own_expense: Optional[bool] = None
+
+    user_id: Optional[int] = None
+
 class ObjectMemberFilterModel(BaseModel):
     id: Optional[int] = None
 

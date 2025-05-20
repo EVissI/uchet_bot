@@ -7,6 +7,7 @@ from app.bot.common.texts import get_text
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import ForemanObjectCallback
 from app.db.dao import ObjectDAO, ObjectMemberDAO
+from app.db.schemas import ObjectFilterModel
 from app.db.models import User    
 from app.db.database import async_session_maker
 
@@ -18,7 +19,7 @@ async def handle_workers_list(callback: CallbackQuery, callback_data: ForemanObj
 
     async with async_session_maker() as session:
         members: list[User] = await ObjectMemberDAO.find_object_members(session, object_id)
-        selected_object = await ObjectDAO.find_one_or_none(session, object_id)
+        selected_object = await ObjectDAO.find_one_or_none(session, ObjectFilterModel(id=object_id))
 
         if not members:
             await callback.message.answer(get_text("no_object_members", user_info.language))
@@ -35,8 +36,8 @@ async def handle_workers_list(callback: CallbackQuery, callback_data: ForemanObj
                 telegram_id=member.telegram_id,
                 username=username,
                 full_name=member.user_enter_fio,
-                phone=member.phone,
-                status=member.status,
+                phone=member.phone_number,
+                status=member.role,
                 object_name=object_name
             )
             try:

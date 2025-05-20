@@ -18,7 +18,7 @@ from app.db.schemas import ObjectPhotoModel
 
 object_photo_router = Router()
 
-@object_photo_router.callback_query(ForemanObjectCallback.filter(F.action == 'photo'), UserInfo())
+@object_photo_router.callback_query(ForemanObjectCallback.filter(F.action == 'photos'), UserInfo())
 async def process_photo_btn(
     callback: CallbackQuery, 
     callback_data: ForemanObjectCallback, 

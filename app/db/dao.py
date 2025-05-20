@@ -2,6 +2,8 @@
 from sqlalchemy import or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+from datetime import datetime
 
 from app.db.base import BaseDAO
 from app.db.models import (
@@ -28,6 +30,35 @@ class UserDocumentDAO(BaseDAO):
 
 class ToolDAO(BaseDAO):
     model = Tool
+
+    @classmethod
+    async def get_filtered_tools(
+        cls,
+        session: AsyncSession,
+        status: str
+    ) -> list[Tool]:
+        """Get filtered tools by status"""
+        try:
+            conditions = []
+            
+            if status == "in_work":
+                conditions.append(cls.model.status == Tool.Status.in_work.value)
+            if status == "free":
+                conditions.append(cls.model.status == Tool.Status.free.value)
+            if status == "repair":
+                conditions.append(cls.model.status == Tool.Status.repair.value)
+            
+            result = await session.execute(
+                select(cls.model)
+                .where(*conditions)
+                .options(joinedload(cls.model.user))
+                .order_by(cls.model.created_at)
+            )
+            return list(result.scalars().all())
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error in get_filtered_tools: {e}")
+            return []
 
 class ObjectDAO(BaseDAO):
     model = Object
@@ -114,6 +145,53 @@ class CheckDAO(BaseDAO):
 
 class ObjectCheckDAO(BaseDAO):
     model = ObjectCheck
+
+    @classmethod
+    async def get_filtered_expenses(
+        cls,
+        session: AsyncSession,
+        object_id: int,
+        start_date: datetime,
+        end_date: datetime,
+        expense_type: str
+    ) -> list[ObjectCheck]:
+        """
+        Get filtered expenses for an object within a date range and by type.
+        
+        Args:
+            session: AsyncSession - DB session
+            object_id: int - ID of the object
+            start_date: datetime - Start date of the period
+            end_date: datetime - End date of the period
+            expense_type: str - Type of expenses ('all', 'own', 'company')
+            
+        Returns:
+            list[ObjectCheck]: List of filtered expenses
+        """
+        try:
+            conditions = [
+                cls.model.object_id == object_id,
+                cls.model.created_at >= start_date,
+                cls.model.created_at <= end_date
+            ]
+
+            # Add expense type filter if not 'all'
+            if expense_type == 'own':
+                conditions.append(cls.model.own_expense == True)
+            elif expense_type == 'company':
+                conditions.append(cls.model.own_expense == False)
+
+            result = await session.execute(
+                select(cls.model)
+                .where(*conditions)
+                .order_by(cls.model.created_at)
+                .options(joinedload(cls.model.user))
+            )
+            return list(result.scalars().all())
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error in get_filtered_expenses: {e}")
+            return []
 
 class ObjectPhotoDAO(BaseDAO):
     model = ObjectPhoto

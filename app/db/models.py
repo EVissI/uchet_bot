@@ -132,6 +132,7 @@ class Check(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     file_id: Mapped[str] = mapped_column(String(255), nullable=False)
     amount: Mapped[float] = mapped_column(nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=True)
     own_expense: Mapped[bool] = mapped_column(Boolean, default=False)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False)

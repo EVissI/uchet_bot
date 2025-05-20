@@ -18,7 +18,7 @@ from app.bot.routers.foreman.object_logic.mass_mailing import mass_mailing_route
 from app.bot.routers.foreman.object_logic.object_photo import object_photo_router
 from app.bot.routers.foreman.object_logic.receipts import receipts_router
 from app.bot.routers.foreman.object_logic.workers_list import workers_list_router
-
+from app.bot.routers.foreman.object_logic.tool_list import tools_list_router
 
 
 foreman_router = Router()
@@ -28,7 +28,8 @@ foreman_router.include_routers(documents_list_router,
                                 handover_router, 
                                 mass_mailing_router,
                                 object_photo_router, 
-                                receipts_router)
+                                receipts_router,
+                                tools_list_router)
 
 
 @foreman_router.message(F.text.in_(get_all_texts("objects_btn")), UserInfo())

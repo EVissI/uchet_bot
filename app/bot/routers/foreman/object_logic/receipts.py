@@ -52,7 +52,7 @@ async def process_check_description(
     )
 
     await state.update_data(photo_id=message.photo[-1].file_id)
-    await state.update_data(description=message.text)
+    await state.update_data(description=message.caption)
     await state.update_data(own_expense=False)
     await state.set_state(ObjectCheckStates.waiting_amount)
     
@@ -71,9 +71,10 @@ async def process_check_amount(
 ) -> None:
     """Handler for receiving check amount"""
     await message.delete()
+    data = await state.get_data()
     await message.bot.delete_message(
         chat_id=message.chat.id,
-        message_id=state.get_data().get('last_senden_msg_id'),
+        message_id=data.get('last_senden_msg_id'),
     )
     try:
         amount = float(message.text.replace(',', '.'))
@@ -127,7 +128,7 @@ async def process_invalid_check_photo(message: Message, user_info: User) -> None
         text=get_text('send_photo_only', user_info.language)
     )
 
-@receipts_router.callback_query(ForemanOwnExpenseCallback.filter())
+@receipts_router.callback_query(ForemanOwnExpenseCallback.filter(), UserInfo())
 async def process_own_expense_btn(
     callback: CallbackQuery,
     callback_data: ForemanOwnExpenseCallback,

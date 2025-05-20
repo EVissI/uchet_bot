@@ -15,6 +15,8 @@ from app.bot.routers.worker.main_worker_router import main_worker_router
 from app.bot.routers.foreman.main_foreman_router import main_foreman_router
 from app.bot.routers.general_routers.profile_router import profile_router
 from app.bot.routers.general_routers.transfer_tool import transfer_router
+from app.bot.routers.general_routers.material_order import material_order_router
+from app.bot.routers.general_routers.material import material_router
 from app.bot.routers.test_router import admin_mock_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
@@ -27,7 +29,9 @@ main_router.include_routers(main_worker_router,
                             main_foreman_router,
                             profile_router,
                             transfer_router,
-                            admin_mock_router)
+                            admin_mock_router,
+                            material_order_router,
+                            material_router)
 
 
 @main_router.message(CommandStart())

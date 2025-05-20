@@ -40,6 +40,9 @@ class ForemanExpenseTypeCallback(CallbackData, prefix="expense_type"):
     expense_type: str
     object_id: int
 
+class ToolStatusCallback(CallbackData, prefix="tool_status"):
+    status: str
+
 def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=get_text('ru',lang), callback_data=LanguageCallback(lang='ru').pack())
@@ -121,7 +124,7 @@ def get_foreman_objects_kbd(object_id: int, lang: str = 'ru') -> InlineKeyboardM
     kb.button(text=get_text("foreman_info_btn", lang), callback_data=ForemanObjectCallback(action="info", object_id=object_id).pack())
     kb.button(text=get_text("foreman_tools_list_btn", lang), callback_data=ForemanObjectCallback(action="tools_list", object_id=object_id).pack())
     kb.button(text=get_text("foreman_mass_mailing_btn", lang), callback_data=ForemanObjectCallback(action="mass_mailing", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_offsite_accounting_btn", lang), callback_data=ForemanObjectCallback(action="offsite_accounting", object_id=object_id).pack())
+    # kb.button(text=get_text("foreman_offsite_accounting_btn", lang), callback_data=ForemanObjectCallback(action="offsite_accounting", object_id=object_id).pack())
     kb.button(text=get_text("foreman_export_xlsx_btn", lang), callback_data=ForemanObjectCallback(action="export_xlsx", object_id=object_id).pack())
     kb.button(text=get_text("back_btn", lang), callback_data=ForemanObjectCallback(action="back", object_id=object_id).pack())
     kb.adjust(1)
@@ -197,5 +200,22 @@ def get_expense_type_kbd(lang: str, object_id: int) -> InlineKeyboardMarkup:
         callback_data=ForemanBackCallback(object_id=object_id).pack()
     )
     
+    kb.adjust(1)
+    return kb.as_markup()
+
+def get_tool_status_kbd(language: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("in_work_tools", language),
+        callback_data=ToolStatusCallback(status="in_work").pack()
+    )
+    kb.button(
+        text=get_text("free_tools", language),
+        callback_data=ToolStatusCallback(status="free").pack()
+    )
+    kb.button(
+        text=get_text("repair_tools", language),
+        callback_data=ToolStatusCallback(status="repair").pack()
+    )
     kb.adjust(1)
     return kb.as_markup()

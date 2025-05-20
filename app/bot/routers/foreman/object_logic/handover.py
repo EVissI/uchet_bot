@@ -11,6 +11,7 @@ from app.bot.kbds.inline_kbds import ForemanObjectCallback, get_back_kbd, Forema
 from app.db.dao import ObjectDAO
 from app.db.models import User
 from app.db.database import async_session_maker
+from app.db.schemas import ObjectFilterModel
 from app.config import settings
 
 handover_router = Router()
@@ -57,7 +58,7 @@ async def process_handover_description(
     object_id = data["object_id"]
     
     async with async_session_maker() as session:
-        object = await ObjectDAO.find_one_or_none(session, object_id)
+        object = await ObjectDAO.find_one_or_none(session, ObjectFilterModel(id=object_id))
         if not object:
             await message.answer(get_text("object_not_found", user_info.language))
             await state.clear()

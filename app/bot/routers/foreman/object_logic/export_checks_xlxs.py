@@ -1,6 +1,6 @@
 ﻿from datetime import datetime
 from aiogram import Router, F
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, BufferedInputFile
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -124,9 +124,13 @@ async def process_expense_type(
 
         excel_file = create_expense_report(expenses, user_info.language)
         
+        input_file = BufferedInputFile(
+            excel_file.getvalue(),
+            filename=f"expense_report_{data['start_date'].strftime('%d_%m_%Y')}-{data['end_date'].strftime('%d_%m_%Y')}.xlsx"
+        )
         await callback.message.delete()
         await callback.message.answer_document(
-            document=excel_file,
+            document=input_file,
             caption=get_text(
                 "expense_report_caption",
                 user_info.language,

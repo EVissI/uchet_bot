@@ -214,7 +214,6 @@ async def create_mock_objects(message: Message, user_info: User) -> None:
     object_models = []
     async with async_session_maker() as session:
         for name, description in SAMPLE_OBJECTS:
-            # Create object
             object_models.append(ObjectModel(
                 name=name,
                 description=description,
