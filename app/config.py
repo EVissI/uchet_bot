@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     TELEGRAM_GROUP_ID_CHEKS: int
     TELEGRAM_GROUP_ID_OBJECT_PHOTO: int
     TELEGRAM_GROUP_ID_MATERIAL_ORDER: int
+    TELEGRAM_GROUP_ID_TRANSFER_TOOL: int
+    TELEGRAM_GROUP_ID_FOREMAN_REPORTS: int
     DB_URL: str = 'sqlite+aiosqlite:///data/db.sqlite3'
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")

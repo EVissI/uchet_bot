@@ -44,7 +44,7 @@ async def process_my_objects(message: Message, user_info: User):
 async def process_object_docs(callback: CallbackQuery, callback_data: ObjectActionCallback, user_info: User):
     """Handler for displaying object documents"""
     async with async_session_maker() as session:
-        documents = await ObjectDocumentDAO.find_object_documents(session, callback_data.object_id)
+        documents = await ObjectDocumentDAO.find_object_documents(session, callback_data.object_id, user_info.role)
         
         if not documents:
             await callback.message.answer(
@@ -190,25 +190,17 @@ async def process_check_btn(
 ):
     """Handler for check button"""
     await state.update_data(object_id=callback_data.object_id)
-    await state.set_state(ObjectCheckStates.waiting_photo)
+    await state.set_state(ObjectCheckStates.waiting_photo_and_desription)
     
     await callback.message.answer(
-        text=get_text('send_check_photo', user_info.language)
+        text=get_text('send_check_photo_and_description', user_info.language)
     )
 
-@my_object_router.message(F.photo, StateFilter(ObjectCheckStates.waiting_photo), UserInfo())
-async def process_check_photo(message: Message, state: FSMContext, user_info: User):
-    """Handler for receiving check photo"""
-    await state.update_data(photo_id=message.photo[-1].file_id)
-    await state.set_state(ObjectCheckStates.waiting_description)
-    
-    await message.answer(
-        text=get_text('enter_check_description', user_info.language)
-    )
 
-@my_object_router.message(StateFilter(ObjectCheckStates.waiting_description), UserInfo())
+@my_object_router.message(F.photo,StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())
 async def process_check_description(message: Message, state: FSMContext, user_info: User):
     """Handler for receiving check description"""
+    await state.update_data(photo_id=message.photo[-1].file_id)
     await state.update_data(description=message.text)
     await state.set_state(ObjectCheckStates.waiting_amount)
     

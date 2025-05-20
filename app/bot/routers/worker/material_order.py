@@ -34,7 +34,6 @@ async def process_order_description(
     """Handler for receiving material description"""
     await state.update_data(description=message.text)
     await state.set_state(MaterialOrderStates.waiting_date)
-
     await message.answer(text=get_text("enter_delivery_date", user_info.language))
 
 
@@ -73,29 +72,14 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
     )
 
     async with async_session_maker() as session:
-        old_order = await MaterialOrderDAO.find_one_or_none(
-            session, filters=MaterialOrderFilter(user_id=user_info.telegram_id)
-        )
-
-        if old_order and old_order.message_id:
-            try:
-                await message.bot.delete_message(
-                    chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
-                    message_id=old_order.message_id,
-                )
-            except Exception:
-                pass
-
         await MaterialOrderDAO.add(
             session,
             MaterialOrderModel(
                 description=data["description"],
                 delivery_date=message.text,
-                user_id=user_info.telegram_id,
                 message_id=sent_message.message_id,
             ),
         )
-        await session.commit()
 
     await message.answer(text=get_text("order_saved", user_info.language))
     await state.clear()

@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from app.bot.filters.role_filter import RoleFilter
-from app.bot.routers.worker.profile_router import profile_router
+from app.bot.routers.general_routers.profile_router import profile_router
 from app.bot.routers.worker.my_object_router import my_object_router
 from app.config import settings
 from app.db.models import User

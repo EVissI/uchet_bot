@@ -16,7 +16,7 @@ class BaseDAO(Generic[T]):
     model: type[T]
 
     @classmethod
-    async def find_one_or_none_by_id(cls, data_id: int, session: AsyncSession):
+    async def find_one_or_none_by_id(cls, session: AsyncSession, data_id: int, ):
         # Найти запись по ID
         logger.info(f"Поиск {cls.model.__name__} с ID: {data_id}")
         try:

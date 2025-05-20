@@ -17,8 +17,7 @@ class ObjectPhotoStates(StatesGroup):
     waiting_description = State()
 
 class ObjectCheckStates(StatesGroup):
-    waiting_photo = State()
-    waiting_description = State()
+    waiting_photo_and_desription = State()
     waiting_amount = State()
 
 class MaterialRemainderStates(StatesGroup):
@@ -29,3 +28,6 @@ class MaterialRemainderStates(StatesGroup):
 class MaterialOrderStates(StatesGroup):
     waiting_description = State()
     waiting_date = State()
+
+class HandoverStates(StatesGroup):
+    waiting_description = State()

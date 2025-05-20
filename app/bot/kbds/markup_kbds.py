@@ -51,8 +51,13 @@ def stop_kb(lang:str = 'ru') -> ReplyKeyboardMarkup:
     )
     return keyboard
 
+
 class MainKeyboard:
     __worker_kb_texts_list = ['profile_btn','my_objects_btn', 'material_remainder_btn','material_order_btn', 'info_btn']
+
+    __foreman_kb_texts_list = ['profile_btn','objects_btn', 'material_remainder_btn','material_order_btn', 'reminder_btn']
+
+    __admin_kb_texts_list = []
 
     @staticmethod
     def get_worker_kb_texts(lang: str = 'ru') -> dict:
@@ -65,16 +70,44 @@ class MainKeyboard:
         }
     
     @staticmethod
+    def get_foreman_kb_texts(lang: str = 'ru') -> dict:
+        """
+        Returns dictionary with worker keyboard texts based on language
+        """
+        return {
+            text: get_text(text, lang) 
+            for text in MainKeyboard.__foreman_kb_texts_list
+        }
+    
+    @staticmethod
+    def get_admin_kb_texts(lang: str = 'ru') -> dict:
+        """
+        Returns dictionary with worker keyboard texts based on language
+        """
+        return {
+            text: get_text(text, lang) 
+            for text in MainKeyboard.__admin_kb_texts_list
+        }
+    
+    @staticmethod
     def build_main_kb(role:User.Role, lang:str) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardBuilder()
         match role:
-            case User.Role.worker.value:
+            case User.Role.worker:
                 for val in MainKeyboard.get_worker_kb_texts(lang).values():
                     kb.button(text=val)
                 kb.adjust(1,1,2,1)
                 return kb.as_markup(resize_keyboard=True)
+            case User.Role.foreman:
+                for val in MainKeyboard.get_foreman_kb_texts(lang).values():
+                    kb.button(text=val)
+                kb.adjust(1)
+                return kb.as_markup(resize_keyboard=True)
             case User.Role.admin:
-                pass
+                for val in MainKeyboard.get_admin_kb_texts(lang).values():
+                    kb.button(text=val)
+                kb.adjust(1)
+                return kb.as_markup(resize_keyboard=True)
             case _: 
                 raise ValueError
 

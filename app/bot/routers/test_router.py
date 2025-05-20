@@ -41,7 +41,7 @@ async def create_mock_tools(message: Message, user_info: User) -> None:
                 name=name,
                 description=description,
                 file_id=None,
-                status=random.choice(["в работе", "на складе", "в ремонте"]),
+                status=random.choice(list(Tool.Status)).value,
                 user_id=random.choice(settings.ROOT_ADMIN_IDS),
             )
             await ToolDAO.add(session, tool)

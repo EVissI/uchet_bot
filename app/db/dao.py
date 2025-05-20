@@ -55,6 +55,32 @@ class ObjectDocumentDAO(BaseDAO):
         )
         result = await session.execute(stmt)
         return result.scalars().all()
+    
+
+    @classmethod
+    async def find_object_documents(cls, session: AsyncSession, object_id: int, user_role: User.Role) -> list[ObjectDocument]:
+        """
+        Find all documents for a specific object
+        Args:
+            session: AsyncSession
+            object_id: ID of the object
+            user_role: Role of the user (worker or foreman)
+        Returns:
+            list[ObjectDocument]: List of documents for the object
+        """
+        try:
+            query = select(cls.model).where(cls.model.object_id == object_id)
+            
+            if user_role == User.Role.worker:
+                query = query.where(cls.model.document_type == ObjectDocument.DocumentType.technical_task)
+                
+            result = await session.execute(query)
+            return list(result.scalars().all())
+            
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_object_documents: {e}")
+            return []
+
 
 class ObjectMemberDAO(BaseDAO):
     model = ObjectMember

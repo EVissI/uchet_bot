@@ -51,7 +51,6 @@ class ToolFilterModel(BaseModel):
 class ObjectModel(BaseModel):
     name: str
     description: Optional[str] = None
-    invite_link: Optional[str] = None
     is_active: bool = True
     creator_id: int
 
@@ -60,9 +59,9 @@ class ObjectModel(BaseModel):
 
 class ObjectFilterModel(BaseModel):
     id: Optional[int] = None
+    
     name: Optional[str] = None
     description: Optional[str] = None
-    invite_link: Optional[str] = None
     is_active: Optional[bool] = None
     creator_id: Optional[int] = None
 
@@ -76,6 +75,7 @@ class ObjectDocumentModel(BaseModel):
 
 class ObjectDocumentFilterModel(BaseModel):
     id: Optional[int] = None
+
     object_id: Optional[int] = None
     file_id: Optional[str] = None
     document_type: Optional[ObjectDocument.DocumentType] = None
@@ -89,6 +89,7 @@ class ObjectMemberModel(BaseModel):
 
 class ObjectMemberFilterModel(BaseModel):
     id: Optional[int] = None
+
     object_id: Optional[int] = None
     user_id: Optional[int] = None
 
@@ -96,6 +97,8 @@ class ObjectCheckModel(BaseModel):
     file_id: str
     amount: float
     description:str
+    own_expense: bool = False
+    
     object_id: int
     user_id: int
 
@@ -104,9 +107,12 @@ class ObjectCheckModel(BaseModel):
 
 class ObjectCheckFilterModel(BaseModel):
     id: Optional[int] = None
+
     file_id: Optional[str] = None
     amount: Optional[float] = None
     description:Optional[str] = None
+    own_expense: Optional[bool] = None
+
     object_id: Optional[int] = None
     user_id: Optional[int] = None
 
