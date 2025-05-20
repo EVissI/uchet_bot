@@ -18,34 +18,34 @@ material_router = Router()
 @material_router.message(
     F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()
 )
-async def process_material_remainder(message: Message, state: FSMContext):
+async def process_material_remainder(message: Message, state: FSMContext, user_info:User):
     await state.set_state(MaterialRemainderStates.waiting_photo)
     await message.answer(
-        text=get_text("send_material_photo", message.from_user.language)
+        text=get_text("send_material_photo", user_info.language)
     )
 
 
 @material_router.message(
     F.photo, StateFilter(MaterialRemainderStates.waiting_photo), UserInfo()
 )
-async def process_material_photo(message: Message, state: FSMContext):
+async def process_material_photo(message: Message, state: FSMContext,user_info:User):
     await state.update_data(photo_id=message.photo[-1].file_id)
     await state.set_state(MaterialRemainderStates.waiting_description)
 
     await message.answer(
-        text=get_text("enter_material_description", message.from_user.language)
+        text=get_text("enter_material_description", user_info.language)
     )
 
 
 @material_router.message(
     StateFilter(MaterialRemainderStates.waiting_description), UserInfo()
 )
-async def process_material_description(message: Message, state: FSMContext):
+async def process_material_description(message: Message, state: FSMContext,user_info:User):
     await state.update_data(description=message.text)
     await state.set_state(MaterialRemainderStates.waiting_location)
 
     await message.answer(
-        text=get_text("enter_storage_location", message.from_user.language)
+        text=get_text("enter_storage_location", user_info.language)
     )
 
 

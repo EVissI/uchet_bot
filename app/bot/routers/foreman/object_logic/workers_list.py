@@ -12,9 +12,9 @@ from app.db.database import async_session_maker
 
 workers_list_router = Router()
 
-@workers_list_router.callback_query(ForemanObjectCallback.filter(F.action == "worker"), UserInfo())
+@workers_list_router.callback_query(ForemanObjectCallback.filter(F.action == "workers"), UserInfo())
 async def handle_workers_list(callback: CallbackQuery, callback_data: ForemanObjectCallback, user_info: User) -> None:
-    object_id = callback_data.id
+    object_id = callback_data.object_id
 
     async with async_session_maker() as session:
         members: list[User] = await ObjectMemberDAO.find_object_members(session, object_id)

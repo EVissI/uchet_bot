@@ -12,6 +12,7 @@ from app.db.database import async_session_maker
 from app.db.models import User
 from app.config import settings
 from app.db.schemas import ObjectCheckModel, ObjectPhotoModel
+
 my_object_router = Router()
 
 @my_object_router.message(F.text.in_(get_all_texts('my_objects_btn')), UserInfo())
@@ -64,6 +65,7 @@ async def process_object_docs(callback: CallbackQuery, callback_data: ObjectActi
                 photo=doc.file_id,
                 caption=doc_text,
             )
+    await callback.answer()
 
 @my_object_router.callback_query(ObjectActionCallback.filter(F.action == 'notify'), UserInfo())
 async def process_notify_btn(
@@ -79,6 +81,9 @@ async def process_notify_btn(
     await callback.message.answer(
         text=get_text('enter_notification', user_info.language)
     )
+    
+    await callback.answer()
+
 
 
 @my_object_router.message(F.text, StateFilter(NotifyObjectStates.waiting_message), UserInfo())
@@ -128,6 +133,9 @@ async def process_photo_btn(
     await callback.message.answer(
         text=get_text('send_object_photo', user_info.language)
     )
+    
+    await callback.answer()
+
 
 @my_object_router.message(F.photo, StateFilter(ObjectPhotoStates.waiting_photo), UserInfo())
 async def process_object_photo(message: Message, state: FSMContext, user_info: User):
@@ -195,13 +203,15 @@ async def process_check_btn(
     await callback.message.answer(
         text=get_text('send_check_photo_and_description', user_info.language)
     )
+    
+    await callback.answer()
 
 
 @my_object_router.message(F.photo,StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())
 async def process_check_description(message: Message, state: FSMContext, user_info: User):
     """Handler for receiving check description"""
     await state.update_data(photo_id=message.photo[-1].file_id)
-    await state.update_data(description=message.text)
+    await state.update_data(description=message.caption)
     await state.set_state(ObjectCheckStates.waiting_amount)
     
     await message.answer(
@@ -254,7 +264,7 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
     )
     await state.clear()
 
-@my_object_router.message(~F.photo, StateFilter(ObjectCheckStates.waiting_photo), UserInfo())
+@my_object_router.message(~F.photo, StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())
 async def process_invalid_check_photo(message: Message, user_info: User):
     """Handler for invalid input in check photo state"""
     await message.answer(

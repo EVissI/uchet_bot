@@ -5,15 +5,33 @@ from aiogram.types import CallbackQuery,Message
 from aiogram.fsm.context import FSMContext
 from app.bot.kbds.inline_kbds import ForemanBackCallback, build_obj_list_kbd, get_foreman_objects_kbd,ObjListCallback,ForemanObjectCallback
 from app.bot.common.texts import get_all_texts, get_text
-from app.db.dao import ObjectDAO, ObjectMemberDAO
+from app.db.dao import ObjectMemberDAO
 from app.db.database import async_session_maker
-from app.db.schemas import ObjectFilterModel, ObjectModel
+
 from app.bot.filters.user_info import UserInfo
 from app.db.models import User
+
+from app.bot.routers.foreman.object_logic.documents_list import documents_list_router
+from app.bot.routers.foreman.object_logic.export_checks_xlxs import export_router
+from app.bot.routers.foreman.object_logic.handover import handover_router
+from app.bot.routers.foreman.object_logic.mass_mailing import mass_mailing_router
+from app.bot.routers.foreman.object_logic.object_photo import object_photo_router
+from app.bot.routers.foreman.object_logic.receipts import receipts_router
+from app.bot.routers.foreman.object_logic.workers_list import workers_list_router
+
+
+
 foreman_router = Router()
+foreman_router.include_routers(documents_list_router, 
+                                workers_list_router,
+                                export_router,
+                                handover_router, 
+                                mass_mailing_router,
+                                object_photo_router, 
+                                receipts_router)
 
 
-@foreman_router.callback_query(F.text.in_(get_all_texts("objects_btn")), UserInfo())
+@foreman_router.message(F.text.in_(get_all_texts("objects_btn")), UserInfo())
 async def handle_workers_callback(message:Message, user_info: User) -> None:
     async with async_session_maker() as session:
         objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
@@ -87,7 +105,7 @@ async def handle_select_object(callback: CallbackQuery, callback_data: ObjListCa
                                   reply_markup=get_foreman_objects_kbd(object_id=callback_data.id, lang=user_info.language))
     
 
-@foreman_router.callback_query(ForemanObjectCallback.filter(action="back"), UserInfo())
+@foreman_router.callback_query(ForemanObjectCallback.filter(F.action == "back"), UserInfo())
 async def handle_back_btn_after_select_obj(callback: CallbackQuery, callback_data: ForemanObjectCallback, user_info: User) -> None:
     async with async_session_maker() as session:
         objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
@@ -115,6 +133,6 @@ async def process_back_btn(
     await callback.message.answer(
         text=get_text("select_object_action", user_info.language),reply_markup=get_foreman_objects_kbd(
             object_id=callback_data.object_id,
-            language=user_info.language,
+            lang=user_info.language,
         )
     )

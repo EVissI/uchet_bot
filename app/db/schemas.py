@@ -35,7 +35,7 @@ class ToolModel(BaseModel):
     name: str
     description: Optional[str] = None
     file_id: Optional[str] = None
-    status: Tool.Status = Tool.Status.ACTIVE
+    status: str
     user_id: int
 
     class Config:
@@ -59,7 +59,7 @@ class ObjectModel(BaseModel):
 
 class ObjectFilterModel(BaseModel):
     id: Optional[int] = None
-    
+
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
@@ -68,7 +68,7 @@ class ObjectFilterModel(BaseModel):
 class ObjectDocumentModel(BaseModel):
     object_id: int
     file_id: str
-    document_type: ObjectDocument.DocumentType
+    document_type: str
 
     class Config:
         from_attributes = True
@@ -78,7 +78,7 @@ class ObjectDocumentFilterModel(BaseModel):
 
     object_id: Optional[int] = None
     file_id: Optional[str] = None
-    document_type: Optional[ObjectDocument.DocumentType] = None
+    document_type: Optional[str] = None
 
 class ObjectMemberModel(BaseModel):
     object_id: int

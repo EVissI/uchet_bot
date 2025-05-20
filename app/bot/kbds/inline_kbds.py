@@ -36,6 +36,10 @@ class ForemanBackCallback(CallbackData, prefix='foreman_back'):
 class ForemanOwnExpenseCallback(CallbackData, prefix='foreman_own_expense'):
     flag: bool
 
+class ForemanExpenseTypeCallback(CallbackData, prefix="expense_type"):
+    expense_type: str
+    object_id: int
+
 def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=get_text('ru',lang), callback_data=LanguageCallback(lang='ru').pack())
@@ -119,8 +123,8 @@ def get_foreman_objects_kbd(object_id: int, lang: str = 'ru') -> InlineKeyboardM
     kb.button(text=get_text("foreman_mass_mailing_btn", lang), callback_data=ForemanObjectCallback(action="mass_mailing", object_id=object_id).pack())
     kb.button(text=get_text("foreman_offsite_accounting_btn", lang), callback_data=ForemanObjectCallback(action="offsite_accounting", object_id=object_id).pack())
     kb.button(text=get_text("foreman_export_xlsx_btn", lang), callback_data=ForemanObjectCallback(action="export_xlsx", object_id=object_id).pack())
-    kb.button(text=get_text("back_btn", lang), callback_data=ForemanObjectCallback(action="export_xlsx", object_id=object_id).pack())
-    kb.adjust(3)
+    kb.button(text=get_text("back_btn", lang), callback_data=ForemanObjectCallback(action="back", object_id=object_id).pack())
+    kb.adjust(1)
     return kb.as_markup()
 
 
@@ -155,11 +159,13 @@ def build_obj_list_kbd(objects: list[Object],page=0) -> InlineKeyboardMarkup:
     kb.adjust(*rows)
     return kb.as_markup(resize_keyboard=True)
 
+
 def get_back_kbd(lang:str, object_id:int) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(text=get_text('back_btn', lang), callback_data=ForemanBackCallback(object_id=object_id).pack())
     kb.adjust(1)
     return kb.as_markup(resize_keyboard=True)
+
 
 def get_own_expense_kbd(lang:str, flag:bool = False) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
@@ -169,3 +175,27 @@ def get_own_expense_kbd(lang:str, flag:bool = False) -> InlineKeyboardMarkup:
         kb.button(text=get_text('own_expense_false_btn', lang), callback_data=ForemanOwnExpenseCallback(flag=flag).pack())
     kb.adjust(1)
     return kb.as_markup(resize_keyboard=True)
+
+
+def get_expense_type_kbd(lang: str, object_id: int) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    kb.button(
+        text=get_text("all_expenses_btn", lang),
+        callback_data=ForemanExpenseTypeCallback(expense_type="all", object_id=object_id).pack()
+    )
+    kb.button(
+        text=get_text("own_expenses_btn", lang),
+        callback_data=ForemanExpenseTypeCallback(expense_type="own", object_id=object_id).pack()
+    )
+    kb.button(
+        text=get_text("company_expenses_btn", lang),
+        callback_data=ForemanExpenseTypeCallback(expense_type="company", object_id=object_id).pack()
+    )
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=ForemanBackCallback(object_id=object_id).pack()
+    )
+    
+    kb.adjust(1)
+    return kb.as_markup()

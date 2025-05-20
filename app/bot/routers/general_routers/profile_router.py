@@ -3,7 +3,6 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 
 from app.bot.common.texts import get_all_texts, get_text
-from app.bot.common.utils import escape_markdown
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import (
     ProfileCallback,
@@ -26,10 +25,10 @@ async def process_profile_callback(message: Message, user_info: User):
         "profile_info",
         lang=user_info.language,
         telegram_id=user_info.telegram_id,
-        username=escape_markdown(user_info.username),
-        full_name=escape_markdown(user_info.user_enter_fio),
-        phone=escape_markdown(user_info.phone_number),
-        role=escape_markdown(user_info.role),
+        username=user_info.username,
+        full_name=user_info.user_enter_fio,
+        phone=user_info.phone_number,
+        role=user_info.role,
     )
     await message.answer(
         text=profile_text,

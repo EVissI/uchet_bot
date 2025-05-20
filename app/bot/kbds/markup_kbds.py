@@ -93,17 +93,17 @@ class MainKeyboard:
     def build_main_kb(role:User.Role, lang:str) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardBuilder()
         match role:
-            case User.Role.worker:
+            case User.Role.worker.value:
                 for val in MainKeyboard.get_worker_kb_texts(lang).values():
                     kb.button(text=val)
                 kb.adjust(1,1,2,1)
                 return kb.as_markup(resize_keyboard=True)
-            case User.Role.foreman:
+            case User.Role.foreman.value:
                 for val in MainKeyboard.get_foreman_kb_texts(lang).values():
                     kb.button(text=val)
                 kb.adjust(1)
                 return kb.as_markup(resize_keyboard=True)
-            case User.Role.admin:
+            case User.Role.admin.value:
                 for val in MainKeyboard.get_admin_kb_texts(lang).values():
                     kb.button(text=val)
                 kb.adjust(1)

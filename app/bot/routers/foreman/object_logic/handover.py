@@ -32,7 +32,8 @@ async def process_handover_btn(
     await state.set_state(HandoverStates.waiting_description)
     await callback.message.delete()
     last_senden_msg = await callback.message.answer(
-        text=get_text("enter_handover_description", user_info.language),reply_markup=get_back_kbd(user_info.language, callback_data.object_id)
+        text=get_text("enter_handover_description", user_info.language),
+        reply_markup=get_back_kbd(user_info.language, callback_data.object_id)
     )
     await state.update_data(last_senden_msg_id=last_senden_msg.message_id)
 

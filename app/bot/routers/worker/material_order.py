@@ -26,7 +26,9 @@ async def process_material_order(message: Message, state: FSMContext, user_info:
 
 
 @material_order_router.message(
-    StateFilter(MaterialOrderStates.waiting_description), UserInfo()
+    F.text,
+    StateFilter(MaterialOrderStates.waiting_description), 
+    UserInfo()
 )
 async def process_order_description(
     message: Message, state: FSMContext, user_info: User

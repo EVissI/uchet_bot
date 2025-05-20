@@ -3,7 +3,6 @@ from aiogram.types import Message,CallbackQuery
 from aiogram.filters import CommandStart,StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
-from aiogram.types import Chat
 
 from loguru import logger
 
@@ -13,6 +12,10 @@ from app.bot.common.utils import generate_math_example
 from app.bot.kbds.inline_kbds import LanguageCallback,CheckUsernameCallback, check_username_kbd, lang_select_kbd
 from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, i_got_acquainted_kbds, stop_kb
 from app.bot.routers.worker.main_worker_router import main_worker_router
+from app.bot.routers.foreman.main_foreman_router import main_foreman_router
+from app.bot.routers.general_routers.profile_router import profile_router
+from app.bot.routers.general_routers.transfer_tool import transfer_router
+from app.bot.routers.test_router import admin_mock_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
@@ -20,7 +23,11 @@ from app.db.schemas import UserModel,UserDocumentModel
 from app.config import settings
 
 main_router = Router()
-main_router.include_router(main_worker_router)
+main_router.include_routers(main_worker_router,
+                            main_foreman_router,
+                            profile_router,
+                            transfer_router,
+                            admin_mock_router)
 
 
 @main_router.message(CommandStart())

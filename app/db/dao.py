@@ -34,53 +34,31 @@ class ObjectDAO(BaseDAO):
 
 class ObjectDocumentDAO(BaseDAO):
     model = ObjectDocument
-
-    @staticmethod
-    async def find_user_objects(session: AsyncSession, user_id: int) -> list[Object]:
-        """
-        Find all active objects assigned to user
-        Args:
-            session: AsyncSession
-            user_id: Telegram ID of the user
-        Returns:
-            list[Object]: List of objects assigned to user
-        """
-        stmt = (
-            select(Object)
-            .join(ObjectMember, Object.id == ObjectMember.object_id)
-            .where(
-                ObjectMember.user_id == user_id,
-                Object.is_active == True
-            )
-        )
-        result = await session.execute(stmt)
-        return result.scalars().all()
     
-
     @classmethod
     async def find_object_documents(cls, session: AsyncSession, object_id: int, user_role: User.Role) -> list[ObjectDocument]:
         """
-        Find all documents for a specific object
+        Find all documents attached to a specific object.
+        
         Args:
-            session: AsyncSession
-            object_id: ID of the object
-            user_role: Role of the user (worker or foreman)
+            session: AsyncSession - DB session
+            object_id: int - ID of the object
+            user_role: User.Role - Role of user (not used currently)
+            
         Returns:
-            list[ObjectDocument]: List of documents for the object
+            list[ObjectDocument]: List of documents attached to object
         """
         try:
-            query = select(cls.model).where(cls.model.object_id == object_id)
-            
-            if user_role == User.Role.worker:
-                query = query.where(cls.model.document_type == ObjectDocument.DocumentType.technical_task)
-                
-            result = await session.execute(query)
+            result = await session.execute(
+                select(cls.model)
+                .where(cls.model.object_id == object_id)
+                .order_by(cls.model.created_at)
+            )
             return list(result.scalars().all())
             
         except SQLAlchemyError as e:
             logger.error(f"Error in find_object_documents: {e}")
             return []
-
 
 class ObjectMemberDAO(BaseDAO):
     model = ObjectMember

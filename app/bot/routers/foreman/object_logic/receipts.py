@@ -26,16 +26,18 @@ async def process_check_btn(
 ) -> None:
     """Handler for check button"""
     await state.update_data(object_id=callback_data.object_id)
-    await state.set_state(ObjectCheckStates.waiting_photo_and_description)
+    await state.set_state(ObjectCheckStates.waiting_photo_and_desription)
     
     last_message = await callback.message.answer(
         text=get_text('send_check_photo_and_description', user_info.language,
                       reply_markup=get_back_kbd(user_info.language, callback_data.object_id))
     )
     await state.update_data(last_senden_msg_id=last_message.message_id)
+    await callback.message.delete()
+    await callback.answer()
 
 
-@receipts_router.message(F.photo, StateFilter(ObjectCheckStates.waiting_photo_and_description), UserInfo())
+@receipts_router.message(F.photo, StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())
 async def process_check_description(
     message: Message, 
     state: FSMContext, 
@@ -118,7 +120,7 @@ async def process_check_amount(
     await state.clear()
 
 
-@receipts_router.message(~F.photo, StateFilter(ObjectCheckStates.waiting_photo_and_description), UserInfo())
+@receipts_router.message(~F.photo, StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())
 async def process_invalid_check_photo(message: Message, user_info: User) -> None:
     """Handler for invalid input in check photo state"""
     await message.answer(

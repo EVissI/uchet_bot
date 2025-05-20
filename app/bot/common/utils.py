@@ -8,16 +8,11 @@ def generate_math_example() -> Tuple[str, int]:
     """
     a = random.randint(1, 10)
     b = random.randint(1, 10)
-    operations = ['+','*']
-    operation = random.choice(operations)
+    operation = '+'
     
     example = f"{a} {operation} {b}"
     
-    match operation:
-        case '+':
-            answer = a + b
-        case '*':
-            answer = a * b
+    answer = a + b
             
     return example, answer
 

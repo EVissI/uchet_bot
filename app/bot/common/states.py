@@ -31,3 +31,8 @@ class MaterialOrderStates(StatesGroup):
 
 class HandoverStates(StatesGroup):
     waiting_description = State()
+
+class ExportXlsxStates(StatesGroup):
+    waiting_start_date = State()
+    waiting_end_date = State()
+    waiting_expense_type = State()
