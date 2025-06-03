@@ -3,20 +3,22 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from app.bot.common.states import MaterialRemainderStates
+from app.bot.common.states import AdminPanelStates, MaterialRemainderStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.user_info import UserInfo
-from app.db.dao import MaterialDAO
+from app.db.dao import MaterialReminderDAO
 from app.db.models import User
 from app.db.database import async_session_maker
-from app.db.schemas import MaterialModel, MaterialFilter
+from app.db.schemas import MaterialReminderFilter,MaterialReminderModel
 from app.config import settings
 
 material_router = Router()
 
 
 @material_router.message(
-    F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()
+    (F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()) or 
+    (StateFilter(AdminPanelStates.material_remainder_control,
+                 F.text.in_(get_all_texts("create_material_reminder_btn")))),
 )
 async def process_material_remainder(message: Message, state: FSMContext, user_info:User):
     await state.set_state(MaterialRemainderStates.waiting_photo)
@@ -71,22 +73,9 @@ async def process_material_location(
     )
 
     async with async_session_maker() as session:
-        old_material = await MaterialDAO.find_one_or_none(
-            session, filters=MaterialFilter(user_id=user_info.telegram_id)
-        )
-
-        if old_material and old_material.message_id:
-            try:
-                await message.bot.delete_message(
-                    chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL,
-                    message_id=old_material.message_id,
-                )
-            except Exception:
-                pass
-
-        await MaterialDAO.add(
+        await MaterialReminderDAO.add(
             session,
-            MaterialModel(
+            MaterialReminderModel(
                 file_id=data["photo_id"],
                 description=data["description"],
                 storage_location=message.text,

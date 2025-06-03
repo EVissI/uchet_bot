@@ -38,13 +38,14 @@ async def process_profile_callback(message: Message, user_info: User):
 
 @profile_router.callback_query(ProfileCallback.filter(F.action == "tools"), UserInfo())
 async def process_tools_btn(callback: CallbackQuery, user_info: User):
+    await callback.message.delete()
     async with async_session_maker() as session:
         tools = await ToolDAO.find_all(
             session, ToolFilterModel(user_id=user_info.telegram_id)
         )
 
         if not tools:
-            await callback.message.answer(get_text("no_tools", lang=user_info.language))
+            await callback.answer(get_text("no_tools", lang=user_info.language))
             return
 
         await callback.message.answer(
@@ -55,6 +56,7 @@ async def process_tools_btn(callback: CallbackQuery, user_info: User):
             tool_text = get_text(
                 "tool_item",
                 lang=user_info.language,
+                tool_id=tool.id,
                 name=tool.name,
                 description=tool.description
                 or get_text("no_description", user_info.language),
@@ -66,16 +68,19 @@ async def process_tools_btn(callback: CallbackQuery, user_info: User):
                 )
             else:
                 await callback.message.answer(text=tool_text)
+        await callback.answer()
 
 
 @profile_router.callback_query(
     ProfileCallback.filter(F.action == "language"), UserInfo()
 )
 async def process_change_lang_btn(callback: CallbackQuery, user_info: User):
+    await callback.message.delete()
     await callback.message.answer(
         get_text("language_select"),
         reply_markup=lang_select_kbd(lang=user_info.language),
     )
+    await callback.answer()
 
 
 @profile_router.callback_query(LanguageCallback.filter(), UserInfo())

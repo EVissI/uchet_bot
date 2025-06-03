@@ -125,10 +125,6 @@ async def process_back_btn(
     state: FSMContext,
     user_info: User
 ) -> None:
-    """
-    Обработчик нажатия кнопки "Назад".
-    Возвращает пользователя в предыдущее состояние.
-    """
     await callback.message.delete()
     await state.clear()
     await callback.message.answer(

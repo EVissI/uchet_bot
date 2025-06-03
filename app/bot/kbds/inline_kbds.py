@@ -1,78 +1,131 @@
 ﻿from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from app.db.models import Object
+from app.db.models import Object, ObjectDocument, User
 from app.bot.common.texts import get_text
 
 
-class LanguageCallback(CallbackData, prefix='lang'):
+class LanguageCallback(CallbackData, prefix="lang"):
     lang: str
 
-class CheckUsernameCallback(CallbackData, prefix='check_username'):
-    action:str
 
-class ProfileCallback(CallbackData, prefix='profile'):
-    action: str  
+class CheckUsernameCallback(CallbackData, prefix="check_username"):
+    action: str
 
-class ObjectActionCallback(CallbackData, prefix='object'):
-    action: str 
+
+class ProfileCallback(CallbackData, prefix="profile"):
+    action: str
+
+
+class WorkerObjectActionCallback(CallbackData, prefix="object"):
+    action: str
     object_id: int
+
 
 class AcceptToolCallback(CallbackData, prefix="accept_tool"):
     tool_id: int
 
-class ForemanObjectCallback(CallbackData, prefix='foreman'):
+
+class ForemanObjectCallback(CallbackData, prefix="foreman"):
     action: str
     object_id: int
+
 
 class ObjListCallback(CallbackData, prefix="group_list"):
     id: int
     action: str
+    context: str
     page: int = 0
 
-class ForemanBackCallback(CallbackData, prefix='foreman_back'):
+
+class WorkerListCallback(CallbackData, prefix="worker_list"):
+    telegram_id: int
+    action: str
+    object_id: int
+    context: str
+    page: int = 0
+
+
+class ForemanBackCallback(CallbackData, prefix="foreman_back"):
     object_id: int
 
-class ForemanOwnExpenseCallback(CallbackData, prefix='foreman_own_expense'):
+
+class ForemanOwnExpenseCallback(CallbackData, prefix="foreman_own_expense"):
     flag: bool
+
 
 class ForemanExpenseTypeCallback(CallbackData, prefix="expense_type"):
     expense_type: str
     object_id: int
 
+
 class ToolStatusCallback(CallbackData, prefix="tool_status"):
     status: str
 
-def lang_select_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
+
+class ObjectDocumentTypeCallback(CallbackData, prefix="doc_type"):
+    type: str
+    document_index: int
+
+
+class UploadWithoutDocumentsCallback(CallbackData, prefix="upload_without_documents"):
+    pass
+
+
+class AdminNotifyCallback(CallbackData, prefix="admin_notify"):
+    type: str
+
+
+class BulkTransferCallback(CallbackData, prefix="bulk_transfer"):
+    action: str
+
+
+class TMCCallback(CallbackData, prefix="tmc"):
+    action: str
+
+
+def lang_select_kbd(lang: str = "ru") -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text=get_text('ru',lang), callback_data=LanguageCallback(lang='ru').pack())
-    kb.button(text=get_text('az',lang), callback_data=LanguageCallback(lang='az').pack())
-    kb.button(text=get_text('tg',lang), callback_data=LanguageCallback(lang='tg').pack())
+    kb.button(
+        text=get_text("ru", lang), callback_data=LanguageCallback(lang="ru").pack()
+    )
+    kb.button(
+        text=get_text("az", lang), callback_data=LanguageCallback(lang="az").pack()
+    )
+    kb.button(
+        text=get_text("tg", lang), callback_data=LanguageCallback(lang="tg").pack()
+    )
     kb.adjust(1)
     return kb.as_markup()
 
 
-def check_username_kbd(lang:str = 'ru') -> InlineKeyboardMarkup:
+def check_username_kbd(lang: str = "ru") -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text=get_text('check',lang=lang), callback_data=CheckUsernameCallback(action='check').pack())
-    kb.button(text=get_text('create_username',lang=lang), callback_data=CheckUsernameCallback(action='create').pack())
+    kb.button(
+        text=get_text("check", lang=lang),
+        callback_data=CheckUsernameCallback(action="check").pack(),
+    )
+    kb.button(
+        text=get_text("create_username", lang=lang),
+        callback_data=CheckUsernameCallback(action="create").pack(),
+    )
     kb.adjust(1)
     return kb.as_markup()
 
 
-def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
+def profile_keyboard(lang: str = "ru") -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(
-        text=get_text('tools_list_btn', lang),
-        callback_data=ProfileCallback(action='tools').pack()
+        text=get_text("tools_list_btn", lang),
+        callback_data=ProfileCallback(action="tools").pack(),
     )
     kb.button(
-        text=get_text('language_select_btn', lang),
-        callback_data=ProfileCallback(action='language').pack()
+        text=get_text("language_select_btn", lang),
+        callback_data=ProfileCallback(action="language").pack(),
     )
     kb.button(
-        text=get_text('rules_btn', lang),
-        callback_data=ProfileCallback(action='rules').pack()
+        text=get_text("rules_btn", lang),
+        callback_data=ProfileCallback(action="rules").pack(),
     )
     kb.adjust(1)
     return kb.as_markup()
@@ -80,24 +133,23 @@ def profile_keyboard(lang: str = 'ru') -> InlineKeyboardMarkup:
 
 def object_keyboard(object_id: int, lang: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    
+
     buttons = [
-        ('navigate', 'navigation_btn'),
-        ('docs', 'documentation_btn'),
-        ('notify', 'notify_object_btn'),
-        ('photo', 'object_photo_btn'),
-        ('checks', 'object_checks_btn')
+        ("navigate", "navigation_btn"),
+        ("docs", "documentation_btn"),
+        ("notify", "notify_object_btn"),
+        ("photo", "object_photo_btn"),
+        ("checks", "object_checks_btn"),
     ]
-    
+
     for action, text_code in buttons:
         kb.button(
             text=get_text(text_code, lang),
-            callback_data=ObjectActionCallback(
-                action=action,
-                object_id=object_id
-            ).pack()
+            callback_data=WorkerObjectActionCallback(
+                action=action, object_id=object_id
+            ).pack(),
         )
-    
+
     kb.adjust(2, 2, 1)
     return kb.as_markup()
 
@@ -106,116 +158,397 @@ def get_accept_tool_keyboard(tool_id: int, lang: str = "ru") -> InlineKeyboardMa
     kb = InlineKeyboardBuilder()
     kb.button(
         text=get_text("accept_tool_btn", lang),
-        callback_data=AcceptToolCallback(tool_id=tool_id).pack()
+        callback_data=AcceptToolCallback(tool_id=tool_id).pack(),
     )
     kb.adjust(1)
     return kb.as_markup()
 
 
-def get_foreman_objects_kbd(object_id: int, lang: str = 'ru') -> InlineKeyboardMarkup:
+def get_foreman_objects_kbd(object_id: int, lang: str = "ru") -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    kb.button(text=get_text("foreman_workers_btn", lang), callback_data=ForemanObjectCallback(action="workers", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_documentation_btn", lang), callback_data=ForemanObjectCallback(action="documentation", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_photos_btn", lang), callback_data=ForemanObjectCallback(action="photos", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_handover_btn", lang), callback_data=ForemanObjectCallback(action="handover", object_id=object_id).pack())
+    kb.button(
+        text=get_text("foreman_workers_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="workers", object_id=object_id
+        ).pack(),
+    )
+    kb.button(
+        text=get_text("foreman_documentation_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="documentation", object_id=object_id
+        ).pack(),
+    )
+    kb.button(
+        text=get_text("foreman_photos_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="photos", object_id=object_id
+        ).pack(),
+    )
+    kb.button(
+        text=get_text("foreman_handover_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="handover", object_id=object_id
+        ).pack(),
+    )
     # kb.button(text=get_text("foreman_procurement_btn", lang), callback_data=ForemanObjectCallback(action="procurement", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_receipts_btn", lang), callback_data=ForemanObjectCallback(action="receipts", object_id=object_id).pack())
+    kb.button(
+        text=get_text("foreman_receipts_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="receipts", object_id=object_id
+        ).pack(),
+    )
     # kb.button(text=get_text("foreman_material_balance_btn", lang), callback_data=ForemanObjectCallback(action="material_balance", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_info_btn", lang), callback_data=ForemanObjectCallback(action="info", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_tools_list_btn", lang), callback_data=ForemanObjectCallback(action="tools_list", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_mass_mailing_btn", lang), callback_data=ForemanObjectCallback(action="mass_mailing", object_id=object_id).pack())
+    kb.button(
+        text=get_text("foreman_info_btn", lang),
+        callback_data=ForemanObjectCallback(action="info", object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("foreman_tools_list_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="tools_list", object_id=object_id
+        ).pack(),
+    )
+    kb.button(
+        text=get_text("foreman_mass_mailing_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="mass_mailing", object_id=object_id
+        ).pack(),
+    )
     # kb.button(text=get_text("foreman_offsite_accounting_btn", lang), callback_data=ForemanObjectCallback(action="offsite_accounting", object_id=object_id).pack())
-    kb.button(text=get_text("foreman_export_xlsx_btn", lang), callback_data=ForemanObjectCallback(action="export_xlsx", object_id=object_id).pack())
-    kb.button(text=get_text("back_btn", lang), callback_data=ForemanObjectCallback(action="back", object_id=object_id).pack())
+    kb.button(
+        text=get_text("foreman_export_xlsx_btn", lang),
+        callback_data=ForemanObjectCallback(
+            action="export_xlsx", object_id=object_id
+        ).pack(),
+    )
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=ForemanObjectCallback(action="back", object_id=object_id).pack(),
+    )
     kb.adjust(1)
     return kb.as_markup()
 
 
-def build_obj_list_kbd(objects: list[Object],page=0) -> InlineKeyboardMarkup:
+def get_back_kbd(lang: str, object_id: int) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    max_buttons = 6 
-    start_idx = page * max_buttons
-    end_idx = start_idx + max_buttons
-    current_objects = objects[start_idx:end_idx]
-
-    for object in current_objects:
-        kb.button(
-            text=object.name,
-            callback_data=ObjListCallback(id=object.id, action='select', page=page).pack()
-
-        )
-
-    nav_buttons = []
-    if len(objects) > max_buttons:
-        if page > 0:
-            nav_buttons.append(("←", ObjListCallback(id=0, action='prev', page=page).pack()))
-        if end_idx < len(objects):
-            nav_buttons.append(("→", ObjListCallback(id=0, action='next', page=page).pack()))
-        
-        for text, callback in nav_buttons:
-            kb.button(text=text, callback_data=callback)
-
-    rows = [1] * len(current_objects)  
-    if nav_buttons:
-        rows.append(len(nav_buttons)) 
-
-    kb.adjust(*rows)
-    return kb.as_markup(resize_keyboard=True)
-
-
-def get_back_kbd(lang:str, object_id:int) -> InlineKeyboardMarkup:
-    kb = InlineKeyboardBuilder()
-    kb.button(text=get_text('back_btn', lang), callback_data=ForemanBackCallback(object_id=object_id).pack())
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=ForemanBackCallback(object_id=object_id).pack(),
+    )
     kb.adjust(1)
     return kb.as_markup(resize_keyboard=True)
 
 
-def get_own_expense_kbd(lang:str, flag:bool = False) -> InlineKeyboardMarkup:
+def get_own_expense_kbd(lang: str, flag: bool = False) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     if flag:
-        kb.button(text=get_text('own_expense_true_btn', lang), callback_data=ForemanOwnExpenseCallback(flag=flag).pack())
+        kb.button(
+            text=get_text("own_expense_true_btn", lang),
+            callback_data=ForemanOwnExpenseCallback(flag=flag).pack(),
+        )
     if not flag:
-        kb.button(text=get_text('own_expense_false_btn', lang), callback_data=ForemanOwnExpenseCallback(flag=flag).pack())
+        kb.button(
+            text=get_text("own_expense_false_btn", lang),
+            callback_data=ForemanOwnExpenseCallback(flag=flag).pack(),
+        )
     kb.adjust(1)
     return kb.as_markup(resize_keyboard=True)
 
 
 def get_expense_type_kbd(lang: str, object_id: int) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
-    
+
     kb.button(
         text=get_text("all_expenses_btn", lang),
-        callback_data=ForemanExpenseTypeCallback(expense_type="all", object_id=object_id).pack()
+        callback_data=ForemanExpenseTypeCallback(
+            expense_type="all", object_id=object_id
+        ).pack(),
     )
     kb.button(
         text=get_text("own_expenses_btn", lang),
-        callback_data=ForemanExpenseTypeCallback(expense_type="own", object_id=object_id).pack()
+        callback_data=ForemanExpenseTypeCallback(
+            expense_type="own", object_id=object_id
+        ).pack(),
     )
     kb.button(
         text=get_text("company_expenses_btn", lang),
-        callback_data=ForemanExpenseTypeCallback(expense_type="company", object_id=object_id).pack()
+        callback_data=ForemanExpenseTypeCallback(
+            expense_type="company", object_id=object_id
+        ).pack(),
     )
     kb.button(
         text=get_text("back_btn", lang),
-        callback_data=ForemanBackCallback(object_id=object_id).pack()
+        callback_data=ForemanBackCallback(object_id=object_id).pack(),
     )
-    
+
     kb.adjust(1)
     return kb.as_markup()
+
 
 def get_tool_status_kbd(language: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(
         text=get_text("in_work_tools", language),
-        callback_data=ToolStatusCallback(status="in_work").pack()
+        callback_data=ToolStatusCallback(status="in_work").pack(),
     )
     kb.button(
         text=get_text("free_tools", language),
-        callback_data=ToolStatusCallback(status="free").pack()
+        callback_data=ToolStatusCallback(status="free").pack(),
     )
     kb.button(
         text=get_text("repair_tools", language),
-        callback_data=ToolStatusCallback(status="repair").pack()
+        callback_data=ToolStatusCallback(status="repair").pack(),
     )
     kb.adjust(1)
+    return kb.as_markup()
+
+
+def get_obj_document_type_kbd(
+    language: str, document_index: int
+) -> InlineKeyboardMarkup:
+    """Get keyboard with document types"""
+    kb = InlineKeyboardBuilder()
+
+    for doc_type in ObjectDocument.DocumentType:
+        kb.button(
+            text=get_text(f"doc_type_{doc_type.value}", language),
+            callback_data=ObjectDocumentTypeCallback(
+                type=doc_type.value, document_index=document_index
+            ),
+        )
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+def get_updload_without_documents_kbd(lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("upload_without_documents_btn", lang),
+        callback_data=UploadWithoutDocumentsCallback().pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+def get_admin_notify_kbd(lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("admin_notify_all_users_inline_btn", lang),
+        callback_data=AdminNotifyCallback(type="all_users").pack(),
+    )
+    kb.button(
+        text=get_text("admin_notify_object_inline_btn", lang),
+        callback_data=AdminNotifyCallback(type="object").pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+def bulk_transfer_tool_btn(lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("download_template_btn", lang),
+        callback_data=BulkTransferCallback(action="template").pack(),
+    )
+    kb.button(
+        text=get_text("start_transfer_btn", lang),
+        callback_data=BulkTransferCallback(action="transfer").pack(),
+    )
+    kb.adjust(2)
+    return kb.as_markup()
+
+
+def get_tools_status_export_kbd(language: str) -> InlineKeyboardMarkup:
+    """Get keyboard for tools export by status"""
+    kb = InlineKeyboardBuilder()
+
+    kb.button(
+        text=get_text("tool_status_all", language),
+        callback_data=ToolStatusCallback(status="all").pack(),
+    )
+    kb.button(
+        text=get_text("in_work_tools", language),
+        callback_data=ToolStatusCallback(status="in_work").pack(),
+    )
+    kb.button(
+        text=get_text("free_tools", language),
+        callback_data=ToolStatusCallback(status="free").pack(),
+    )
+    kb.button(
+        text=get_text("repair_tools", language),
+        callback_data=ToolStatusCallback(status="repair").pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+def build_tmc_upload_kbd(lang: str) -> InlineKeyboardMarkup:
+    """Build keyboard for TMC upload options"""
+    kb = InlineKeyboardBuilder()
+
+    kb.button(
+        text=get_text("tmc_manual_btn", lang),
+        callback_data=TMCCallback(action="manual").pack(),
+    )
+    kb.button(
+        text=get_text("tmc_template_btn", lang),
+        callback_data=TMCCallback(action="template").pack(),
+    )
+    kb.button(
+        text=get_text("tmc_upload_btn", lang),
+        callback_data=TMCCallback(action="upload").pack(),
+    )
+
+    kb.adjust(1)
+    return kb.as_markup()
+
+
+def build_paginated_list_kbd(
+    items: list,
+    page: int = 0,
+    context: str = None,
+    max_buttons: int = 6,
+    text_field: str = "name",
+) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    start_idx = page * max_buttons
+    end_idx = start_idx + max_buttons
+    current_items = items[start_idx:end_idx]
+
+    for item in current_items:
+        kb.button(
+            text=getattr(item, text_field),
+            callback_data=ObjListCallback(
+                id=item.id, action="select", page=page, context=context
+            ).pack(),
+        )
+
+    nav_buttons = []
+    if len(items) > max_buttons:
+        if page > 0:
+            nav_buttons.append(
+                (
+                    "←",
+                    ObjListCallback(
+                        id=0, action="prev", page=page, context=context
+                    ).pack(),
+                )
+            )
+        if end_idx < len(items):
+            nav_buttons.append(
+                (
+                    "→",
+                    ObjListCallback(
+                        id=0, action="next", page=page, context=context
+                    ).pack(),
+                )
+            )
+
+        for text, callback in nav_buttons:
+            kb.button(text=text, callback_data=callback)
+
+    rows = [1] * len(current_items)
+    if nav_buttons:
+        rows.append(len(nav_buttons))
+
+    kb.adjust(*rows)
+    return kb.as_markup(resize_keyboard=True)
+
+class ItemCardCallback(CallbackData, prefix="item_card"):
+    item_id: int
+    action: str 
+    current_page: int = 1
+    total_pages: int 
+    keyboard_type: str
+
+def build_item_card_kbd(
+    item_id: int,
+    total_pages: int,
+    keyboard_type: str = None,
+    current_page: int = 1,
+    lang: str = "ru"
+) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    nav_row = []
+    buttons = []
+    
+    if current_page > 1:
+        nav_row.append((
+            "←",
+            ItemCardCallback(
+                item_id=0,
+                action="prev",
+                current_page=current_page - 1,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+    
+    nav_row.append((
+        f"{current_page}/{total_pages}",
+        ItemCardCallback(
+            item_id=0,
+            action="counter",
+            current_page=current_page,
+            total_pages=total_pages,
+            keyboard_type=keyboard_type
+        ).pack()
+    ))
+    
+    if current_page < total_pages:
+        nav_row.append((
+            "→",
+            ItemCardCallback(
+                item_id=0,
+                action="next",
+                current_page=current_page + 1,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+    if keyboard_type == 'change_order_riminder':
+        buttons.append((
+            get_text("change_order_reminder_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="change_order",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+    if keyboard_type == 'deactivate_riminder':
+        buttons.append((
+            get_text("deactivate_reminder_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="deactivate",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+    for text, callback in nav_row:
+        kb.button(text=text, callback_data=callback)
+    for text, callback in buttons:
+        kb.button(text=text, callback_data=callback)
+    kb.adjust(len(nav_row),len(buttons))
+    return kb.as_markup()
+
+class DeleteItemConfirmCallback(CallbackData, prefix="delete_item"):
+    item_id: int
+    action: str
+
+def build_delete_item_confirm_kbd(item_id: int, lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("yes_btn", lang),
+        callback_data=DeleteItemConfirmCallback(item_id=item_id, action="confirm").pack(),
+    )
+    kb.button(
+        text=get_text("no_btn", lang),
+        callback_data=DeleteItemConfirmCallback(item_id=item_id, action="cancel").pack(),
+    )
+    kb.adjust(2)
     return kb.as_markup()

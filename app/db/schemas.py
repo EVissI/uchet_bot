@@ -117,7 +117,7 @@ class ObjectMemberFilterModel(BaseModel):
 class ObjectCheckModel(BaseModel):
     file_id: str
     amount: float
-    description:str
+    description:Optional[str]
     own_expense: bool = False
     
     object_id: int
@@ -158,7 +158,7 @@ class NotificationFilter(BaseModel):
     first_notification_time: Optional[datetime] = None
     second_notification_time: Optional[datetime] = None
 
-class MaterialModel(BaseModel):
+class MaterialReminderModel(BaseModel):
     description:str 
     file_id:str
     storage_location:str
@@ -167,7 +167,8 @@ class MaterialModel(BaseModel):
     class Config:
         from_attributes = True
 
-class MaterialFilter(BaseModel):
+class MaterialReminderFilter(BaseModel):
+    id: Optional[int] = None
     description:Optional[str] = None 
     file_id:Optional[str] = None
     storage_location:Optional[str] = None
@@ -184,3 +185,23 @@ class MaterialOrderModel(BaseModel):
 class MaterialOrderFilter(BaseModel):
     id: Optional[int] = None
     message_id: Optional[int] = None
+
+class CheckModel(BaseModel):
+    file_id: str
+    amount: float
+    description: Optional[str] = None
+    own_expense: bool = False
+
+    user_id: int
+
+    class Config:
+        from_attributes = True
+
+class CheckFilterModel(BaseModel):
+    id: Optional[int] = None
+    file_id: Optional[str] = None
+    amount: Optional[float] = None
+    description: Optional[str] = None
+    own_expense: Optional[bool] = None
+
+    user_id: Optional[int] = None

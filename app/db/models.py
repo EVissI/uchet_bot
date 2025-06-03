@@ -117,7 +117,7 @@ class ObjectMember(Base):
     object: Mapped['Object'] = relationship("Object", back_populates="members")
     user: Mapped['User'] = relationship("User", back_populates="objects")
 
-class Material(Base):
+class MaterialReminder(Base):
     __tablename__ = "materials"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

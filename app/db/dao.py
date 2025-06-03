@@ -8,22 +8,57 @@ from datetime import datetime
 from app.db.base import BaseDAO
 from app.db.models import (
     User, UserDocument, Tool, Object, 
-    ObjectDocument, ObjectMember, Material,
+    ObjectDocument, ObjectMember, MaterialReminder,
     Check, ObjectCheck, ObjectPhoto,WorkerNotification,ForemanNotification,MaterialOrder
 )
 
-from app.db.schemas import TelegramIDModel
+from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterModel
 
 
 class UserDAO(BaseDAO):
     model = User
 
+    @classmethod
     async def find_by_telegram_id(session:AsyncSession, telegram_id:int) -> User | None:
         """
         find user by telegram id
         """
         filters = TelegramIDModel(telegram_id=telegram_id)
         return await UserDAO.find_one_or_none(session,filters=filters)
+    
+    @classmethod
+    async def find_by_identifier(cls, session: AsyncSession, identifier: str) -> User | None:
+        """
+        Find user by username or telegram_id
+        
+        Args:
+            session: AsyncSession - DB session
+            identifier: str - Username (@username) or Telegram ID
+            
+        Returns:
+            User | None: Found user or None
+        """
+        try:
+            identifier = identifier.strip('@') if identifier else None
+            if not identifier:
+                return None
+
+            if identifier.isdigit():
+                user = await cls.find_one_or_none(
+                    session,
+                    UserFilterModel(telegram_id=int(identifier))
+                )
+                if user:
+                    return user
+
+            return await cls.find_one_or_none(
+                session,
+                UserFilterModel(username=identifier)
+            )
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_by_identifier: {e}")
+            return None
     
 class UserDocumentDAO(BaseDAO):
     model = UserDocument
@@ -137,8 +172,17 @@ class ObjectMemberDAO(BaseDAO):
         return result.scalars().all()
     
 
-class MaterialDAO(BaseDAO):
-    model = Material
+class MaterialReminderDAO(BaseDAO):
+    model = MaterialReminder
+
+    @classmethod
+    async def find_material_reminder_by_page(session: AsyncSession, page:int) -> tuple[int,int,int] | None:
+        """
+        retun page, total reminders count, id of reminder on that page
+        """
+        reminders:list[MaterialReminder] = await MaterialReminderDAO.find_all(session,MaterialReminderFilter())
+        if reminders:
+            return (page, len(reminders), reminders[page-1].id)
 
 class CheckDAO(BaseDAO):
     model = Check

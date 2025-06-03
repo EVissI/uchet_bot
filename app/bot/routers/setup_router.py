@@ -13,6 +13,7 @@ from app.bot.kbds.inline_kbds import LanguageCallback,CheckUsernameCallback, che
 from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, i_got_acquainted_kbds, stop_kb
 from app.bot.routers.worker.main_worker_router import main_worker_router
 from app.bot.routers.foreman.main_foreman_router import main_foreman_router
+from app.bot.routers.admin.object_control.main_object_control import main_object_control_router
 from app.bot.routers.general_routers.profile_router import profile_router
 from app.bot.routers.general_routers.transfer_tool import transfer_router
 from app.bot.routers.general_routers.material_order import material_order_router
@@ -27,6 +28,7 @@ from app.config import settings
 main_router = Router()
 main_router.include_routers(main_worker_router,
                             main_foreman_router,
+                            main_object_control_router,
                             profile_router,
                             transfer_router,
                             admin_mock_router,

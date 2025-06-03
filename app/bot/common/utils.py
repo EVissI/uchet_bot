@@ -1,6 +1,11 @@
 ﻿import random
 from typing import Tuple
 
+from app.db.dao import MaterialReminderDAO
+from app.db.models import MaterialReminder
+from app.db.schemas import MaterialReminderFilter
+
+
 def generate_math_example() -> Tuple[str, int]:
     """
     Generates a simple math example with numbers from 1 to 20

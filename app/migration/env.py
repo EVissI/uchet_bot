@@ -15,10 +15,14 @@ from app.db.models import (
     Object,
     ObjectDocument,
     ObjectMember,
-    Material,
+    MaterialReminder,
     Check,
     ObjectCheck,
-    ObjectPhoto
+    ObjectPhoto,
+    WorkerNotification,
+    ForemanNotification,
+    MaterialOrder,
+    
 )
 
 
