@@ -1,7 +1,7 @@
 ﻿from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from app.db.models import Object, ObjectDocument, User
+from app.db.models import Object, ObjectDocument, User, ProficAccounting
 from app.bot.common.texts import get_text
 
 
@@ -304,14 +304,14 @@ def get_tool_status_kbd(language: str) -> InlineKeyboardMarkup:
 
 
 def get_obj_document_type_kbd(
-    language: str, document_index: int
+    lang: str, document_index: int
 ) -> InlineKeyboardMarkup:
     """Get keyboard with document types"""
     kb = InlineKeyboardBuilder()
 
     for doc_type in ObjectDocument.DocumentType:
         kb.button(
-            text=get_text(f"doc_type_{doc_type.value}", language),
+            text=get_text(f"doc_type_{doc_type.value}", lang),
             callback_data=ObjectDocumentTypeCallback(
                 type=doc_type.value, document_index=document_index
             ),
@@ -472,7 +472,6 @@ def build_item_card_kbd(
     
     nav_row = []
     buttons = []
-    
     if current_page > 1:
         nav_row.append((
             "←",
@@ -507,17 +506,38 @@ def build_item_card_kbd(
                 keyboard_type=keyboard_type
             ).pack()
         ))
-    if keyboard_type == 'change_order_riminder':
+    if keyboard_type == 'change_material_riminder':
         buttons.append((
-            get_text("change_order_reminder_btn", lang),
+            get_text("change_description_material_reminder_btn", lang),
             ItemCardCallback(
                 item_id=item_id,
-                action="change_order",
+                action="change_description",
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type
             ).pack()
         ))
+        buttons.append((
+            get_text("change_photo_material_reminder_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="change_photo",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+        buttons.append((
+            get_text("change_storage_location_material_reminder_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="change_location",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
+
     if keyboard_type == 'deactivate_riminder':
         buttons.append((
             get_text("deactivate_reminder_btn", lang),
@@ -529,11 +549,12 @@ def build_item_card_kbd(
                 keyboard_type=keyboard_type
             ).pack()
         ))
+
     for text, callback in nav_row:
         kb.button(text=text, callback_data=callback)
     for text, callback in buttons:
         kb.button(text=text, callback_data=callback)
-    kb.adjust(len(nav_row),len(buttons))
+    kb.adjust(len(nav_row),1)
     return kb.as_markup()
 
 class DeleteItemConfirmCallback(CallbackData, prefix="delete_item"):
@@ -552,3 +573,19 @@ def build_delete_item_confirm_kbd(item_id: int, lang: str = "ru") -> InlineKeybo
     )
     kb.adjust(2)
     return kb.as_markup()
+
+class AccountingTypeCallback(CallbackData, prefix="accounting_type"):
+    type: str
+
+def build_accounting_type_kb(lang:str):
+    kb = InlineKeyboardBuilder()
+    for type in ProficAccounting.PaymentType:
+        kb.button(
+            text=get_text(f"accounting_type_{type.value}", lang),
+            callback_data=AccountingTypeCallback(
+                type=type.value
+            ),
+        )
+    kb.adjust(1)
+    return kb.as_markup()
+    

@@ -1,10 +1,11 @@
 ﻿import random
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, BufferedInputFile
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
+from app.bot.common.texts import get_text
 from app.bot.filters.user_info import UserInfo
 from app.db.dao import (
     ObjectCheckDAO,
@@ -322,3 +323,61 @@ async def create_mock_checks(
         await message.answer("Нет объектов с прикрепленными пользователями")
     
     await state.clear()
+
+
+from openpyxl import Workbook
+import io
+
+def generate_test_tmc_data() -> io.BytesIO:
+    """Generate test TMC data file"""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Шаблон инструментов"
+
+    # Headers
+    headers = [
+        "Наименование*",
+        "Количество*",
+        "Описание",
+        "Статус",
+        "File ID фото"
+    ]
+    
+    for col, header in enumerate(headers, 1):
+        ws.cell(row=1, column=col, value=header)
+
+    # Test data
+    test_data = [
+        ["Перфоратор Bosch GBH 2-26", "2", "Новый, в комплекте 2 бура", "свободный", None],
+        ["Шуруповерт Makita", "3", "Аккумулятор 4А", "свободный", None],
+        ["Болгарка DeWalt", "1", "180мм", "свободный", None],
+        ["Уровень лазерный Bosch", "2", "Зеленый луч", "свободный", None],
+        # Test invalid data
+        ["", "2", "Пустое имя", "свободный", None],  # Should be skipped
+        ["Дрель", "-1", "Отрицательное количество", "свободный", None],  # Should be skipped
+        ["Отвертка", "abc", "Неверное количество", "свободный", None],  # Should be skipped
+    ]
+
+    for row_idx, row_data in enumerate(test_data, 2):
+        for col_idx, value in enumerate(row_data, 1):
+            ws.cell(row=row_idx, column=col_idx, value=value)
+
+    # Save to buffer
+    excel_buffer = io.BytesIO()
+    wb.save(excel_buffer)
+    excel_buffer.seek(0)
+    
+    return excel_buffer
+
+@admin_mock_router.message(F.text == '/test_tmc_file', UserInfo())
+async def process_tmc_test_file(message:Message, user_info: User):
+    """Send test TMC file for testing"""
+
+    test_file = generate_test_tmc_data()
+    await message.answer_document(
+        document=BufferedInputFile(
+            test_file.getvalue(),
+            filename="tmc_test_data.xlsx"
+        ),
+        caption=get_text("tmc_test_file_instruction", user_info.language)
+    )

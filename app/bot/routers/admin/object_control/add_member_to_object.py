@@ -7,7 +7,7 @@ from app.bot.common.states import AdminAddMemberToObjectStates, AdminPanelStates
 from app.bot.common.texts import get_text,get_all_texts
 from app.bot.kbds.markup_kbds import AdminObjectControlKeyboard
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import ObjListCallback, build_obj_list_kbd
+from app.bot.kbds.inline_kbds import ObjListCallback, build_paginated_list_kbd
 from app.bot.kbds.markup_kbds import get_back_keyboard
 from app.db.database import async_session_maker
 from app.db.schemas import ObjectFilterModel,ObjectMemberModel
@@ -18,9 +18,9 @@ class AddMemberToObjectRouter(Router, StateHistoryMixin, DialogMessageManager):
     def __init__(self):
         super().__init__()
 
-add_member_to_object = Router()
+add_member_to_object_router = Router()
 
-@add_member_to_object.message(F.text.in_(get_all_texts("add_worker_to_object_btn")),
+@add_member_to_object_router.message(F.text.in_(get_all_texts("add_worker_to_object_btn")),
                               StateFilter(AdminPanelStates.objects_control),
                               UserInfo())
 async def add_member_to_object_handler(message: Message, user_info: User):
@@ -32,11 +32,11 @@ async def add_member_to_object_handler(message: Message, user_info: User):
     await message.delete()
     await message.answer(
         text=get_text("add_worker_to_object_text", user_info.language),
-        reply_markup=build_obj_list_kbd(objects,context=('add_member_to_object'))
+        reply_markup=build_paginated_list_kbd(objects,context=('add_member_to_object'))
     )
 
 
-@add_member_to_object.callback_query(ObjListCallback.filter(F.action == "select", F.context == "add_member_to_object"), UserInfo())
+@add_member_to_object_router.callback_query(ObjListCallback.filter(F.action == "select" and F.context == "add_member_to_object"), UserInfo())
 async def select_object_for_adding_member(callback: CallbackQuery, callback_data: ObjListCallback,state:FSMContext, user_info: User):
     """Handler for selecting an object to add a member."""
     await callback.answer()
@@ -48,7 +48,7 @@ async def select_object_for_adding_member(callback: CallbackQuery, callback_data
     await state.update_data(object_id=callback_data.object_id)
     await state.set_state(AdminAddMemberToObjectStates.waiting_user_ids)
 
-@add_member_to_object.message(F.text, StateFilter(AdminPanelStates.add_member_to_object),StateFilter(AdminAddMemberToObjectStates.waiting_user_ids), UserInfo())
+@add_member_to_object_router.message(F.text, StateFilter(AdminAddMemberToObjectStates.waiting_user_ids), UserInfo())
 async def process_user_ids(message: Message, state: FSMContext, user_info: User):
     """Handler for processing user IDs to add to an object."""
     user_ids = message.text.split(',')

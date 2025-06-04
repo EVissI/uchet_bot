@@ -7,16 +7,19 @@ from app.db.models import Tool
 
 class TelegramIDModel(BaseModel):
     telegram_id: int
+
     class Config:
         from_attributes = True
 
+
 class UserModel(TelegramIDModel):
-    username: str 
+    username: str
     language: str
-    phone_number: str 
-    user_enter_fio: str 
-    role: str 
-    can_use_bot: bool 
+    phone_number: str
+    user_enter_fio: str
+    role: str
+    can_use_bot: bool
+
 
 class UserFilterModel(BaseModel):
     telegram_id: Optional[int] = None
@@ -27,9 +30,11 @@ class UserFilterModel(BaseModel):
     role: Optional[str] = None
     can_use_bot: Optional[bool] = None
 
+
 class UserDocumentModel(BaseModel):
-    file_id:str
-    user_id:int
+    file_id: str
+    user_id: int
+
 
 class ToolModel(BaseModel):
     name: str
@@ -41,12 +46,14 @@ class ToolModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ToolFilterModel(BaseModel):
     id: Optional[int] = None
     name: Optional[str] = None
     description: Optional[str] = None
     file_id: Optional[str] = None
     user_id: Optional[int] = None
+
 
 class ObjectModel(BaseModel):
     name: str
@@ -57,6 +64,7 @@ class ObjectModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ObjectFilterModel(BaseModel):
     id: Optional[int] = None
 
@@ -64,6 +72,7 @@ class ObjectFilterModel(BaseModel):
     description: Optional[str] = None
     is_active: Optional[bool] = None
     creator_id: Optional[int] = None
+
 
 class ObjectDocumentModel(BaseModel):
     object_id: int
@@ -73,6 +82,7 @@ class ObjectDocumentModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ObjectDocumentFilterModel(BaseModel):
     id: Optional[int] = None
 
@@ -80,12 +90,14 @@ class ObjectDocumentFilterModel(BaseModel):
     file_id: Optional[str] = None
     document_type: Optional[str] = None
 
+
 class ObjectMemberModel(BaseModel):
     object_id: int
     user_id: int
 
     class Config:
         from_attributes = True
+
 
 class CheclModel(BaseModel):
     file_id: str
@@ -98,6 +110,7 @@ class CheclModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class CheckFilterModel(BaseModel):
     id: Optional[int] = None
 
@@ -108,34 +121,38 @@ class CheckFilterModel(BaseModel):
 
     user_id: Optional[int] = None
 
+
 class ObjectMemberFilterModel(BaseModel):
     id: Optional[int] = None
 
     object_id: Optional[int] = None
     user_id: Optional[int] = None
 
+
 class ObjectCheckModel(BaseModel):
     file_id: str
     amount: float
-    description:Optional[str]
+    description: Optional[str]
     own_expense: bool = False
-    
+
     object_id: int
     user_id: int
 
     class Config:
         from_attributes = True
 
+
 class ObjectCheckFilterModel(BaseModel):
     id: Optional[int] = None
 
     file_id: Optional[str] = None
     amount: Optional[float] = None
-    description:Optional[str] = None
+    description: Optional[str] = None
     own_expense: Optional[bool] = None
 
     object_id: Optional[int] = None
     user_id: Optional[int] = None
+
 
 class ObjectPhotoModel(BaseModel):
     file_id: str
@@ -146,6 +163,7 @@ class ObjectPhotoModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ObjectPhotoFilterModel(BaseModel):
     id: Optional[int] = None
     file_id: Optional[str] = None
@@ -153,26 +171,30 @@ class ObjectPhotoFilterModel(BaseModel):
     object_id: Optional[int] = None
     user_id: Optional[int] = None
 
+
 class NotificationFilter(BaseModel):
     message: Optional[str] = None
     first_notification_time: Optional[datetime] = None
     second_notification_time: Optional[datetime] = None
 
+
 class MaterialReminderModel(BaseModel):
-    description:str 
-    file_id:str
-    storage_location:str
-    message_id:Optional[int] = None
-    
+    description: str
+    file_id: str
+    storage_location: str
+    message_id: Optional[int] = None
+
     class Config:
         from_attributes = True
 
+
 class MaterialReminderFilter(BaseModel):
     id: Optional[int] = None
-    description:Optional[str] = None 
-    file_id:Optional[str] = None
-    storage_location:Optional[str] = None
-    message_id:Optional[int] = None
+    description: Optional[str] = None
+    file_id: Optional[str] = None
+    storage_location: Optional[str] = None
+    message_id: Optional[int] = None
+
 
 class MaterialOrderModel(BaseModel):
     description: str
@@ -182,9 +204,11 @@ class MaterialOrderModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class MaterialOrderFilter(BaseModel):
     id: Optional[int] = None
     message_id: Optional[int] = None
+
 
 class CheckModel(BaseModel):
     file_id: str
@@ -197,6 +221,7 @@ class CheckModel(BaseModel):
     class Config:
         from_attributes = True
 
+
 class CheckFilterModel(BaseModel):
     id: Optional[int] = None
     file_id: Optional[str] = None
@@ -205,3 +230,24 @@ class CheckFilterModel(BaseModel):
     own_expense: Optional[bool] = None
 
     user_id: Optional[int] = None
+
+
+class ProficAccountingModel(BaseModel):
+    object_id: int
+    amount: float
+    purpose: str
+    payment_type: str  # "приход" or "расход"
+    created_by: int
+
+    class Config:
+        from_attributes = True
+
+
+class ProficAccountingFilterModel(BaseModel):
+    id: Optional[int] = None
+    object_id: Optional[int] = None
+    amount: Optional[float] = None
+    purpose: Optional[str] = None
+    payment_type: Optional[str] = None
+    created_by: Optional[int] = None
+

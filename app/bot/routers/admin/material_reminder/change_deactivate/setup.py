@@ -12,9 +12,16 @@ from app.bot.filters.user_info import UserInfo
 from app.db.models import User
 from app.db.dao import MaterialReminderDAO
 from app.db.database import async_session_maker
+from app.bot.routers.admin.material_reminder.change_deactivate.change import change_reminder_router
+from app.bot.routers.admin.material_reminder.change_deactivate.deactivate import delete_reminder_router
 
 
 setup_activate_deactivate_reminder_router = Router()
+setup_activate_deactivate_reminder_router.include_routers(
+    change_reminder_router,
+    delete_reminder_router
+)
+
 
 @setup_activate_deactivate_reminder_router.message(F.text.in_(get_all_texts('change_deactivate_btn')), 
                                                    StateFilter(AdminPanelStates.material_remainder_control),

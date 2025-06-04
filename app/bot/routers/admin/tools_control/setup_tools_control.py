@@ -8,9 +8,9 @@ from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.markup_kbds import AdminToolsControlKeyboard,MainKeyboard
 from app.db.models import User
 
-main_tools_control = Router()
+setup_tools_control_router = Router()
 
-@main_tools_control.message(F.text.in_(get_all_texts('instrument_control_btn'),UserInfo()))
+@setup_tools_control_router.message(F.text.in_(get_all_texts('instrument_control_btn')),UserInfo())
 async def create_tool_control_kbd(message:Message, state:FSMContext, user_info:User):
     await message.delete()
     await message.answer(message.text,
@@ -18,7 +18,7 @@ async def create_tool_control_kbd(message:Message, state:FSMContext, user_info:U
     await state.set_state(AdminPanelStates.tools_control)
 
 
-@main_tools_control.message(F.text.in_(get_all_texts('back_btn')),
+@setup_tools_control_router.message(F.text.in_(get_all_texts('back_btn')),
                             StateFilter(AdminPanelStates.tools_control),
                             UserInfo())
 async def process_back_btn(message:Message,state:FSMContext,user_info:User):

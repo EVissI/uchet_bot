@@ -70,7 +70,8 @@ class MainKeyboard:
 
     __foreman_kb_texts_list = ['profile_btn','objects_btn', 'material_remainder_btn','material_order_btn', 'reminder_out_object_btn']
 
-    __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn','reminder_out_object_btn','reminder_btn','object_control_btn',]
+    __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn'
+                             ,'reminder_out_object_btn','reminder_btn','object_control_btn',]
 
     @staticmethod
     def get_worker_kb_texts(lang: str = 'ru') -> dict:

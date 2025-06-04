@@ -16,9 +16,7 @@ material_router = Router()
 
 
 @material_router.message(
-    (F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()) or 
-    (StateFilter(AdminPanelStates.material_remainder_control,
-                 F.text.in_(get_all_texts("create_material_reminder_btn")))),
+    F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()
 )
 async def process_material_remainder(message: Message, state: FSMContext, user_info:User):
     await state.set_state(MaterialRemainderStates.waiting_photo)

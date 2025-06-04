@@ -9,7 +9,7 @@ from loguru import logger
 from app.bot.common.states import AdminCheckStates
 from app.bot.filters.user_info import UserInfo
 from app.bot.common.texts import get_all_texts,get_text
-from app.bot.kbds.inline_kbds import ObjListCallback, build_obj_list_kbd
+from app.bot.kbds.inline_kbds import ObjListCallback, build_paginated_list_kbd
 from app.bot.kbds.markup_kbds import MainKeyboard
 from app.db.dao import ObjectCheckDAO, ObjectDAO
 from app.db.models import User
@@ -33,9 +33,9 @@ def build_admin_reminder_send_to_group_choise(lang:str):
     kb.adjust(1)
     return kb.as_markup()
 
-admin_reminder_object_rotuer = Router()
+admin_reminder_object_router = Router()
 
-@admin_reminder_object_rotuer.message(F.text.in_(get_all_texts('reminder_btn')), UserInfo())
+@admin_reminder_object_router.message(F.text.in_(get_all_texts('reminder_btn')), UserInfo())
 async def process_reminder_object(
     callback: Message,
     state: FSMContext,
@@ -54,10 +54,10 @@ async def process_reminder_object(
             
         await callback.message.answer(
             text=get_text('select_object_for_notification', user_info.language),
-            reply_markup=build_obj_list_kbd(objects, context="admin_reminder_obj")
+            reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj")
         )
 
-@admin_reminder_object_rotuer.callback_query(ObjListCallback.filter(F.action == 'select',
+@admin_reminder_object_router.callback_query(ObjListCallback.filter(F.action == 'select' and
                                                                     F.context == 'admin_reminder_obj'),UserInfo())
 async def process_admin_check_btn(
     callback: CallbackQuery,
@@ -75,7 +75,7 @@ async def process_admin_check_btn(
     )
     await callback.answer()
 
-@admin_reminder_object_rotuer.message(F.photo, StateFilter(AdminCheckStates.waiting_photo_and_description), UserInfo())
+@admin_reminder_object_router.message(F.photo, StateFilter(AdminCheckStates.waiting_photo_and_description), UserInfo())
 async def process_admin_check_description(message: Message, state: FSMContext, user_info: User):
     logger.info(f"Admin {user_info.telegram_id} uploaded check photo with description")
     await state.update_data(photo_id=message.photo[-1].file_id)
@@ -86,7 +86,7 @@ async def process_admin_check_description(message: Message, state: FSMContext, u
         text=get_text('enter_check_amount', user_info.language)
     )
 
-@admin_reminder_object_rotuer.message(F.text, StateFilter(AdminCheckStates.waiting_amount), UserInfo())
+@admin_reminder_object_router.message(F.text, StateFilter(AdminCheckStates.waiting_amount), UserInfo())
 async def process_admin_check_amount(message: Message, state: FSMContext, user_info: User):
     """Handler for receiving check amount from admin"""
     try:
@@ -105,7 +105,7 @@ async def process_admin_check_amount(message: Message, state: FSMContext, user_i
         reply_markup=build_admin_reminder_send_to_group_choise(user_info.language)
     )
 
-@admin_reminder_object_rotuer.callback_query(SendToGroupChoise.filter(),UserInfo())
+@admin_reminder_object_router.callback_query(SendToGroupChoise.filter(),UserInfo())
 async def process_choise(callback:CallbackQuery,callback_data:SendToGroupChoise,state:FSMContext,user_info:User):
     await callback.message.delete()
     data = await state.get_data()

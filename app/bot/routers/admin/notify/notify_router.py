@@ -9,7 +9,7 @@ from loguru import logger
 from app.bot.common.states import AdminNotify
 from app.bot.common.texts import get_all_texts,get_text
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import AdminNotifyCallback, ObjListCallback, build_obj_list_kbd, get_admin_notify_kbd
+from app.bot.kbds.inline_kbds import AdminNotifyCallback, ObjListCallback, build_paginated_list_kbd, get_admin_notify_kbd
 from app.bot.kbds.markup_kbds import MainKeyboard
 from app.db.schemas import ObjectFilterModel, UserFilterModel
 from app.db.dao import ObjectDAO, ObjectMemberDAO, UserDAO
@@ -25,7 +25,7 @@ async def process_notify_btn(message:Message, user_info:User):
     await message.answer('admin_notify', reply_markup=get_admin_notify_kbd(lang=user_info.language))
 
 
-@admin_notify_router.callback_query(AdminNotifyCallback.filter(F.type == 'all_users'))
+@admin_notify_router.callback_query(AdminNotifyCallback.filter(F.type == 'all_users'),UserInfo())
 async def process_notify_all_users(callback:CallbackQuery, callback_data:AdminNotifyCallback, state:FSMContext, user_info:User):
     await callback.message.delete()
     await callback.message.answer(get_text('admin_notify_all_user_w8_message',lang=user_info.language))
@@ -38,7 +38,7 @@ async def notify_all_users(message:Message,state:FSMContext,user_info:User):
     failed_count = 0
     
     async with async_session_maker() as session:
-        users = await UserDAO.find_all(session, UserFilterModel())
+        users = await UserDAO.find_all_except(session, user_info.telegram_id)
         if not users:
             await message.answer(
                 text=get_text('no_users_found', user_info.language),
@@ -109,11 +109,11 @@ async def process_notify_object(
             
         await callback.message.answer(
             text=get_text('select_object_for_notification', user_info.language),
-            reply_markup=build_obj_list_kbd(objects, context="notify")
+            reply_markup=build_paginated_list_kbd(objects, context="notify")
         )
 
 
-@admin_notify_router.callback_query(ObjListCallback.filter(F.context == "notify", F.action == "select"), UserInfo())
+@admin_notify_router.callback_query(ObjListCallback.filter(F.context == "notify" and F.action == "select"), UserInfo())
 async def process_object_selection(
     callback: CallbackQuery,
     callback_data: ObjListCallback,
@@ -138,7 +138,7 @@ async def notify_object_members(message: Message, state: FSMContext, user_info: 
     failed_count = 0
     
     async with async_session_maker() as session:
-        members = await ObjectMemberDAO.find_object_members(session, object_id)
+        members = await ObjectMemberDAO.find_object_members_except(session, object_id,user_info.telegram_id)
         if not members:
             await message.answer(
                 text=get_text('no_members_found', user_info.language),

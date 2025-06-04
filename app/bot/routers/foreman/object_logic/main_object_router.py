@@ -3,7 +3,7 @@
 from aiogram import Router,F
 from aiogram.types import CallbackQuery,Message
 from aiogram.fsm.context import FSMContext
-from app.bot.kbds.inline_kbds import ForemanBackCallback, build_obj_list_kbd, get_foreman_objects_kbd,ObjListCallback,ForemanObjectCallback
+from app.bot.kbds.inline_kbds import ForemanBackCallback, build_paginated_list_kbd, get_foreman_objects_kbd,ObjListCallback,ForemanObjectCallback
 from app.bot.common.texts import get_all_texts, get_text
 from app.db.dao import ObjectMemberDAO
 from app.db.database import async_session_maker
@@ -41,7 +41,7 @@ async def handle_workers_callback(message:Message, user_info: User) -> None:
             return
 
     await message.answer(text=get_text("select_object_prompt", user_info.language), 
-                                  reply_markup=build_obj_list_kbd(objects, page=0))
+                                  reply_markup=build_paginated_list_kbd(objects, page=0,context='foreman_object_action'))
 
 
 @foreman_router.callback_query(ObjListCallback.filter(F.action == "prev"), UserInfo())
@@ -56,7 +56,7 @@ async def handle_prev_page(callback: CallbackQuery, callback_data: ObjListCallba
         if not objects:
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
-    new_keyboard = build_obj_list_kbd(objects, page=new_page)
+    new_keyboard = build_paginated_list_kbd(objects, page=new_page,context=callback_data.context)
     try:
         await callback.message.edit_reply_markup(reply_markup=new_keyboard)
     except Exception as e:
@@ -76,7 +76,7 @@ async def handle_next_page(callback: CallbackQuery, callback_data: ObjListCallba
         if not objects:
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
-    new_keyboard = build_obj_list_kbd(objects, page=new_page)
+    new_keyboard = build_paginated_list_kbd(objects, page=new_page,context=callback_data.context)
     try:
         await callback.message.edit_reply_markup(reply_markup=new_keyboard)
     except Exception as e:
@@ -99,7 +99,7 @@ async def handle_back(callback: CallbackQuery, callback_data: ObjListCallback, u
     await callback.answer()
 
 
-@foreman_router.callback_query(ObjListCallback.filter(F.action == "select"), UserInfo())
+@foreman_router.callback_query(ObjListCallback.filter(F.action == "select" and F.context=='foreman_object_action'), UserInfo())
 async def handle_select_object(callback: CallbackQuery, callback_data: ObjListCallback, user_info: User) -> None:
     await callback.message.delete()
     await callback.message.answer(get_text("select_object_action", user_info.language),
@@ -116,7 +116,7 @@ async def handle_back_btn_after_select_obj(callback: CallbackQuery, callback_dat
 
     await callback.message.delete()
     await callback.message.answer(get_text("select_object_action", user_info.language),
-                                  reply_markup=build_obj_list_kbd(objects, page=0))
+                                  reply_markup=build_paginated_list_kbd(objects, page=0,context='foreman_object_action'))
 
 @foreman_router.callback_query(ForemanBackCallback.filter(), UserInfo())
 async def process_back_btn(

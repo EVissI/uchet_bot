@@ -13,12 +13,7 @@ from app.bot.kbds.inline_kbds import LanguageCallback,CheckUsernameCallback, che
 from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, i_got_acquainted_kbds, stop_kb
 from app.bot.routers.worker.main_worker_router import main_worker_router
 from app.bot.routers.foreman.main_foreman_router import main_foreman_router
-from app.bot.routers.admin.object_control.main_object_control import main_object_control_router
-from app.bot.routers.general_routers.profile_router import profile_router
-from app.bot.routers.general_routers.transfer_tool import transfer_router
-from app.bot.routers.general_routers.material_order import material_order_router
-from app.bot.routers.general_routers.material import material_router
-from app.bot.routers.test_router import admin_mock_router
+from app.bot.routers.admin.admin_setup_router import main_admin_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
@@ -28,18 +23,14 @@ from app.config import settings
 main_router = Router()
 main_router.include_routers(main_worker_router,
                             main_foreman_router,
-                            main_object_control_router,
-                            profile_router,
-                            transfer_router,
-                            admin_mock_router,
-                            material_order_router,
-                            material_router)
+                            main_admin_router
+                            )
 
 
 @main_router.message(CommandStart())
 async def start_command(message: Message,state: FSMContext):
     async with async_session_maker() as session:
-        user:User = await UserDAO.find_by_telegram_id(session, message.from_user.id)
+        user:User = await UserDAO.find_by_telegram_id(session = session, telegram_id = message.from_user.id)
     if not user:
         await message.answer(get_text('start', lang=message.from_user.language_code, name=message.from_user.full_name))
         await message.answer(get_text('language_select', lang=message.from_user.language_code),reply_markup=lang_select_kbd())

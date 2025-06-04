@@ -9,7 +9,8 @@ from app.db.base import BaseDAO
 from app.db.models import (
     User, UserDocument, Tool, Object, 
     ObjectDocument, ObjectMember, MaterialReminder,
-    Check, ObjectCheck, ObjectPhoto,WorkerNotification,ForemanNotification,MaterialOrder
+    Check, ObjectCheck, ObjectPhoto,WorkerNotification,ForemanNotification,MaterialOrder,
+    ProficAccounting
 )
 
 from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterModel
@@ -17,9 +18,37 @@ from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterMo
 
 class UserDAO(BaseDAO):
     model = User
+    
+    @classmethod
+    async def find_all_except(cls, session: AsyncSession, exclude_user_id: int) -> list[User]:
+        """
+        Find all active users except specified user
+        
+        Args:
+            session: AsyncSession - DB session
+            exclude_user_id: int - Telegram ID of user to exclude
+            
+        Returns:
+            list[User]: List of users excluding specified user
+        """
+        try:
+            stmt = (
+                select(cls.model)
+                .where(
+                    cls.model.telegram_id != exclude_user_id,
+                    cls.model.can_use_bot == True
+                )
+                .order_by(cls.model.user_enter_fio)
+            )
+            result = await session.execute(stmt)
+            return list(result.scalars().all())
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_all_except: {e}")
+            return []
 
     @classmethod
-    async def find_by_telegram_id(session:AsyncSession, telegram_id:int) -> User | None:
+    async def find_by_telegram_id(cls, session:AsyncSession, telegram_id:int) -> User | None:
         """
         find user by telegram id
         """
@@ -150,27 +179,63 @@ class ObjectMemberDAO(BaseDAO):
         return result.scalars().all()
     
 
-    async def find_object_members(session: AsyncSession, object_id: int) -> list[User]:
+    @classmethod
+    async def find_object_members(cls, session: AsyncSession, object_id: int) -> list[User]:
         """
-        Find all users assigned to specific object
+        Find all unique users assigned to specific object
         Args:
             session: AsyncSession
             object_id: ID of the object
         Returns:
-            list[User]: List of users assigned to object
+            list[User]: List of unique users assigned to object
         """
-        stmt = (
-            select(User)
-            .join(ObjectMember, User.telegram_id == ObjectMember.user_id)
-            .where(
-                ObjectMember.object_id == object_id,
-                User.can_use_bot == True
+        try:
+            stmt = (
+                select(User)
+                .distinct()
+                .join(ObjectMember, User.telegram_id == ObjectMember.user_id)
+                .where(
+                    ObjectMember.object_id == object_id,
+                    User.can_use_bot == True
+                )
+                .order_by(User.user_enter_fio)
             )
-            .order_by(User.user_enter_fio)
-        )
-        result = await session.execute(stmt)
-        return result.scalars().all()
-    
+            result = await session.execute(stmt)
+            return list(result.scalars().all())
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_object_members: {e}")
+            return []
+        
+    @classmethod
+    async def find_object_members_except(cls, session: AsyncSession, object_id: int, exclude_user_id: int) -> list[User]:
+        """
+        Find all unique users assigned to specific object except specified user
+        
+        Args:
+            session: AsyncSession - DB session
+            object_id: ID of the object
+            exclude_user_id: Telegram ID of user to exclude
+            
+        Returns:
+            list[User]: List of unique users assigned to object (excluding specified user)
+        """
+        try:
+            stmt = (
+                select(User)
+                .distinct()
+                .join(ObjectMember, User.telegram_id == ObjectMember.user_id)
+                .where(
+                    ObjectMember.object_id == object_id,
+                    User.can_use_bot == True,
+                    User.telegram_id != exclude_user_id
+                )
+                .order_by(User.user_enter_fio)
+            )
+            result = await session.execute(stmt)
+            return list(result.scalars().all())
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_object_members_except: {e}")
+            return []
 
 class MaterialReminderDAO(BaseDAO):
     model = MaterialReminder
@@ -248,3 +313,6 @@ class ForemanNotificationDAO(BaseDAO):
 
 class MaterialOrderDAO(BaseDAO):
     model = MaterialOrder
+
+class ProficAccountingDAO(BaseDAO):
+    model = ProficAccounting

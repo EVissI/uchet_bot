@@ -73,3 +73,13 @@ class AdminCheckStates(StatesGroup):
 class CheckOutObjectStates(StatesGroup):
     waiting_photo = State()
     waiting_amount = State()
+
+class ChangeMaterialRemainderStates(StatesGroup):
+    description = State()
+    file = State()
+    location = State()
+
+class ProficAccountingStates(StatesGroup):
+    enter_amount = State()
+    enter_purpose = State()
+    confirm = State()

@@ -11,9 +11,9 @@ from app.db.dao import MaterialReminderDAO
 from app.db.schemas import MaterialReminderFilter
 from app.bot.common.texts import get_text, get_all_texts
 
-change_reminder_router = Router()
+delete_reminder_router = Router()
 
-@change_reminder_router.message(F.text.in_(get_all_texts('deactivate_reminder_btn')),StateFilter(AdminPanelStates.material_remainder_change_deactivate))
+@delete_reminder_router.message(F.text.in_(get_all_texts('deactivate_reminder_btn')),StateFilter(AdminPanelStates.material_remainder_change_deactivate))
 async def change_reminder(message: Message, user_info: User):
     async with async_session_maker() as session:
         page, total_pages, reminder_id = await MaterialReminderDAO.find_material_reminder_by_page(
@@ -25,7 +25,7 @@ async def change_reminder(message: Message, user_info: User):
             )
             return
         await message.answer(
-            text=get_text('choose_reminder_to_deactivate', user_info.language),
+            text=get_text('choose_reminder', user_info.language),
             reply_markup=build_item_card_kbd(
                 item_id=reminder_id,
                 total_pages=total_pages,
@@ -35,7 +35,7 @@ async def change_reminder(message: Message, user_info: User):
             )
         )
 
-@change_reminder_router.callback_query(ItemCardCallback.filter(F.keyboard_type=='deactivate_riminder',
+@delete_reminder_router.callback_query(ItemCardCallback.filter(F.keyboard_type=='deactivate_riminder' and
                                                                 F.action == 'deactivate'),UserInfo())
 async def deactivate_reminder(callback: CallbackQuery, callback_data: ItemCardCallback, user_info: User):
     async with async_session_maker() as session:
@@ -57,7 +57,7 @@ async def deactivate_reminder(callback: CallbackQuery, callback_data: ItemCardCa
             )
         )
 
-@change_reminder_router.callback_query(DeleteItemConfirmCallback.filter(F.action == 'confirm'),
+@delete_reminder_router.callback_query(DeleteItemConfirmCallback.filter(F.action == 'confirm'),
                                       UserInfo())
 async def confirm_deactivate_reminder(callback: CallbackQuery, callback_data: DeleteItemConfirmCallback, user_info: User):
     async with async_session_maker() as session:
@@ -77,7 +77,7 @@ async def confirm_deactivate_reminder(callback: CallbackQuery, callback_data: De
         )
     await callback.answer()
 
-@change_reminder_router.callback_query(DeleteItemConfirmCallback.filter(F.action == 'cancel'),
+@delete_reminder_router.callback_query(DeleteItemConfirmCallback.filter(F.action == 'cancel'),
                                       UserInfo())
 async def cancel_deactivate_reminder(callback: CallbackQuery, callback_data: DeleteItemConfirmCallback, user_info: User):
     async with async_session_maker() as session:
@@ -92,7 +92,7 @@ async def cancel_deactivate_reminder(callback: CallbackQuery, callback_data: Del
 
         await callback.message.delete()
         await callback.message.answer(
-            text=get_text('choose_reminder_to_deactivate', user_info.language),
+            text=get_text('choose_reminder', user_info.language),
             reply_markup=build_item_card_kbd(
                 item_id=reminder_id,
                 total_pages=total_pages,
