@@ -46,7 +46,7 @@ async def process_tools_export(callback: CallbackQuery, callback_data: ToolStatu
                 await callback.message.edit_text(get_text("no_tools_found", user_info.language))
                 return
 
-            excel_file = await create_tools_export(tools, user_info.language)
+            excel_file = create_tools_export(tools, user_info.language)
             
             filename = f"tools_export_{callback_data.status}_{datetime.now().strftime('%d_%m_%Y')}.xlsx"
             

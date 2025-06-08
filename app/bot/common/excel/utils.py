@@ -138,7 +138,7 @@ def create_tools_report(tools: list[Tool], lang: str) -> io.BytesIO:
     return excel_buffer
 
 
-async def create_user_tools_report(
+def create_user_tools_report(
     tools: list[Tool], user: User, lang: str
 ) -> io.BytesIO:
     """
@@ -150,7 +150,7 @@ async def create_user_tools_report(
     """
     wb = Workbook()
     ws = wb.active
-    ws.title = f"Инструменты {user.user_enter_fio}"
+    ws.title = f"Инструменты {user.user_enter_fio}"[:31]
 
     # Стили
     header_font = Font(bold=True)
@@ -255,7 +255,7 @@ def generate_transfer_template(lang: str) -> io.BytesIO:
     return excel_buffer
 
 
-async def create_tools_export(tools: list[Tool], lang: str) -> io.BytesIO:
+def create_tools_export(tools: list[Tool], lang: str) -> io.BytesIO:
     """Create Excel file with tools list"""
     wb = Workbook()
     ws = wb.active
@@ -306,7 +306,7 @@ async def create_tools_export(tools: list[Tool], lang: str) -> io.BytesIO:
     return excel_buffer
 
 
-async def create_materials_excel(materials: list, lang: str) -> io.BytesIO:
+def create_materials_excel(materials: list, lang: str) -> io.BytesIO:
     """Create Excel file with materials list"""
     wb = Workbook()
     ws = wb.active
@@ -324,6 +324,7 @@ async def create_materials_excel(materials: list, lang: str) -> io.BytesIO:
         get_text("excel_material_id", lang),
         get_text("excel_material_description", lang),
         get_text("excel_material_location", lang),
+        get_text("excel_material_file_id", lang), 
     ]
 
     for col, header in enumerate(headers, 1):
@@ -338,11 +339,13 @@ async def create_materials_excel(materials: list, lang: str) -> io.BytesIO:
         ws.cell(row=row, column=1, value=material.id)
         ws.cell(row=row, column=2, value=material.description)
         ws.cell(row=row, column=3, value=material.storage_location or "-")
+        ws.cell(row=row, column=4, value=material.file_id or "-")  
 
     # Adjust column widths
-    ws.column_dimensions["A"].width = 10  # ID
-    ws.column_dimensions["B"].width = 50  # Description
-    ws.column_dimensions["C"].width = 30  # Location
+    ws.column_dimensions["A"].width = 10   # ID
+    ws.column_dimensions["B"].width = 50   # Description
+    ws.column_dimensions["C"].width = 30   # Location
+    ws.column_dimensions["D"].width = 70   # File ID
 
     excel_buffer = io.BytesIO()
     wb.save(excel_buffer)

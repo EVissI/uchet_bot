@@ -19,6 +19,7 @@ change_reminder_router = Router()
 @change_reminder_router.message(
     F.text.in_(get_all_texts("change_reminder_btn")),
     StateFilter(AdminPanelStates.material_remainder_change_deactivate),
+    UserInfo()
 )
 async def change_reminder(message: Message, user_info: User):
     async with async_session_maker() as session:
@@ -30,20 +31,27 @@ async def change_reminder(message: Message, user_info: User):
                 text=get_text("no_material_reminders", user_info.language)
             )
             return
-        await message.answer(
-            text=get_text("choose_reminder", user_info.language),
+        reminder:MaterialReminder = await MaterialReminderDAO.find_one_or_none_by_id(session, reminder_id)
+        await message.answer_photo(
+            photo=reminder.file_id,
+            caption=get_text(
+                "choose_reminder", 
+                user_info.language,
+                description=reminder.description,
+                storage_location = reminder.storage_location
+            ),
             reply_markup=build_item_card_kbd(
                 item_id=reminder_id,
                 total_pages=total_pages,
                 current_page=page,
                 lang=user_info.language,
-                keyboard_type="change_order_riminder",
+                keyboard_type="change_material_riminder",
             ),
         )
 
 
 @change_reminder_router.callback_query(
-    ItemCardCallback.filter(F.keyboard_type == "change_order_riminder" and F.action == "change_description"),
+    ItemCardCallback.filter((F.keyboard_type == "change_material_riminder") & (F.action == "change_description")),
     UserInfo(),
 )
 async def change_reminder_description(
@@ -93,31 +101,16 @@ async def process_change_reminder_description(
                 description=message.text, message_id=bot_message.message_id
             ),
         )
-        page, total_pages, reminder_id = (
-            await MaterialReminderDAO.find_material_reminder_by_page(
-                session, page=reminder_id + 1
-            )
+        await message.answer(
+            text=get_text("reminder_description_updated", user_info.language)
         )
 
-    await message.answer(
-        text=get_text("reminder_description_updated", user_info.language)
-    )
-    await message.answer(
-        text=get_text("choose_reminder", user_info.language),
-        reply_markup=build_item_card_kbd(
-            item_id=reminder_id,
-            total_pages=total_pages,
-            current_page=page,
-            lang=user_info.language,
-            keyboard_type="change_order_riminder",
-        ),
-    )
     await state.set_state(AdminPanelStates.material_remainder_change_deactivate)
 
 
 @change_reminder_router.callback_query(
     ItemCardCallback.filter(
-        F.keyboard_type == "change_order_riminder" and F.action == "change_photo"
+        (F.keyboard_type == "change_material_riminder") & (F.action == "change_photo")
     ),
     UserInfo(),
 )
@@ -177,30 +170,14 @@ async def process_change_reminder_photo(
             ),
         )
 
-        # Get next reminder for pagination
-        page, total_pages, reminder_id = (
-            await MaterialReminderDAO.find_material_reminder_by_page(
-                session, page=reminder_id + 1
-            )
-        )
 
     await message.answer(text=get_text("reminder_photo_updated", user_info.language))
-    await message.answer(
-        text=get_text("choose_reminder", user_info.language),
-        reply_markup=build_item_card_kbd(
-            item_id=reminder_id,
-            total_pages=total_pages,
-            current_page=page,
-            lang=user_info.language,
-            keyboard_type="change_order_riminder",
-        ),
-    )
     await state.set_state(AdminPanelStates.material_remainder_change_deactivate)
 
 
 @change_reminder_router.callback_query(
     ItemCardCallback.filter(
-        F.keyboard_type == "change_order_riminder" and F.action == "change_location"
+        (F.keyboard_type == "change_material_riminder") & (F.action == "change_location")
     ),
     UserInfo(),
 )
@@ -238,7 +215,6 @@ async def process_change_reminder_location(
             chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL, message_id=reminder.message_id
         )
 
-        # Send new message with updated location
         material_text = get_text(
             "material_remainder_format",
             user_info.language,
@@ -260,22 +236,5 @@ async def process_change_reminder_location(
             ),
         )
 
-        # Get next reminder for pagination
-        page, total_pages, reminder_id = (
-            await MaterialReminderDAO.find_material_reminder_by_page(
-                session, page=reminder_id + 1
-            )
-        )
-
     await message.answer(text=get_text("reminder_location_updated", user_info.language))
-    await message.answer(
-        text=get_text("choose_reminder", user_info.language),
-        reply_markup=build_item_card_kbd(
-            item_id=reminder_id,
-            total_pages=total_pages,
-            current_page=page,
-            lang=user_info.language,
-            keyboard_type="change_order_riminder",
-        ),
-    )
     await state.set_state(AdminPanelStates.material_remainder_change_deactivate)

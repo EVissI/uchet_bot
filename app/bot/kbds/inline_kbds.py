@@ -1,4 +1,5 @@
-﻿from aiogram.filters.callback_data import CallbackData
+﻿from typing import Any, Optional
+from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from app.db.models import Object, ObjectDocument, User, ProficAccounting
@@ -29,21 +30,6 @@ class AcceptToolCallback(CallbackData, prefix="accept_tool"):
 class ForemanObjectCallback(CallbackData, prefix="foreman"):
     action: str
     object_id: int
-
-
-class ObjListCallback(CallbackData, prefix="group_list"):
-    id: int
-    action: str
-    context: str
-    page: int = 0
-
-
-class WorkerListCallback(CallbackData, prefix="worker_list"):
-    telegram_id: int
-    action: str
-    object_id: int
-    context: str
-    page: int = 0
 
 
 class ForemanBackCallback(CallbackData, prefix="foreman_back"):
@@ -403,12 +389,24 @@ def build_tmc_upload_kbd(lang: str) -> InlineKeyboardMarkup:
     return kb.as_markup()
 
 
+class ObjListCallback(CallbackData, prefix="group_list"):
+    id: int
+    action: str
+    context: str
+    page: int = 0
+    object_type: str
+    sub_info:Any
+
 def build_paginated_list_kbd(
     items: list,
     page: int = 0,
     context: str = None,
+    sub_info: None|int = None,
     max_buttons: int = 6,
     text_field: str = "name",
+    primary_key_name: str = "id",
+    object_type: str = 'object'
+
 ) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     start_idx = page * max_buttons
@@ -419,7 +417,12 @@ def build_paginated_list_kbd(
         kb.button(
             text=getattr(item, text_field),
             callback_data=ObjListCallback(
-                id=item.id, action="select", page=page, context=context
+                id=getattr(item, primary_key_name), 
+                action="select", 
+                page=page, 
+                context=context, 
+                object_type=object_type, 
+                sub_info=sub_info
             ).pack(),
         )
 
@@ -430,7 +433,12 @@ def build_paginated_list_kbd(
                 (
                     "←",
                     ObjListCallback(
-                        id=0, action="prev", page=page, context=context
+                        id=0, 
+                        action="prev", 
+                        page=page, 
+                        context=context, 
+                        object_type=object_type, 
+                        sub_info=sub_info
                     ).pack(),
                 )
             )
@@ -439,7 +447,12 @@ def build_paginated_list_kbd(
                 (
                     "→",
                     ObjListCallback(
-                        id=0, action="next", page=page, context=context
+                        id=0, 
+                        action="next", 
+                        page=page, 
+                        context=context, 
+                        object_type=object_type, 
+                        sub_info=sub_info
                     ).pack(),
                 )
             )

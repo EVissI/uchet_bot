@@ -23,6 +23,7 @@ setup_object_control_router.include_routers(
 @setup_object_control_router.message(F.text.in_(get_all_texts('object_control_btn')),UserInfo())
 async def process_object_control(message: Message,state:FSMContext, user_info: User):
     """Handler for displaying object control options"""
+    await message.delete()
     await message.answer(
         text=message.text,
         reply_markup=AdminObjectControlKeyboard.build_object_control_kb(user_info.language)
@@ -32,6 +33,7 @@ async def process_object_control(message: Message,state:FSMContext, user_info: U
 @setup_object_control_router.message(F.text == get_text('back_btn'),StateFilter(AdminPanelStates.objects_control), UserInfo())
 async def process_back_btn(message: Message,state:FSMContext, user_info: User):
     """Handler for back button in object control"""
+    await message.delete()
     await message.answer(
         text=message.text,
         reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)

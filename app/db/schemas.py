@@ -183,6 +183,7 @@ class MaterialReminderModel(BaseModel):
     file_id: str
     storage_location: str
     message_id: Optional[int] = None
+    is_active:bool
 
     class Config:
         from_attributes = True
@@ -194,6 +195,7 @@ class MaterialReminderFilter(BaseModel):
     file_id: Optional[str] = None
     storage_location: Optional[str] = None
     message_id: Optional[int] = None
+    is_active:bool = None
 
 
 class MaterialOrderModel(BaseModel):

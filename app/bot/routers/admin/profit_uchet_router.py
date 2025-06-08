@@ -37,7 +37,7 @@ async def start_profic_accounting(message: Message, state: FSMContext, user_info
         )
 
 
-@profic_router.callback_query(ObjListCallback.filter(F.action == 'select',F.context== 'admin_profic_accounting'))
+@profic_router.callback_query(ObjListCallback.filter((F.action == 'select') & (F.context== 'admin_profic_accounting')))
 async def process_object_selection(
     callback: CallbackQuery, callback_data:ObjListCallback, state: FSMContext, user_info: User
 ):

@@ -98,9 +98,9 @@ async def process_object_description(message: Message, state: FSMContext, user_i
     await state.set_state(CreateObjectStates.waiting_documents.state)
     bot_message = await message.answer(
         text=get_text('create_object_documents', user_info.language,reply_markup=stop_kb(user_info.language)),
-        reply_markup=get_dialog_keyboard(user_info.language)
+        reply_markup=stop_kb(user_info.language)
     )
-    await create_object_router.save_message(state, bot_message.message_id)
+    await create_object_router.save_message(state, bot_message.message_id)  
 
 @create_object_router.message(F.photo, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
 async def process_object_documents(message: Message, state: FSMContext, user_info: User):
@@ -112,15 +112,6 @@ async def process_object_documents(message: Message, state: FSMContext, user_inf
     
     bot_message = await message.answer(
         text=get_text('create_object_document_has_received', user_info.language),
-        reply_markup=get_dialog_keyboard(user_info.language)
-    )
-    await create_object_router.save_message(state, bot_message.message_id)
-
-@create_object_router.message(~F.photo, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
-async def unprocess_object_documents(message: Message, state: FSMContext, user_info: User):
-    await create_object_router.save_message(state, message.message_id)
-    bot_message = await message.answer(
-        text=get_text('create_object_document_no_received', user_info.language),
         reply_markup=stop_kb(user_info.language)
     )
     await create_object_router.save_message(state, bot_message.message_id)
@@ -138,7 +129,21 @@ async def finish_document_received(message: Message, state: FSMContext, user_inf
         )
         await create_object_router.save_message(state, bot_message.message_id)
         return
-    
+    await state.update_data(
+        document_types=[],
+        current_doc_index=0
+    )
+    await send_next_document(message, state, user_info)
+
+
+@create_object_router.message(~F.photo, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
+async def unprocess_object_documents(message: Message, state: FSMContext, user_info: User):
+    await create_object_router.save_message(state, message.message_id)
+    bot_message = await message.answer(
+        text=get_text('create_object_document_no_received', user_info.language),
+        reply_markup=stop_kb(user_info.language)
+    )
+    await create_object_router.save_message(state, bot_message.message_id)
     
 
 async def send_next_document(message: Message, state: FSMContext, user_info: User):
@@ -188,7 +193,7 @@ async def create_object_with_documents(message: Message, state: FSMContext, user
         )
 
 
-@create_object_router.callback_query(ObjectDocumentTypeCallback.filter(), StateFilter(CreateObjectStates))
+@create_object_router.callback_query(ObjectDocumentTypeCallback.filter(), StateFilter(CreateObjectStates),UserInfo())
 async def process_document_type(
     callback: CallbackQuery, 
     callback_data: ObjectDocumentTypeCallback, 

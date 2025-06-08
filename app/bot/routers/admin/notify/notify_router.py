@@ -22,7 +22,7 @@ admin_notify_router = Router()
 @admin_notify_router.message(F.text.in_(get_all_texts('notify_btn')),UserInfo())
 async def process_notify_btn(message:Message, user_info:User):
     await message.delete()
-    await message.answer('admin_notify', reply_markup=get_admin_notify_kbd(lang=user_info.language))
+    await message.answer(get_text('admin_notify'), reply_markup=get_admin_notify_kbd(lang=user_info.language))
 
 
 @admin_notify_router.callback_query(AdminNotifyCallback.filter(F.type == 'all_users'),UserInfo())
@@ -109,11 +109,15 @@ async def process_notify_object(
             
         await callback.message.answer(
             text=get_text('select_object_for_notification', user_info.language),
-            reply_markup=build_paginated_list_kbd(objects, context="notify")
+            reply_markup=build_paginated_list_kbd(objects, 
+                                                  context="notify",
+                                                  object_type='all_objects')
         )
 
 
-@admin_notify_router.callback_query(ObjListCallback.filter(F.context == "notify" and F.action == "select"), UserInfo())
+@admin_notify_router.callback_query(ObjListCallback.filter((F.context == "notify") 
+                                                            & (F.action == "select")
+                                                            & (F.object_type=='all_objects')), UserInfo())
 async def process_object_selection(
     callback: CallbackQuery,
     callback_data: ObjListCallback,

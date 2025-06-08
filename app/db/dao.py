@@ -18,7 +18,7 @@ from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterMo
 
 class UserDAO(BaseDAO):
     model = User
-    
+
     @classmethod
     async def find_all_except(cls, session: AsyncSession, exclude_user_id: int) -> list[User]:
         """
@@ -241,7 +241,7 @@ class MaterialReminderDAO(BaseDAO):
     model = MaterialReminder
 
     @classmethod
-    async def find_material_reminder_by_page(session: AsyncSession, page:int) -> tuple[int,int,int] | None:
+    async def find_material_reminder_by_page(cls,session: AsyncSession, page:int) -> tuple[int,int,int] | None:
         """
         retun page, total reminders count, id of reminder on that page
         """

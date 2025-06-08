@@ -9,8 +9,9 @@ from app.bot.common.texts import get_text, get_all_texts
 from app.bot.kbds.inline_kbds import ItemCardCallback,build_item_card_kbd
 from app.bot.kbds.markup_kbds import AdminMaterialReminderKeyboard
 from app.bot.filters.user_info import UserInfo
-from app.db.models import User
+from app.db.models import MaterialReminder, User
 from app.db.dao import MaterialReminderDAO
+from app.db.schemas import MaterialReminderFilter
 from app.db.database import async_session_maker
 from app.bot.routers.admin.material_reminder.change_deactivate.change import change_reminder_router
 from app.bot.routers.admin.material_reminder.change_deactivate.deactivate import delete_reminder_router
@@ -43,7 +44,7 @@ async def back_to_reminder_control(message: Message, state: FSMContext, user_inf
         reply_markup=AdminMaterialReminderKeyboard.get_material_reminder_control_kb(user_info.language)
     )
 
-@setup_activate_deactivate_reminder_router.callback_query(ItemCardCallback.filter(F.action.in_(['next','prev'])))
+@setup_activate_deactivate_reminder_router.callback_query(ItemCardCallback.filter(F.action.in_(['next','prev'])),UserInfo())
 async def change_deactivate_reminder_card(
     callback: CallbackQuery, 
     callback_data: ItemCardCallback, 
@@ -56,13 +57,22 @@ async def change_deactivate_reminder_card(
             session, 
             page=page
         )
-    await callback.message.delete()
-    await callback.message.answer(
-        text=get_text('change_deactivate_reminder', user_info.language),
-        reply_markup=build_item_card_kbd(item_id=reminder_id,
-                                         current_page=page, 
-                                         total_pages=total_pages, 
-                                         keyboard_type=callback_data.keyboard_type,
-                                         language=user_info.language)
-    )
+        reminder:MaterialReminder = await MaterialReminderDAO.find_one_or_none(session,MaterialReminderFilter(id=reminder_id))
+        await callback.message.delete()
+        await callback.message.answer_photo(
+            photo=reminder.file_id,
+            caption=get_text(
+                "choose_reminder", 
+                user_info.language,
+                description=reminder.description,
+                storage_location = reminder.storage_location
+            ),
+            reply_markup=build_item_card_kbd(
+                item_id=reminder_id,
+                total_pages=total_pages,
+                current_page=page,
+                lang=user_info.language,
+                keyboard_type="change_material_riminder",
+            ),
+        )
 

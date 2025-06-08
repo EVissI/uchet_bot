@@ -126,7 +126,7 @@ class MainKeyboard:
                 raise ValueError
 
 class AdminToolsControlKeyboard:
-    __tools_control_texts = ['bulk_transfer_btn','user_tools_list_btn','back_btn']
+    __tools_control_texts = ['bulk_transfer_btn' ,'tmc_upload_btn','user_tools_list_btn','tools_export_btn','back_btn']
 
     @staticmethod
     def get_tools_control_texts(lang: str = 'ru') -> dict:
@@ -143,7 +143,7 @@ class AdminToolsControlKeyboard:
         kb = ReplyKeyboardBuilder()
         for val in AdminToolsControlKeyboard.get_tools_control_texts(lang).values():
             kb.button(text=val)
-        kb.adjust(3,1)
+        kb.adjust(4,1)
         return kb.as_markup(resize_keyboard=True)
     
 

@@ -6,9 +6,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from app.bot.common.excel.utils import create_user_tools_report
 from app.bot.common.states import AdminPanelStates
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import ObjListCallback, WorkerListCallback, build_obj_list_kbd, build_workers_kbd
+from app.bot.kbds.inline_kbds import ObjListCallback,build_paginated_list_kbd
 from app.db.dao import ObjectDAO, ObjectMemberDAO, UserDAO, ToolDAO
-from app.db.schemas import ToolFilterModel
+from app.db.schemas import ObjectFilterModel, ToolFilterModel
 from app.db.models import User
 from app.bot.common.texts import get_text,get_all_texts
 from app.db.database import async_session_maker
@@ -35,7 +35,7 @@ async def user_tools_xlsx_command(message: Message,user_info:User):
 
     lang = user_info.language
     async with async_session_maker() as session:
-        user = await UserDAO.find_one_or_none_by_id(session, user_id)
+        user = await UserDAO.find_by_telegram_id(session, user_id)
         if not user:
             await message.reply(get_text("no_users_found", lang))
             return
@@ -57,16 +57,18 @@ async def user_tools_xlsx_command(message: Message,user_info:User):
                                  UserInfo())
 async def process_user_tools_list_markup_btn(message:Message,state:FSMContext, user_info:User):
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session)
+        objects = await ObjectDAO.find_all(session,ObjectFilterModel())
         if not objects:
             await message.answer(get_text("no_objects_found", user_info.language))
             return
         await message.answer(
             get_text("objects_list", user_info.language),
-            reply_markup=build_obj_list_kbd(objects, page=0, context="user_tools")
+            reply_markup=build_paginated_list_kbd(objects, context="user_tools", object_type='all_objects')
         )
 
-@users_tools_xlsx_router.callback_query(ObjListCallback.filter(F.context == "user_tools", F.action == "select"))
+@users_tools_xlsx_router.callback_query(ObjListCallback.filter((F.context == "user_tools") 
+                                                               &(F.action == "select") 
+                                                               &(F.object_type=='all_objects')),UserInfo())
 async def process_object_select_for_workers(callback: CallbackQuery, callback_data: ObjListCallback, user_info: User):
     async with async_session_maker() as session:
         workers = await ObjectMemberDAO.find_object_members(session, callback_data.id)
@@ -75,14 +77,19 @@ async def process_object_select_for_workers(callback: CallbackQuery, callback_da
             return
         await callback.message.edit_text(
             get_text("object_members_header", user_info.language),
-            reply_markup=build_workers_kbd(workers,
-                                            object_id=callback_data.id,
+            reply_markup=build_paginated_list_kbd(workers,
                                             context='user_tools',
+                                            sub_info=callback_data.id,
+                                            text_field='user_enter_fio',
+                                            primary_key_name='telegram_id',
+                                            object_type='object_workers',
                                             page=0)
         )
 
-@users_tools_xlsx_router.callback_query(WorkerListCallback.filter(F.action == "select"))
-async def process_worker_select(callback: CallbackQuery, callback_data: WorkerListCallback, user_info: User):
+@users_tools_xlsx_router.callback_query(ObjListCallback.filter((F.context == "user_tools") 
+                                                               & (F.action == "select") 
+                                                               & (F.object_type=='object_workers')),UserInfo())
+async def process_worker_select(callback: CallbackQuery, callback_data: ObjListCallback, user_info: User):
     """Handle worker selection"""
     async with async_session_maker() as session:
         tools = await ToolDAO.find_all(session, ToolFilterModel(user_id=callback_data.id))
@@ -93,7 +100,7 @@ async def process_worker_select(callback: CallbackQuery, callback_data: WorkerLi
         xlsx_file = create_user_tools_report(tools, user_info, user_info.language)
         input_file = BufferedInputFile(
             xlsx_file.getvalue(),
-            filename=f"tools_worker_{callback_data.id}.xlsx"
+            filename=f"tools_{callback_data.id}.xlsx"
         )
         await callback.message.delete()
         await callback.message.answer_document(
@@ -102,32 +109,5 @@ async def process_worker_select(callback: CallbackQuery, callback_data: WorkerLi
                 "user_tools_list",
                 user_info.language,
                 full_name=user_info.user_enter_fio
-            )
-        )
-
-@users_tools_xlsx_router.callback_query(WorkerListCallback.filter(F.action == "prev"))
-async def process_workers_pagination(callback: CallbackQuery, callback_data: WorkerListCallback, user_info: User):
-    """Handle workers list pagination"""
-    async with async_session_maker() as session:
-        workers = await ObjectMemberDAO.find_object_members(session, callback_data.object_id)
-        await callback.message.reply_markup(
-            reply_markup=build_workers_kbd(
-                workers,
-                object_id=callback_data.object_id,
-                page=callback_data.page-1,
-                context=callback_data.context
-            )
-        )
-@users_tools_xlsx_router.callback_query(WorkerListCallback.filter(F.action == "next"))
-async def process_workers_pagination(callback: CallbackQuery, callback_data: WorkerListCallback, user_info: User):
-    """Handle workers list pagination"""
-    async with async_session_maker() as session:
-        workers = await ObjectMemberDAO.find_object_members(session, callback_data.object_id)
-        await callback.message.reply_markup(
-            reply_markup=build_workers_kbd(
-                workers,
-                object_id=callback_data.object_id,
-                page=callback_data.page+1,
-                context=callback_data.context
             )
         )

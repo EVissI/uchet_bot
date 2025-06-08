@@ -14,6 +14,7 @@ from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, i
 from app.bot.routers.worker.main_worker_router import main_worker_router
 from app.bot.routers.foreman.main_foreman_router import main_foreman_router
 from app.bot.routers.admin.admin_setup_router import main_admin_router
+from app.bot.routers.general_routers.object_list_control_kbd import kbd_obj_list_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
@@ -23,7 +24,8 @@ from app.config import settings
 main_router = Router()
 main_router.include_routers(main_worker_router,
                             main_foreman_router,
-                            main_admin_router
+                            main_admin_router,
+                            kbd_obj_list_router
                             )
 
 

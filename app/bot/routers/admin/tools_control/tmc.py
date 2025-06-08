@@ -41,25 +41,36 @@ async def process_tmc_upload_btn(message: Message, user_info: User):
         reply_markup=build_tmc_upload_kbd(user_info.language),
     )
 
+@tmc_router.message(F.text == get_all_texts("stop_btn"), StateFilter(TMCStates),UserInfo())
+async def process_tmc_stop(message: Message, state: FSMContext, user_info: User):
+    logger.info(f"User {user_info.telegram_id} stopped TMC upload process")
+    await state.set_state(AdminPanelStates.tools_control)
+    await message.answer(
+        text=get_text("tmc_upload_stopped", user_info.language),
+        reply_markup=AdminToolsControlKeyboard.build_tools_control_kb(
+            user_info.language
+        ),
+    )
+    await tmc_router.clear_messages(state, message.chat.id, message.bot)
 
-@tmc_router.callback_query(TMCCallback.filter(F.action == "manual"))
+@tmc_router.callback_query(TMCCallback.filter(F.action == "manual"),UserInfo())
 async def process_tmc_manual(
     callback: CallbackQuery, state: FSMContext, user_info: User
 ):
     """Start manual TMC input process"""
     logger.info(f"User {user_info.telegram_id} selected manual TMC input")
     await state.set_state(TMCStates.input_name)
-    await callback.message.edit_text(
+    await callback.message.delete()
+    await callback.message.answer(
         text=get_text(
             "tmc_enter_name",
             user_info.language,
-            reply_markup=stop_kb(user_info.language),
-        )
+        ),reply_markup=stop_kb(user_info.language),
     )
     await callback.answer()
 
 
-@tmc_router.message(F.text, StateFilter(TMCStates.input_name))
+@tmc_router.message(F.text, StateFilter(TMCStates.input_name),UserInfo())
 async def process_tmc_name(message: Message, state: FSMContext, user_info: User):
     logger.info(f"User {user_info.telegram_id} entered TMC name: {message.text}")
     await tmc_router.save_message(state, message.message_id)
@@ -71,7 +82,7 @@ async def process_tmc_name(message: Message, state: FSMContext, user_info: User)
     await tmc_router.save_message(state, bot_message.message_id)
 
 
-@tmc_router.message(F.text, StateFilter(TMCStates.input_description))
+@tmc_router.message(F.text, StateFilter(TMCStates.input_description),UserInfo())
 async def process_tmc_unit(message: Message, state: FSMContext, user_info: User):
     await tmc_router.save_message(state, message.message_id)
     await state.update_data(description=message.text)
@@ -82,7 +93,7 @@ async def process_tmc_unit(message: Message, state: FSMContext, user_info: User)
     await tmc_router.save_message(state, bot_message.message_id)
 
 
-@tmc_router.message(F.photo, StateFilter(TMCStates.input_file))
+@tmc_router.message(F.photo, StateFilter(TMCStates.input_file),UserInfo())
 async def process_tmc_file(message: Message, state: FSMContext, user_info: User):
     logger.info(f"User {user_info.telegram_id} uploaded TMC file")
     try:
@@ -109,7 +120,7 @@ async def process_tmc_file(message: Message, state: FSMContext, user_info: User)
         await message.answer(get_text("tmc_file_error", user_info.language))
 
 
-@tmc_router.message(F.text, StateFilter(TMCStates.input_quantity))
+@tmc_router.message(F.text, StateFilter(TMCStates.input_quantity),UserInfo())
 async def process_tmc_quantity(message: Message, state: FSMContext, user_info: User):
     try:
         await tmc_router.save_message(state, message.message_id)
@@ -151,20 +162,8 @@ async def process_tmc_quantity(message: Message, state: FSMContext, user_info: U
         await tmc_router.save_message(state, bot_message.message_id)
 
 
-@tmc_router.message(F.text == get_all_texts("stop_btn"), StateFilter(TMCStates))
-async def process_tmc_stop(message: Message, state: FSMContext, user_info: User):
-    logger.info(f"User {user_info.telegram_id} stopped TMC upload process")
-    await state.set_state(AdminPanelStates.tools_control)
-    await message.answer(
-        text=get_text("tmc_upload_stopped", user_info.language),
-        reply_markup=AdminToolsControlKeyboard.build_tools_control_kb(
-            user_info.language
-        ),
-    )
-    await tmc_router.clear_messages(state, message.chat.id, message.bot)
 
-
-@tmc_router.callback_query(TMCCallback.filter(F.action == "template"))
+@tmc_router.callback_query(TMCCallback.filter(F.action == "template"),UserInfo())
 async def process_tmc_template(callback: CallbackQuery, user_info: User):
     """Handle TMC template download"""
     logger.info(f"User {user_info.telegram_id} requested TMC template")
@@ -186,17 +185,18 @@ async def process_tmc_template(callback: CallbackQuery, user_info: User):
         )
 
 
-@tmc_router.callback_query(TMCCallback.filter(F.action == "upload"))
+@tmc_router.callback_query(TMCCallback.filter(F.action == "upload"),UserInfo())
 async def process_tmc_upload_start(
     callback: CallbackQuery, state: FSMContext, user_info: User
 ):
     """Handle TMC file upload start"""
     logger.info(f"User {user_info.telegram_id} started TMC file upload process")
     try:
-        await callback.message.edit_text(
-            text=get_text("tmc_upload_instruction", user_info.language)
+        await callback.message.delete()
+        await callback.message.answer(
+            text=get_text("tmc_upload_instruction", user_info.language),reply_markup=stop_kb(user_info.language)
         )
-        await state.set_state(TMCStates.waiting_file)
+        await state.set_state(TMCStates.input_file)
         await callback.answer()
         logger.debug(f"State set to waiting_file for user {user_info.telegram_id}")
     except Exception as e:
@@ -205,7 +205,7 @@ async def process_tmc_upload_start(
         )
 
 
-@tmc_router.message(F.document, StateFilter(TMCStates.waiting_file))
+@tmc_router.message(F.document, StateFilter(TMCStates.input_file),UserInfo())
 async def process_tmc_file_upload(message: Message, state: FSMContext, user_info: User):
     """Process uploaded TMC Excel file"""
     logger.info(f"User {user_info.telegram_id} uploaded TMC Excel file")

@@ -11,6 +11,7 @@ from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.user_info import UserInfo
 from app.db.dao import MaterialReminderDAO
+from app.db.schemas import MaterialReminderFilter
 from app.db.models import User
 from app.db.database import async_session_maker
 
@@ -18,7 +19,7 @@ material_reminder_excel_view_router = Router()
 
 
 @material_reminder_excel_view_router.message(
-    F.text.in_(get_all_texts("materials_excel_btn")),
+    F.text.in_(get_all_texts("excel_view_btn")),
     StateFilter(AdminPanelStates.material_remainder_control),
     UserInfo()
 )
@@ -28,13 +29,13 @@ async def process_materials_excel(message: Message, user_info: User):
         logger.info(f"User {user_info.telegram_id} requested materials excel export")
         
         async with async_session_maker() as session:
-            materials = await MaterialReminderDAO.find_all(session)
+            materials = await MaterialReminderDAO.find_all(session,MaterialReminderFilter())
             
             if not materials:
                 await message.answer(get_text("no_materials_found", user_info.language))
                 return
 
-            excel_file = await create_materials_excel(materials, user_info.language)
+            excel_file = create_materials_excel(materials, user_info.language)
             
             await message.answer_document(
                 document=BufferedInputFile(

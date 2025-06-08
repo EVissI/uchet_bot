@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     TELEGRAM_GROUP_ID_FOREMAN_REPORTS: int
     
     DB_URL: str = 'sqlite+aiosqlite:///data/db.sqlite3'
+    SYNC_DB_URL:str = 'sqlite:///data/db.sqlite3'
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 

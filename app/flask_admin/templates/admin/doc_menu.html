@@ -1,0 +1,6 @@
+﻿{% extends 'admin/master.html' %}
+{% block body %}
+    <h3>Выберите раздел документов:</h3>
+    <a class="btn btn-secondary" href="{{ url_for('userdocument.index_view') }}">Документы сотрудников</a>
+    <a class="btn btn-secondary" href="{{ url_for('objectdocument.index_view') }}">Документы объектов</a>
+{% endblock %}

@@ -57,8 +57,8 @@ async def process_reminder_object(
             reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj")
         )
 
-@admin_reminder_object_router.callback_query(ObjListCallback.filter(F.action == 'select' and
-                                                                    F.context == 'admin_reminder_obj'),UserInfo())
+@admin_reminder_object_router.callback_query(ObjListCallback.filter((F.action == 'select') &
+                                                                    (F.context == 'admin_reminder_obj')),UserInfo())
 async def process_admin_check_btn(
     callback: CallbackQuery,
     callback_data: ObjListCallback,

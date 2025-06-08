@@ -28,7 +28,7 @@ async def process_delete_obj_btn(message:Message,state:FSMContext,user_info:User
         reply_markup=build_paginated_list_kbd(objects, context=('delete_object'))
     )
 
-@delete_object_router.callback_query(ObjListCallback.filter(F.action == "select" and F.context == "delete_object"), UserInfo())
+@delete_object_router.callback_query(ObjListCallback.filter((F.action == "select") & (F.context == "delete_object")), UserInfo())
 async def process_delete_obj(callback: CallbackQuery, callback_data: ObjListCallback,state:FSMContext, user_info: User):
     await callback.message.delete()
     async with async_session_maker() as session:

@@ -78,6 +78,7 @@ async def process_material_location(
                 description=data["description"],
                 storage_location=message.text,
                 message_id=sent_message.message_id,
+                is_active=True
             ),
         )
 

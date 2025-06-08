@@ -41,47 +41,7 @@ async def handle_workers_callback(message:Message, user_info: User) -> None:
             return
 
     await message.answer(text=get_text("select_object_prompt", user_info.language), 
-                                  reply_markup=build_paginated_list_kbd(objects, page=0,context='foreman_object_action'))
-
-
-@foreman_router.callback_query(ObjListCallback.filter(F.action == "prev"), UserInfo())
-async def handle_prev_page(callback: CallbackQuery, callback_data: ObjListCallback, user_info:User) -> None:
-    """
-    Обработчик для кнопки "←" (prev).
-    Вычисляет новую страницу (page - 1), получает список объектов и обновляет клавиатуру.
-    """
-    new_page = callback_data.page - 1 if callback_data.page > 0 else 0
-    async with async_session_maker() as session:
-        objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
-        if not objects:
-            await callback.message.answer(get_text("no_objects", user_info.language))
-            return
-    new_keyboard = build_paginated_list_kbd(objects, page=new_page,context=callback_data.context)
-    try:
-        await callback.message.edit_reply_markup(reply_markup=new_keyboard)
-    except Exception as e:
-        logger.error(f"Ошибка при обновлении клавиатуры (prev): {e}")
-    await callback.answer()
-
-
-@foreman_router.callback_query(ObjListCallback.filter(F.action == "next"), UserInfo())
-async def handle_next_page(callback: CallbackQuery, callback_data: ObjListCallback, user_info:User) -> None:
-    """
-    Обработчик для кнопки "→" (next).
-    Вычисляет новую страницу (page + 1), получает список объектов и обновляет клавиатуру.
-    """
-    new_page = callback_data.page + 1
-    async with async_session_maker() as session:
-        objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
-        if not objects:
-            await callback.message.answer(get_text("no_objects", user_info.language))
-            return
-    new_keyboard = build_paginated_list_kbd(objects, page=new_page,context=callback_data.context)
-    try:
-        await callback.message.edit_reply_markup(reply_markup=new_keyboard)
-    except Exception as e:
-        logger.error(f"Ошибка при обновлении клавиатуры (next): {e}")
-    await callback.answer()
+                                  reply_markup=build_paginated_list_kbd(objects, page=0, context='foreman_object_action'))
 
 
 @foreman_router.callback_query(ObjListCallback.filter(F.action == "back"), UserInfo())

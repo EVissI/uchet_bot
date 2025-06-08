@@ -1,0 +1,6 @@
+﻿{% extends 'admin/master.html' %}
+{% block body %}
+    <h3>Выберите раздел чеков:</h3>
+    <a class="btn btn-secondary" href="{{ url_for('check.index_view') }}">Чеки (без объекта)</a>
+    <a class="btn btn-secondary" href="{{ url_for('objectcheck.index_view') }}">Чеки по объектам</a>
+{% endblock %}

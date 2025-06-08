@@ -5,8 +5,9 @@ import re
 import uuid
 from loguru import logger
 
-from sqlalchemy import func, TIMESTAMP, inspect, text
+from sqlalchemy import func, TIMESTAMP, inspect, create_engine
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.asyncio import (
     AsyncAttrs,
     async_sessionmaker,
@@ -14,6 +15,11 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
 )
 from app.config import settings
+
+
+sync_engine = create_engine(settings.SYNC_DB_URL)
+sync_session_factory = sessionmaker(bind=sync_engine)
+sync_session = scoped_session(sync_session_factory)
 
 engine = create_async_engine(url=str(settings.DB_URL))
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession)
