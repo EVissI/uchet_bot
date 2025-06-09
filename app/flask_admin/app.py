@@ -3,61 +3,72 @@ from datetime import datetime, timezone
 import os
 import flask
 from flask import Flask, request, redirect, url_for, render_template
+from werkzeug.security import check_password_hash
 from app.config import setup_logger
 from app.flask_admin.model_view import (CheckModelView, ObjectCheckModelView,
 ObjectModelView, ToolModelView,MaterialReminderModelView,UserModelView,ChecksMenuView,
 DocumentsMenuView, ObjectDocumentModelView, UserDocumentModelView)
 
 logger = setup_logger("admin_panel")
+from loguru import logger
+
 from flask import Flask
 from flask_admin import Admin,AdminIndexView
 from flask_admin.form import SecureForm
 from app.db.database import sync_session
-from app.db.models import Check, MaterialReminder, Object, ObjectCheck, ObjectDocument, Tool, User, UserDocument
+from app.db.models import AdminUser, Check, MaterialReminder, Object, ObjectCheck, ObjectDocument, Tool, User, UserDocument
 
 app = Flask(
     __name__,
     template_folder=os.path.join(os.path.dirname(__file__), 'templates')
 )
-
 app.config['SECRET_KEY'] = 'AJKClasc6x5z1i2S3Kx3zcdo23'
 app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == '123' and password == '123':
-            flask.session['logged_in'] = True
-            flask.session['login_time'] = datetime.now()
-            return redirect('/admin')
-        else:
-            return render_template('login.html', error='Invalid credentials!')  
-    return render_template('login.html') 
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        with sync_session() as session:
+            user = session.query(AdminUser).filter_by(username=username).first()
+            if user and check_password_hash(user.password, password):
+                flask.session['admin_id'] = user.id
+                flask.session['admin_username'] = user.username
+                flask.session['logged_in'] = True
+                flask.session['login_time'] = datetime.now().isoformat()
+                
+                user.last_login = datetime.now()
+                session.commit()
+                
+                return redirect(url_for('admin.index'))
+                
+    return render_template('admin/login.html')
 
 @app.before_request
 def check_login():
-    if not flask.session.get('logged_in') and request.endpoint not in ['login', 'static']:
-        return redirect(url_for('login'))
-    elif flask.session.get('logged_in'):
+    if request.endpoint not in ['admin_login', 'static']:
+        if not flask.session.get('logged_in'):
+            return redirect(url_for('admin_login'))
+        
         login_time = flask.session.get('login_time')
         if login_time:
-            login_time = datetime.fromisoformat(login_time) if isinstance(login_time, str) else login_time
+            login_time = datetime.fromisoformat(login_time)
             time_diff = datetime.now(timezone.utc) - login_time.replace(tzinfo=timezone.utc)
-            if time_diff.total_seconds() > 1800:  
+            
+            if time_diff.total_seconds() > 1800:
                 flask.session.clear()
-                return redirect(url_for('login'))
-
-            flask.session['login_time'] = datetime.now()
-
+                return redirect(url_for('admin_login'))
+            
+            flask.session['login_time'] = datetime.now().isoformat()
 
 @app.route('/logout')
 def logout():
     flask.session.clear()  
-    return redirect(url_for('login'))
+    return redirect(url_for('admin_login'))
 
 class MyAdminIndexView(AdminIndexView):
     form_base_class = SecureForm

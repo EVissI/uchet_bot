@@ -1,6 +1,8 @@
 ﻿from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
+
+from sqlalchemy import JSON
 from app.db.models import ObjectDocument
 from app.db.models import Tool
 
@@ -253,3 +255,25 @@ class ProficAccountingFilterModel(BaseModel):
     payment_type: Optional[str] = None
     created_by: Optional[int] = None
 
+class AdminUserModel(BaseModel):
+    username:str
+    password:str
+
+class AdminUserFilter(BaseModel):
+    username:str = None
+    password:str = None
+    last_login:datetime = None
+
+class AdminActionLogModel(BaseModel):
+    admin_user_id:int
+    action:str
+    model:str
+    record_id:int 
+    details:JSON  
+
+class AdminActionLogModel(BaseModel):
+    admin_user_id:int = None
+    action:str = None
+    model:str = None
+    record_id:int = None 
+    details:JSON = None  

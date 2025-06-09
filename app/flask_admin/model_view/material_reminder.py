@@ -2,8 +2,9 @@
 from wtforms import TextAreaField, StringField
 from wtforms.validators import Optional
 from app.db.models import MaterialReminder
+from app.flask_admin.model_view.base import AuthModelView
 
-class MaterialReminderModelView(ModelView):
+class MaterialReminderModelView(AuthModelView):
     can_create = True
     can_edit = True
     can_delete = True
@@ -41,6 +42,6 @@ class MaterialReminderModelView(ModelView):
         return form_class
 
     def on_model_change(self, form, model, is_created):
-        # Если поле is_active отсутствует (например, в старых данных), добавляем его
+        super().on_model_change(form, model, is_created)
         if not hasattr(model, 'is_active'):
             model.is_active = True

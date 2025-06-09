@@ -4,8 +4,10 @@ from flask_admin.form import Select2Widget
 from app.db.models import ObjectMember, Object, User
 import flask
 
+from app.flask_admin.model_view.base import AuthModelView
 
-class UserModelView(ModelView):
+
+class UserModelView(AuthModelView):
     can_create = False
     can_delete = False
     can_edit = True
@@ -97,6 +99,7 @@ class UserModelView(ModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         try:
             print("[DEBUG] Starting model change...")
             selected_ids = flask.request.form.getlist('object_selection', type=int)

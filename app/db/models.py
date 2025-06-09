@@ -127,7 +127,7 @@ class Object(Base):
         "ObjectPhoto", back_populates="object", cascade="all, delete"
     )
     profic_accounting: Mapped[list["ProficAccounting"]] = relationship(
-        "ProficAccounting", back_populates="object"
+        "ProficAccounting", back_populates="object", cascade="all, delete"
     )
 
 
@@ -274,3 +274,26 @@ class ProficAccounting(Base):
         "Object", back_populates="profic_accounting"
     )
     user: Mapped["User"] = relationship("User", back_populates="profic_accounting")
+
+
+class AdminUser(Base):
+    __tablename__ = 'admin_users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    last_login = Column(DateTime(timezone=True))
+
+    action_logs = relationship("AdminActionLog", back_populates="admin_user")
+
+class AdminActionLog(Base):
+    __tablename__ = 'admin_action_logs'
+
+    id = Column(Integer, primary_key=True)
+    admin_user_id = Column(Integer, ForeignKey('admin_users.id'))
+    action = Column(String(50))  
+    model = Column(String(50))   
+    record_id = Column(Integer)  
+    details = Column(JSON)       
+
+    admin_user = relationship("AdminUser", back_populates="action_logs")

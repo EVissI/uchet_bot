@@ -4,12 +4,14 @@ from wtforms import StringField, SelectField
 from app.db.models import Object, ObjectDocument, User
 from flask_admin import BaseView, expose
 
+from app.flask_admin.model_view.base import AuthModelView
+
 class DocumentsMenuView(BaseView):
     @expose('/')
     def index(self):
         return self.render('admin/doc_menu.html')
 
-class ObjectDocumentModelView(ModelView):
+class ObjectDocumentModelView(AuthModelView):
     can_create = True
     can_edit = False
     can_delete = True
@@ -56,6 +58,7 @@ class ObjectDocumentModelView(ModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         if hasattr(form, 'object_select') and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:
@@ -72,7 +75,7 @@ class ObjectDocumentModelView(ModelView):
     def is_visible(self):
         return False
     
-class UserDocumentModelView(ModelView):
+class UserDocumentModelView(AuthModelView):
     can_create = True
     can_edit = False
     can_delete = True
@@ -109,6 +112,7 @@ class UserDocumentModelView(ModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         if hasattr(form, 'user_select') and form.user_select.data:
             model.user_id = form.user_select.data.telegram_id
         else:

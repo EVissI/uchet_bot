@@ -4,6 +4,7 @@ from flask_admin import BaseView, expose
 from wtforms import TextAreaField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from app.db.models import Object, User
+from app.flask_admin.model_view.base import AuthModelView
 
 
 class ChecksMenuView(BaseView):
@@ -11,7 +12,7 @@ class ChecksMenuView(BaseView):
     def index(self):
         return self.render('admin/checks_menu.html')
 
-class CheckModelView(ModelView):
+class CheckModelView(AuthModelView):
     can_create = True
     can_edit = True
     can_delete = True
@@ -63,6 +64,7 @@ class CheckModelView(ModelView):
             form.user_select.data = None
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         if hasattr(form, 'user_select') and form.user_select.data:
             model.user_id = form.user_select.data.telegram_id
         else:
@@ -77,7 +79,7 @@ class CheckModelView(ModelView):
     def is_visible(self):
         return False
 
-class ObjectCheckModelView(ModelView):
+class ObjectCheckModelView(AuthModelView):
     can_create = True
     can_edit = True
     can_delete = True
@@ -145,6 +147,7 @@ class ObjectCheckModelView(ModelView):
             form.user_select.data = None
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         if hasattr(form, 'object_select') and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:

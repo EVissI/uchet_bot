@@ -2,9 +2,10 @@
 from wtforms import SelectField, TextAreaField
 from wtforms_sqlalchemy.fields import QuerySelectField
 from app.db.models import User
+from app.flask_admin.model_view.base import AuthModelView
 
 
-class ToolModelView(ModelView):
+class ToolModelView(AuthModelView):
     can_create = True
     can_edit = True
     can_delete = True
@@ -67,7 +68,7 @@ class ToolModelView(ModelView):
             form.user_select.data = None
 
     def on_model_change(self, form, model, is_created):
-        # Присваиваем user_id вручную из виртуального поля
+        super().on_model_change(form, model, is_created)
         if hasattr(form, 'user_select') and form.user_select.data:
             model.user_id = form.user_select.data.telegram_id
         else:

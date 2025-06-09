@@ -1,11 +1,13 @@
 ﻿from flask_admin.contrib.sqla import ModelView
 from wtforms import SelectMultipleField, TextAreaField
 from flask_admin.form import Select2Widget
-from app.db.models import ObjectMember, User
+from app.db.models import ObjectCheck, ObjectDocument, ObjectMember, ObjectPhoto, ProficAccounting, User
 import flask
 
+from app.flask_admin.model_view.base import AuthModelView
 
-class ObjectModelView(ModelView):
+
+class ObjectModelView(AuthModelView):
     can_create = True
     can_edit = True
     can_delete = True
@@ -72,6 +74,7 @@ class ObjectModelView(ModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         try:
             selected_ids = flask.request.form.getlist('user_selection', type=int)
             session = self.session
@@ -89,3 +92,20 @@ class ObjectModelView(ModelView):
         except Exception as e:
             session.rollback()
             raise Exception(f'Ошибка при сохранении пользователей: {str(e)}')
+    
+    def on_model_delete(self, model):
+        super().on_model_delete(model)
+        """
+        Явно удаляем связанные записи перед удалением объекта
+        """
+        session = self.session
+        try:
+            session.query(ObjectDocument).filter_by(object_id=model.id).delete()
+            session.query(ObjectCheck).filter_by(object_id=model.id).delete()
+            session.query(ObjectPhoto).filter_by(object_id=model.id).delete()
+            session.query(ObjectMember).filter_by(object_id=model.id).delete()
+            session.query(ProficAccounting).filter_by(object_id=model.id).delete()
+            session.flush()
+        except Exception as e:
+            session.rollback()
+            raise Exception(f'Ошибка при удалении связанных данных: {str(e)}')
