@@ -43,6 +43,7 @@ class AdminPanelStates(StatesGroup):
     tools_control = State()
     material_remainder_control = State()
     material_remainder_change_deactivate = State()
+    enter_period = State()
 
 class CreateObjectStates(StatesGroup):
     waiting_name = State()

@@ -1,12 +1,15 @@
 ﻿from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputMediaPhoto
 from aiogram.filters import Command
 
 from app.bot.common.texts import get_all_texts, get_text
+from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import (
+    ItemCardCallback,
     ProfileCallback,
     LanguageCallback,
+    build_item_card_kbd,
     lang_select_kbd,
     profile_keyboard,
 )
@@ -17,6 +20,8 @@ from app.db.schemas import ToolFilterModel, UserFilterModel
 from app.db.database import async_session_maker
 
 profile_router = Router()
+profile_router.message.filter(RoleFilter([User.Role.worker.value,
+                                          User.Role.foreman.value]))
 
 
 @profile_router.message(F.text.in_(get_all_texts("profile_btn")), UserInfo())
@@ -48,27 +53,112 @@ async def process_tools_btn(callback: CallbackQuery, user_info: User):
             await callback.answer(get_text("no_tools", lang=user_info.language))
             return
 
-        await callback.message.answer(
-            text=get_text("tools_list_header", lang=user_info.language),
+        # Get first tool
+        current_tool = tools[0]
+        total_pages = len(tools)
+
+        # Format tool card text
+        tool_text = get_text(
+            "tool_item",
+            lang=user_info.language,
+            tool_id=current_tool.id,
+            name=current_tool.name,
+            description=current_tool.description
+            or get_text("no_description", user_info.language),
         )
 
-        for tool in tools:
+        # Send tool card with navigation keyboard
+        if current_tool.file_id:
+            await callback.message.answer_photo(
+                photo=current_tool.file_id,
+                caption=tool_text,
+                reply_markup=build_item_card_kbd(
+                    item_id=current_tool.id,
+                    total_pages=total_pages,
+                    keyboard_type="tool_view",
+                    current_page=1,
+                    lang=user_info.language,
+                ),
+            )
+        else:
+            await callback.message.answer(
+                text=tool_text,
+                reply_markup=build_item_card_kbd(
+                    item_id=current_tool.id,
+                    total_pages=total_pages,
+                    keyboard_type="tool_view",
+                    current_page=1,
+                    lang=user_info.language,
+                ),
+            )
+        await callback.answer()
+
+
+@profile_router.callback_query(
+    ItemCardCallback.filter(F.keyboard_type == "tool_view"), UserInfo()
+)
+async def process_tool_navigation(
+    callback: CallbackQuery, callback_data: ItemCardCallback, user_info: User
+):
+    """Handle tool card navigation"""
+
+    if callback_data.action == "back":
+        await callback.message.delete()
+        await callback.message.answer(
+            text=get_text(
+                "profile_info",
+                lang=user_info.language,
+                telegram_id=user_info.telegram_id,
+                username=user_info.username,
+                full_name=user_info.user_enter_fio,
+                phone=user_info.phone_number,
+                role=user_info.role,
+            ),
+            reply_markup=profile_keyboard(user_info.language)
+        )
+        return
+    if callback_data.action in ["prev", "next"]:
+        async with async_session_maker() as session:
+            tools = await ToolDAO.find_all(
+                session, ToolFilterModel(user_id=user_info.telegram_id)
+            )
+
+            current_tool = tools[callback_data.current_page - 1]
             tool_text = get_text(
                 "tool_item",
                 lang=user_info.language,
-                tool_id=tool.id,
-                name=tool.name,
-                description=tool.description
+                tool_id=current_tool.id,
+                name=current_tool.name,
+                description=current_tool.description
                 or get_text("no_description", user_info.language),
             )
 
-            if tool.file_id:
-                await callback.message.answer_photo(
-                    photo=tool.file_id, caption=tool_text
+            if current_tool.file_id:
+                await callback.message.edit_media(
+                    media=InputMediaPhoto(
+                        media=current_tool.file_id, caption=tool_text
+                    ),
+                    reply_markup=build_item_card_kbd(
+                        item_id=current_tool.id,
+                        total_pages=len(tools),
+                        keyboard_type="tool_view",
+                        current_page=callback_data.current_page,
+                        lang=user_info.language,
+                    ),
                 )
             else:
-                await callback.message.answer(text=tool_text)
-        await callback.answer()
+                await callback.message.edit_text(
+                    text=tool_text,
+                    reply_markup=build_item_card_kbd(
+                        item_id=current_tool.id,
+                        total_pages=len(tools),
+                        keyboard_type="tool_view",
+                        current_page=callback_data.current_page,
+                        lang=user_info.language,
+                    ),
+                )
+
+    await callback.answer()
 
 
 @profile_router.callback_query(
@@ -105,4 +195,5 @@ async def process_change_lang_inline(
 
 @profile_router.callback_query(ProfileCallback.filter(F.action == "rules"), UserInfo())
 async def process_rule_btn(callback: CallbackQuery, user_info: User):
+    await callback.answer()
     await callback.message.answer(get_text("rules", lang=user_info.language))

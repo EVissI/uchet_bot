@@ -10,6 +10,7 @@ from app.bot.routers.admin.notify.notify_router import admin_notify_router
 from app.bot.routers.admin.tools_control.setup_tools_control import setup_tools_control_router
 from app.bot.routers.admin.generate_file_id import generate_file_id_router
 from app.bot.routers.admin.cheks_object import admin_reminder_object_router
+from app.bot.routers.admin.finance_report import finance_report_router
 
 
 main_admin_router = Router()
@@ -19,5 +20,6 @@ main_admin_router.include_routers(setup_object_control_router,
                                   admin_notify_router,
                                   setup_tools_control_router,
                                   generate_file_id_router,
-                                  admin_reminder_object_router
+                                  admin_reminder_object_router,
+                                  finance_report_router
                                   )

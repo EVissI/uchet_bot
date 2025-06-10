@@ -1,5 +1,5 @@
 ﻿from loguru import logger
-from sqlalchemy import or_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
@@ -251,6 +251,37 @@ class MaterialReminderDAO(BaseDAO):
 
 class CheckDAO(BaseDAO):
     model = Check
+    @staticmethod
+    async def get_by_date_range(
+        session: AsyncSession,
+        start_date: datetime,
+        end_date: datetime
+    ) -> list[Check]:
+        """
+        Get checks by date range
+        
+        Args:
+            session: AsyncSession - DB session
+            start_date: datetime - Start date of the period
+            end_date: datetime - End date of the period
+            
+        Returns:
+            list[Check]: List of checks within date range
+        """
+        try:
+            query = select(Check).where(
+                and_(
+                    Check.created_at >= start_date,
+                    Check.created_at <= end_date
+                )
+            ).order_by(Check.created_at)
+            
+            result = await session.execute(query)
+            return result.scalars().all()
+
+        except SQLAlchemyError as e:
+            logger.error(f"Error in get_by_date_range: {e}")
+            return []
 
 class ObjectCheckDAO(BaseDAO):
     model = ObjectCheck
@@ -301,9 +332,30 @@ class ObjectCheckDAO(BaseDAO):
         except SQLAlchemyError as e:
             logger.error(f"Error in get_filtered_expenses: {e}")
             return []
+    @staticmethod
+    async def get_by_date_range(
+        session: AsyncSession,
+        start_date: datetime,
+        end_date: datetime,
+        object_id: int | None = None
+    ) -> list[ObjectCheck]:
+        """Get object checks by date range and optionally by object"""
+        query = select(ObjectCheck).where(
+            and_(
+                ObjectCheck.created_at >= start_date,
+                ObjectCheck.created_at <= end_date
+            )
+        )
+        
+        if object_id is not None:
+            query = query.where(ObjectCheck.object_id == object_id)
+            
+        result = await session.execute(query)
+        return result.scalars().all()
 
 class ObjectPhotoDAO(BaseDAO):
     model = ObjectPhoto
+
 
 class WorkerNotificationDAO(BaseDAO):
     model = WorkerNotification
@@ -316,3 +368,23 @@ class MaterialOrderDAO(BaseDAO):
 
 class ProficAccountingDAO(BaseDAO):
     model = ProficAccounting
+    @staticmethod
+    async def get_by_date_range(
+        session: AsyncSession,
+        start_date: datetime,
+        end_date: datetime,
+        object_id: int | None = None
+    ) -> list[ProficAccounting]:
+        """Get profic accounting records by date range and optionally by object"""
+        query = select(ProficAccounting).where(
+            and_(
+                ProficAccounting.created_at >= start_date,
+                ProficAccounting.created_at <= end_date
+            )
+        )
+        
+        if object_id is not None:
+            query = query.where(ProficAccounting.object_id == object_id)
+            
+        result = await session.execute(query)
+        return result.scalars().all()

@@ -6,6 +6,7 @@ from datetime import datetime
 
 from app.bot.common.states import MaterialOrderStates
 from app.bot.common.texts import get_all_texts, get_text
+from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
 from app.db.dao import MaterialOrderDAO
 from app.db.models import User
@@ -14,7 +15,8 @@ from app.db.schemas import MaterialOrderModel, MaterialOrderFilter
 from app.config import settings
 
 material_order_router = Router()
-
+material_order_router.message.filter(RoleFilter([User.Role.worker.value,
+                                          User.Role.foreman.value]))
 
 @material_order_router.message(
     F.text.in_(get_all_texts("material_order_btn")), UserInfo()

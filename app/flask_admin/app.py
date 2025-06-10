@@ -8,6 +8,8 @@ from app.config import setup_logger
 from app.flask_admin.model_view import (CheckModelView, ObjectCheckModelView,
 ObjectModelView, ToolModelView,MaterialReminderModelView,UserModelView,ChecksMenuView,
 DocumentsMenuView, ObjectDocumentModelView, UserDocumentModelView)
+from app.flask_admin.model_view.logs import AdminActionLogView
+from app.flask_admin.model_view.notification import ForemanNotificationView, NotificationsMenuView, WorkerNotificationView
 
 logger = setup_logger("admin_panel")
 from loguru import logger
@@ -16,7 +18,7 @@ from flask import Flask
 from flask_admin import Admin,AdminIndexView
 from flask_admin.form import SecureForm
 from app.db.database import sync_session
-from app.db.models import AdminUser, Check, MaterialReminder, Object, ObjectCheck, ObjectDocument, Tool, User, UserDocument
+from app.db.models import AdminActionLog, AdminUser, Check, ForemanNotification, MaterialReminder, Object, ObjectCheck, ObjectDocument, Tool, User, UserDocument, WorkerNotification
 
 app = Flask(
     __name__,
@@ -87,12 +89,27 @@ admin.add_view(UserModelView(User,sync_session,name = 'Пользователи'
 admin.add_view(ToolModelView(Tool, sync_session, name='Инструменты'))
 admin.add_view(ObjectModelView(Object,sync_session,name='Объекты'))
 admin.add_view(ChecksMenuView(name='Чеки', endpoint='checks_menu'))
-admin.add_view(CheckModelView(Check, sync_session, name='Чеки (без объекта)', endpoint='check'))
-admin.add_view(ObjectCheckModelView(ObjectCheck, sync_session, name='Чеки по объектам', endpoint='objectcheck'))
+admin.add_view(CheckModelView(Check, sync_session, name='Чеки без объекта', endpoint='check',category='Чеки'))
+admin.add_view(ObjectCheckModelView(ObjectCheck, sync_session, name='Чеки по объектам', endpoint='objectcheck',category='Чеки'))
 admin.add_view(MaterialReminderModelView(MaterialReminder, sync_session, name='Остатки материалов'))
 admin.add_view(DocumentsMenuView(name='Документы', endpoint='doc_menu'))
 admin.add_view(UserDocumentModelView(UserDocument, sync_session, name='Документы сотрудников', endpoint='userdocument'))
 admin.add_view(ObjectDocumentModelView(ObjectDocument, sync_session, name='Документы объектов', endpoint='objectdocument'))
-
+admin.add_view(AdminActionLogView(AdminActionLog, sync_session, name='История действий',endpoint='admin_logs'))
+admin.add_view(NotificationsMenuView(name='Уведомления', endpoint='notifications_menu'))
+admin.add_view(WorkerNotificationView(
+    WorkerNotification, 
+    sync_session, 
+    name='Уведомления рабочих', 
+    endpoint='workernotification',
+    category='Уведомления'
+))
+admin.add_view(ForemanNotificationView(
+    ForemanNotification, 
+    sync_session, 
+    name='Уведомления бригадиров', 
+    endpoint='foremannotification',
+    category='Уведомления'
+))
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=2434)

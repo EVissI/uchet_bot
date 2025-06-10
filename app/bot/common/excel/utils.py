@@ -1,6 +1,6 @@
 ﻿import io
 from openpyxl import Workbook
-from openpyxl.styles import Font, Alignment, PatternFill
+from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.worksheet.worksheet import Worksheet
 from datetime import datetime
 
@@ -598,3 +598,167 @@ def _set_column_widths(ws: Worksheet) -> None:
     }
     for col, width in widths.items():
         ws.column_dimensions[col].width = width
+
+def create_profic_report(
+    profic_records: list[ProficAccounting],
+    object_checks: list[ObjectCheck] | None = None,
+    non_object_checks: list[Check] | None = None,
+    start_date: datetime = None,
+    end_date: datetime = None,
+    lang: str = "ru"
+) -> io.BytesIO:
+    """Creates financial report in Excel format"""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Финансовый отчет"
+    
+    # Styles
+    header_style = {
+        'font': Font(bold=True, size=12),
+        'fill': PatternFill(start_color="CCCCCC", end_color="CCCCCC", fill_type="solid"),
+        'alignment': Alignment(horizontal='center', vertical='center'),
+        'border': Border(
+            left=Side(style='thin'),
+            right=Side(style='thin'),
+            top=Side(style='thin'),
+            bottom=Side(style='thin')
+        )
+    }
+    
+    income_style = {
+        'fill': PatternFill(start_color="E2EFDA", end_color="E2EFDA", fill_type="solid"),
+        'alignment': Alignment(horizontal='left', vertical='center')
+    }
+    
+    expense_style = {
+        'fill': PatternFill(start_color="FFF2CC", end_color="FFF2CC", fill_type="solid"),
+        'alignment': Alignment(horizontal='left', vertical='center')
+    }
+
+    # Report header
+    ws.merge_cells('A1:G1')
+    header_cell = ws['A1']
+    header_cell.value = "ФИНАНСОВЫЙ ОТЧЕТ"
+    header_cell.font = Font(bold=True, size=14)
+    header_cell.alignment = Alignment(horizontal='center')
+
+    # Period info
+    if start_date and end_date:
+        ws.merge_cells('A2:G2')
+        period_cell = ws['A2']
+        period_cell.value = f"Период: {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}"
+        period_cell.alignment = Alignment(horizontal='center')
+
+    # Headers
+    headers = [
+        "Дата", "Тип", "Объект", "Описание", 
+        "Сумма", "За свой счет", "Пользователь"
+    ]
+    
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=4, column=col)
+        cell.value = header
+        for style_attr, style_value in header_style.items():
+            setattr(cell, style_attr, style_value)
+
+    # Data
+    current_row = 5
+    total_income = 0
+    total_expense = 0
+    
+    # Process profic records
+    for record in profic_records:
+        row_data = [
+            record.created_at.strftime("%d.%m.%Y"),
+            record.payment_type.value,
+            record.object.name if record.object else "-",
+            record.purpose,
+            record.amount,
+            "-",
+            record.user.user_enter_fio
+        ]
+        
+        style = income_style if record.payment_type == ProficAccounting.PaymentType.income else expense_style
+        
+        for col, value in enumerate(row_data, 1):
+            cell = ws.cell(row=current_row, column=col, value=value)
+            for style_attr, style_value in style.items():
+                setattr(cell, style_attr, style_value)
+        
+        if record.payment_type == ProficAccounting.PaymentType.income:
+            total_income += record.amount
+        else:
+            total_expense += record.amount
+            
+        current_row += 1
+
+    # Process object checks
+    if object_checks:
+        for check in object_checks:
+            row_data = [
+                check.created_at.strftime("%d.%m.%Y"),
+                "Чек (объект)",
+                check.object.name,
+                check.description or "-",
+                check.amount,
+                "Да" if check.own_expense else "Нет",
+                check.user.user_enter_fio
+            ]
+            
+            for col, value in enumerate(row_data, 1):
+                cell = ws.cell(row=current_row, column=col, value=value)
+                for style_attr, style_value in expense_style.items():
+                    setattr(cell, style_attr, style_value)
+            
+            total_expense += check.amount
+            current_row += 1
+
+    # Process personal checks
+    if non_object_checks:
+        for check in non_object_checks:
+            row_data = [
+                check.created_at.strftime("%d.%m.%Y"),
+                "Чек (вне объекта)",  # Changed label
+                "-",
+                check.description or "-",
+                check.amount,
+                "Да" if check.own_expense else "Нет",
+                check.user.user_enter_fio
+            ]
+            
+            for col, value in enumerate(row_data, 1):
+                cell = ws.cell(row=current_row, column=col, value=value)
+                for style_attr, style_value in expense_style.items():
+                    setattr(cell, style_attr, style_value)
+            
+            total_expense += check.amount
+            current_row += 1
+
+    # Totals
+    summary_row = current_row + 2
+    summary_style = {'font': Font(bold=True)}
+    
+    ws.cell(row=summary_row, column=1, value="ИТОГО доходы:").font = Font(bold=True)
+    ws.cell(row=summary_row, column=5, value=total_income).font = Font(bold=True)
+    
+    ws.cell(row=summary_row + 1, column=1, value="ИТОГО расходы:").font = Font(bold=True)
+    ws.cell(row=summary_row + 1, column=5, value=total_expense).font = Font(bold=True)
+    
+    profit = total_income - total_expense
+    ws.cell(row=summary_row + 2, column=1, value="ИТОГО прибыль:").font = Font(bold=True)
+    profit_cell = ws.cell(row=summary_row + 2, column=5, value=profit)
+    profit_cell.font = Font(bold=True)
+    if profit < 0:
+        profit_cell.fill = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
+
+    # Column widths
+    column_widths = [15, 15, 30, 50, 15, 15, 30]
+    for i, width in enumerate(column_widths, 1):
+        ws.column_dimensions[chr(64 + i)].width = width
+
+    # Save to buffer
+    excel_buffer = io.BytesIO()
+    wb.save(excel_buffer)
+    excel_buffer.seek(0)
+    
+    return excel_buffer

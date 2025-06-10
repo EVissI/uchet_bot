@@ -270,6 +270,10 @@ class AdminActionLogModel(BaseModel):
     model:str
     record_id:int 
     details:JSON  
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "from_attributes": True
+    }
 
 class AdminActionLogModel(BaseModel):
     admin_user_id:int = None
@@ -277,3 +281,7 @@ class AdminActionLogModel(BaseModel):
     model:str = None
     record_id:int = None 
     details:JSON = None  
+    model_config = {
+        "arbitrary_types_allowed": True,
+        "from_attributes": True
+    }

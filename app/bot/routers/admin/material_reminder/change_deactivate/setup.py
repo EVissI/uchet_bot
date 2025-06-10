@@ -44,7 +44,8 @@ async def back_to_reminder_control(message: Message, state: FSMContext, user_inf
         reply_markup=AdminMaterialReminderKeyboard.get_material_reminder_control_kb(user_info.language)
     )
 
-@setup_activate_deactivate_reminder_router.callback_query(ItemCardCallback.filter(F.action.in_(['next','prev'])),UserInfo())
+@setup_activate_deactivate_reminder_router.callback_query(ItemCardCallback.filter((F.action.in_(['next','prev'])) &
+                                                                                  (F.keyboard_type.in_(['change_material_riminder','deactivate_riminder']))),UserInfo())
 async def change_deactivate_reminder_card(
     callback: CallbackQuery, 
     callback_data: ItemCardCallback, 

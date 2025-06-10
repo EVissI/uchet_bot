@@ -50,10 +50,8 @@ async def stop_bot():
 
 
 async def main():
-    # регистрация роутеров
     dp.include_router(main_router)
 
-    # регистрация функций
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
     try:

@@ -11,33 +11,15 @@ from app.bot.common.texts import get_text
 from app.bot.common.utils import generate_math_example
 from app.bot.kbds.inline_kbds import LanguageCallback,CheckUsernameCallback, check_username_kbd, lang_select_kbd
 from app.bot.kbds.markup_kbds import MainKeyboard, get_share_contact_keyboard, i_got_acquainted_kbds, stop_kb
-from app.bot.routers.worker.setup_worker_router import main_worker_router
-from app.bot.routers.foreman.setup_foreman_router import main_foreman_router
-from app.bot.routers.admin.admin_setup_router import main_admin_router
-from app.bot.routers.general_routers.object_list_control_kbd import kbd_obj_list_router
-from app.bot.routers.general_routers.profile_router import profile_router
-from app.bot.routers.general_routers.material_reminder import material_router
-from app.bot.routers.general_routers.material_order import material_order_router
-from app.bot.routers.general_routers.transfer_tool import transfer_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
 from app.db.schemas import UserModel,UserDocumentModel
-from app.config import settings
 
-main_router = Router()
-main_router.include_routers(main_worker_router,
-                            main_foreman_router,
-                            main_admin_router,
-                            kbd_obj_list_router,
-                            profile_router,
-                            material_router,
-                            material_order_router,
-                            transfer_router
-                            )
+registration_router = Router()
 
 
-@main_router.message(CommandStart())
+@registration_router.message(CommandStart())
 async def start_command(message: Message,state: FSMContext):
     async with async_session_maker() as session:
         user:User = await UserDAO.find_by_telegram_id(session = session, telegram_id = message.from_user.id)
@@ -49,7 +31,7 @@ async def start_command(message: Message,state: FSMContext):
     if user:
         await message.answer(get_text('start', lang=message.from_user.language_code, name=message.from_user.full_name),reply_markup=MainKeyboard.build_main_kb(role=user.role,lang=user.language))
 
-@main_router.callback_query(LanguageCallback.filter(), StateFilter(RegistrationStates.language))
+@registration_router.callback_query(LanguageCallback.filter(), StateFilter(RegistrationStates.language))
 async def language_select(callback: CallbackQuery,callback_data:LanguageCallback, state: FSMContext):
     lang = callback_data.lang
     await state.update_data(lang=lang)
@@ -63,7 +45,7 @@ async def language_select(callback: CallbackQuery,callback_data:LanguageCallback
         await callback.message.answer(get_text('username_instruction', lang=lang),reply_markup=check_username_kbd(lang=lang))
         return
 
-@main_router.callback_query(CheckUsernameCallback.filter(), StateFilter(RegistrationStates.username))
+@registration_router.callback_query(CheckUsernameCallback.filter(), StateFilter(RegistrationStates.username))
 async def username_check(callback:CallbackQuery,callback_data:CheckUsernameCallback,state:FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
@@ -73,7 +55,7 @@ async def username_check(callback:CallbackQuery,callback_data:CheckUsernameCallb
     if not callback.from_user.username:
         await callback.answer(get_text('has_no_username'), lang=lang)
 
-@main_router.message(F.contact, StateFilter(RegistrationStates.phone))
+@registration_router.message(F.contact, StateFilter(RegistrationStates.phone))
 async def process_contact(message:Message,state:FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
@@ -82,13 +64,13 @@ async def process_contact(message:Message,state:FSMContext):
     await state.set_state(RegistrationStates.fio)
 
 
-@main_router.message(~F.contact, StateFilter(RegistrationStates.phone))
+@registration_router.message(~F.contact, StateFilter(RegistrationStates.phone))
 async def unprocess_contact(message:Message,state:FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
     await message.answer(get_text('its_no_contact', lang=lang))
 
-@main_router.message(F.text, StateFilter(RegistrationStates.fio))
+@registration_router.message(F.text, StateFilter(RegistrationStates.fio))
 async def process_contact(message:Message,state:FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
@@ -96,7 +78,7 @@ async def process_contact(message:Message,state:FSMContext):
     await message.answer(get_text('reques_docs', lang=lang),reply_markup=stop_kb(lang))
     await state.set_state(RegistrationStates.documents)
 
-@main_router.message(F.photo, StateFilter(RegistrationStates.documents))
+@registration_router.message(F.photo, StateFilter(RegistrationStates.documents))
 async def process_photos(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
@@ -109,7 +91,7 @@ async def process_photos(message: Message, state: FSMContext):
                 count=len(photos))
     )
 
-@main_router.message(lambda message: message.text in [
+@registration_router.message(lambda message: message.text in [
     get_text('stop_upload_btn', 'ru'),
     get_text('stop_upload_btn', 'az'),
     get_text('stop_upload_btn', 'tg')
@@ -137,7 +119,7 @@ async def finish_photos(message: Message, state: FSMContext):
     await state.set_state(RegistrationStates.instructions)
 
 
-@main_router.message(lambda message: message.text in [
+@registration_router.message(lambda message: message.text in [
     get_text('i_got_acquainted_btn', 'ru'),
     get_text('i_got_acquainted_btn', 'az'),
     get_text('i_got_acquainted_btn', 'tg')
@@ -153,7 +135,7 @@ async def i_got_acquainted(message: Message, state: FSMContext):
     )
     await state.set_state(RegistrationStates.verification)
 
-@main_router.message(F.text, RegistrationStates.verification)
+@registration_router.message(F.text, RegistrationStates.verification)
 async def verify_answer(message: Message, state: FSMContext):
     data = await state.get_data()
     lang = data.get('lang')
@@ -192,7 +174,7 @@ async def verify_answer(message: Message, state: FSMContext):
         await message.answer(get_text('not_a_number', lang=lang))
 
 
-@main_router.message(Command("chatid"), F.chat.type.in_({"group", "supergroup"}))
+@registration_router.message(Command("chatid"), F.chat.type.in_({"group", "supergroup"}))
 async def get_chat_id(message: Message):
     """Returns current chat ID when called from a group"""
     chat_info = await message.bot.get_chat(message.chat.id)

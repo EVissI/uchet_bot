@@ -5,6 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from app.bot.common.states import AdminPanelStates, MaterialRemainderStates
 from app.bot.common.texts import get_all_texts, get_text
+from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
 from app.db.dao import MaterialReminderDAO
 from app.db.models import User
@@ -13,7 +14,8 @@ from app.db.schemas import MaterialReminderFilter,MaterialReminderModel
 from app.config import settings
 
 material_router = Router()
-
+material_router.message.filter(RoleFilter([User.Role.worker.value,
+                                          User.Role.foreman.value]))
 
 @material_router.message(
     F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()

@@ -562,6 +562,17 @@ def build_item_card_kbd(
                 keyboard_type=keyboard_type
             ).pack()
         ))
+    if keyboard_type == 'tool_view':
+        buttons.append((
+            get_text("back_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="back",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type
+            ).pack()
+        ))
 
     for text, callback in nav_row:
         kb.button(text=text, callback_data=callback)
@@ -602,3 +613,93 @@ def build_accounting_type_kb(lang:str):
     kb.adjust(1)
     return kb.as_markup()
     
+class FinanceReportTypeCallback(CallbackData, prefix="fin_report"):
+    action: str 
+
+class FinanceReportPeriodCallback(CallbackData, prefix="fin_period"):
+    action: str 
+
+class FinanceReportObjectCallback(CallbackData, prefix="fin_object"):
+    object_id: int
+    page: int
+    action: str 
+
+def get_finance_report_type_kbd(lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("report_by_objects_btn", lang),
+        callback_data=FinanceReportTypeCallback(action="by_object").pack()
+    )
+    kb.button(
+        text=get_text("report_no_objects_btn", lang),
+        callback_data=FinanceReportTypeCallback(action="no_object").pack()
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+def get_finance_period_kbd(lang: str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("this_month_btn", lang),
+        callback_data=FinanceReportPeriodCallback(action="month").pack()
+    )
+    kb.button(
+        text=get_text("all_time_btn", lang),
+        callback_data=FinanceReportPeriodCallback(action="all_time").pack()
+    )
+    kb.button(
+        text=get_text("custom_period_btn", lang),
+        callback_data=FinanceReportPeriodCallback(action="custom").pack()
+    )
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=FinanceReportPeriodCallback(action="back").pack()
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+def get_finance_objects_kbd(
+    objects: list[Object], 
+    page: int = 0, 
+    items_per_page: int = 5,
+    lang: str = "ru"
+) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    start_idx = page * items_per_page
+    end_idx = start_idx + items_per_page
+    current_objects = objects[start_idx:end_idx]
+    
+    for obj in current_objects:
+        kb.button(
+            text=obj.name,
+            callback_data=FinanceReportObjectCallback(
+                object_id=obj.id,
+                page=page,
+                action="select"
+            ).pack()
+        )
+    
+    nav_buttons = []
+    if page > 0:
+        nav_buttons.append((
+            "←", 
+            FinanceReportObjectCallback(object_id=0, page=page-1, action="prev").pack()
+        ))
+    if end_idx < len(objects):
+        nav_buttons.append((
+            "→", 
+            FinanceReportObjectCallback(object_id=0, page=page+1, action="next").pack()
+        ))
+    
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=FinanceReportObjectCallback(object_id=0, page=0, action="back").pack()
+    )
+    
+    if nav_buttons:
+        for text, callback in nav_buttons:
+            kb.button(text=text, callback_data=callback)
+            
+    kb.adjust(1)  
+    return kb.as_markup()
