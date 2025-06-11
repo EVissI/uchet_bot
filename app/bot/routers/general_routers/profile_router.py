@@ -43,17 +43,15 @@ async def process_profile_callback(message: Message, user_info: User):
 
 @profile_router.callback_query(ProfileCallback.filter(F.action == "tools"), UserInfo())
 async def process_tools_btn(callback: CallbackQuery, user_info: User):
-    await callback.message.delete()
     async with async_session_maker() as session:
         tools = await ToolDAO.find_all(
             session, ToolFilterModel(user_id=user_info.telegram_id)
         )
 
         if not tools:
-            await callback.answer(get_text("no_tools", lang=user_info.language))
+            await callback.message.answer(get_text("no_tools", lang=user_info.language))
             return
-
-        # Get first tool
+        await callback.message.delete()
         current_tool = tools[0]
         total_pages = len(tools)
 

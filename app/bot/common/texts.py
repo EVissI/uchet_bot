@@ -6,8 +6,8 @@ def get_text(text_code: str, lang: str = "ru", **kwargs) -> str:
     match lang:
         case "ru":
             text = TEXTS_TRANSLITE["ru"].get(text_code, text_code)
-        case "az":
-            text = TEXTS_TRANSLITE["az"].get(text_code, text_code)
+        case "uz":
+            text = TEXTS_TRANSLITE["uz"].get(text_code, text_code)
         case "tg":
             text = TEXTS_TRANSLITE["tg"].get(text_code, text_code)
         case _:
@@ -18,7 +18,7 @@ def get_text(text_code: str, lang: str = "ru", **kwargs) -> str:
 
 
 def get_all_texts(text_code: str) -> list[str]:
-    __languages = ["ru", "az", "tg"]
+    __languages = ["ru", "uz", "tg"]
     result = []
     for lang in __languages:
         result.append(TEXTS_TRANSLITE[lang].get(text_code, text_code))
@@ -33,7 +33,7 @@ TEXTS_TRANSLITE = {
         "start": "Привет, {name}! Я бот",
         "language_select": "Выберите язык:",
         "language_ru": "Русский",
-        "language_az": "Азербайджанский",
+        "language_uz": "Узбекский",
         "language_tg": "Таджикский",
         "request_contact": "Пожалуйста, поделитесь своим номером телефона, с помощью кнопки ниже.",
         "username_instruction": """
@@ -574,552 +574,549 @@ TEXTS_TRANSLITE = {
         "total_expense": "Итого расходы:",
         "total_profit": "Итого прибыль:",
     },
-    "az": {
-        "reminder_delete_canceled": "Qalıqların silinməsi ləğv edildi",
-        "reminder_deleted": "Qalıqlar deaktiv edildi",
-        "reminder_not_found": "Qalıqlar tapılmadı",
-        "start": "Salam, {name}! Mən botam",
-        "language_select": "Dil seçin:",
-        "language_ru": "Rus dili",
-        "language_az": "Azərbaycan dili",
-        "language_tg": "Tacik dili",
-        "request_contact": "Zəhmət olmasa, aşağıdakı düymə ilə telefon nömrənizi paylaşın.",
-        "username_instruction": """
-Botdan istifadə etmək üçün istifadəçi adı yaratmalısınız. Təlimatlara əməl edin
+    "uz": {
+            "reminder_delete_canceled": "Qoldiqlarni o'chirish bekor qilindi",
+    "reminder_deleted": "Qoldiqlar faolsizlantirildi",
+    "reminder_not_found": "Qoldiqlar topilmadi",
+    "start": "Salom, {name}! Men botman",
+    "language_select": "Tilni tanlang:",
+    "language_ru": "Ruscha",
+    "language_uz": "O'zbek",
+    "language_tg": "Tojikcha",
+    "request_contact": "Iltimos, pastdagi tugma orqali telefon raqamingizni ulashing.",
+    "username_instruction": """
+Botdan foydalanish uchun foydalanuvchi nomi yaratishingiz kerak. Ko'rsatmalarga rioya qiling
 
-<b>Telegram-da istifadəçi adı necə yaradılır:</b>
+<b>Telegram-da foydalanuvchi nomini qanday yaratish mumkin:</b>
 
-1. Telegram parametrlərini açın
-2. Profilinizi düzəldin
-3. "İstifadəçi adı" sahəsini seçin
-4. İstədiyiniz istifadəçi adını daxil edin
-5. Saxlamaq üçün ✓ işarəsinə toxunun
+1. Telegram sozlamalarini oching
+2. "Profilni tahrirlash" tugmasini bosing
+3. "Foydalanuvchi nomi" maydonini bosing
+4. Xohlagan foydalanuvchi nomingizni kiriting
+5. Saqlash uchun ✓ belgisini bosing
 
-İstifadəçi adını yaratdıqdan sonra aşağıdakı "Yoxla" düyməsinə basın.""",
-        "check": "Yoxla",
-        "create_username": "İstifadəçi adı yarat",
-        "has_no_username": "İstifadəçi adı yaratmaq üçün təlimatlara əməl edin",
-        "share_contact_btn": "Əlaqəni paylaş 📱",
-        "no_contact": "Klaviaturadan istifadə edin",
-        "cancel": "Ləğv et",
-        "confirm": "Təsdiq et",
-        "its_no_contact": "Zəhmət olmasa, klaviaturadakı düymədən istifadə edin",
-        "reques_docs": "Söhbətə sənəd şəkilləri göndərin. Bütün sənədləri yüklədikdən sonra 'Dayandır' düyməsinə basın.",
-        "stop_upload_btn": "Dayandır",
-        "i_got_acquainted_btn": "Məlumat aldım",
-        "i_got_acquainted": "Bütün məlumatları aldınızsa, 'Məlumat aldım' düyməsinə basın",
-        "reques_fio": "Ad, soyad və ata adınızı daxil edin",
-        "ru": "Rus dili",
-        "az": "Azərbaycan dili",
-        "tg": "Tacik dili",
-        "photo_received": "Şəkil alındı. Ümumi yüklənib: {count}",
-        "photos_saved": "Bütün şəkillər ({count}) uğurla saxlanıldı!",
-        "no_photos": "Heç bir şəkil yükləməmisiniz",
-        "solve_example": "İnsan olduğunuzu təsdiqləmək üçün nümunəni həll edin:\n{example}",
-        "verification_success": "Təsdiq uğurla başa çatdı! Qeydiyyat tamamlandı.",
-        "wrong_answer": "Səhv cavab. Başqa nümunəni həll edin:\n{example}",
-        "not_a_number": "Zəhmət olmasa, ədəd daxil edin.",
-        "report_accepted": "Hesabat qəbul edildi",
-        "report_error": "Mesajın göndərilməsində xəta baş verdi.",
-        "profile_btn": "Profil",
-        "my_objects_btn": "Mənim obyektlərim",
-        "material_remainder_btn": "Material qalıqları",
-        "material_order_btn": "Material sifarişi",
-        "info_btn": "Məlumat",
-        "instructions": "Botu istifadə etmək üçün təlimat",
-        "rules": "İstifadə qaydaları",
-        "profile_info": (
-            "👤 <b>Profil</b>\n\n"
-            "🆔 Telegram ID: <code>{telegram_id}</code>\n"
-            "📧 İstifadəçi adı: @{username}\n"
-            "👨‍💼 Ad, Soyad: {full_name}\n"
-            "📱 Telefon: {phone}\n"
-            "📊 Status: {role}"
-        ),
-        "tools_list_btn": "Alətlər",
-        "language_select_btn": "Dil seçimi",
-        "rules_btn": "Qaydalar",
-        "no_tools": "Sizə heç bir alət təyin edilməyib",
-        "tools_list_header": "🛠 <b>Təyin edilmiş alətlər siyahısı:</b>",
-        "tool_item": "<b>{name}</b>\nid:<code>{tool_id}</code>\n📝 Təsvir: <i>{description}</i>",
-        "no_description": "Təsvir yoxdur",
-        "lang_has_changed": "Botun dili dəyişdirildi",
-        "no_objects": "Sizin üçün heç bir obyekt mövcud deyil",
-        "objects_list_header": "🏗 <b>Sizin obyektləriniz:</b>",
-        "object_item": "🔹 <b>{name}</b>\n📝 <i>{description}</i>",
-        "navigation_btn": "📍 Naviqasiya",
-        "documentation_btn": "📄 Sənədlər",
-        "notify_object_btn": "📢 Obyekti xəbərdar et",
-        "object_photo_btn": "📸 Obyektdən şəkil",
-        "object_checks_btn": "🧾 Çek qeydi",
-        "no_navigation": "Bu obyekt üçün naviqasiya əlavə edilməyib",
-        "enter_notification": "Bütün obyekt iştirakçılarına göndəriləcək mesajı daxil edin",
-        "notification_format": (
-            "📢 <b>{object_id} obyektindən xəbərdarlıq</b>\n\n"
-            "👤 <b>Göndərən:</b> {sender_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "💬 <b>Mesaj:</b>\n<i>{message}</i>"
-        ),
-        "notification_sent": "✅ Bütün iştirakçılara xəbərdar edildi",
-        "send_object_photo": "📸 Obyektdən şəkil göndərin",
-        "enter_photo_description": "📝 Şəkilə təsvir əlavə edin",
-        "object_photo_format": (
-            "📸 <b>Obyektdən şəkil #{object_id}</b>\n\n"
-            "👤 <b>Göndərən:</b> {worker_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "📝 <b>Təsvir:</b>\n<i>{description}</i>"
-        ),
-        "photo_sent": "✅ Şəkil uğurla göndərildi",
-        "send_photo_only": "❌ Zəhmət olmasa, yalnız şəkil göndərin",
-        "send_check_photo_and_description": "📸 Çeki və təsvirini göndərin",
-        "enter_check_amount": "💰 Çek məbləğini daxil edin (yalnız rəqəmlər)",
-        "invalid_amount": "❌ Məbləğin formatı yanlışdır. Məsələn: 1234.56",
-        "check_format": (
-            "🧾 <b>{object_id} obyektindən çek</b>\n\n"
-            "👤 <b>Göndərən:</b> {worker_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "📝 <b>Təsvir:</b> <i>{description}</i>\n"
-            "💰 <b>Məbləğ:</b> {amount} AZN"
-        ),
-        "check_saved": "✅ Çek uğurla saxlanıldı",
-        "enter_material_order": "📝 Lazım olan materialları təsvir edin",
-        "enter_delivery_date": "📅 Çatdırılma tarixini daxil edin (format: GG.AA.İİİİ)",
-        "date_must_be_future": "❌ Çatdırılma tarixi gələcəkdə olmalıdır",
-        "invalid_date": "❌ Tarix yanlışdır",
-        "invalid_date_format": (
-            "❌ Tarix formatı yanlışdır\n\n"
-            "Format: GG.AA.İİİİ\n"
-            "Məsələn: 25.05.2024"
-        ),
-        "material_order_format": (
-            "🛍 <b>Material sifarişi</b>\n\n"
-            "👤 <b>Sifarişçi:</b> {worker_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "📝 <b>Tələb olunan materiallar:</b>\n<i>{description}</i>\n"
-            "📅 <b>Çatdırılma tarixi:</b> <i>{delivery_date}</i>"
-        ),
-        "order_saved": "✅ Material sifarişi uğurla göndərildi",
-        "send_material_photo": "📸 Materialın şəkilini göndərin",
-        "enter_material_description": "📝 Material təsvirini daxil edin",
-        "enter_storage_location": "📍 Saxlanma yerini daxil edin",
-        "material_remainder_format": (
-            "📦 <b>Material qalıqları</b>\n\n"
-            "📝 <b>Təsvir:</b> <i>{description}</i>\n"
-            "📍 <b>Saxlanma yeri:</b> <i>{location}</i>"
-        ),
-        "material_saved": "✅ Material məlumatı saxlanıldı",
-        "transfer_tool_invalid_format": "Əmr formatı yanlışdır. İstifadə edin: /transfer_tool <alət_ID> <qəbul edən> <təsvir>",
-        "transfer_tool_invalid_tool_id": "Alət ID rəqəm olmalıdır.",
-        "transfer_tool_not_found": "Daxil edilmiş alət tapılmadı.",
-        "transfer_tool_format": (
-            "Alətin ötürülməsi:\n"
-            "Alət: {tool_name} (ID: {tool_id})\n"
-            "Qəbul edən: {recipient}\n"
-            "Göndərən: {sender}\n"
-            "Təsvir: {description}"
-        ),
-        "transfer_tool_request_sent": "Alətin ötürülməsi üçün sorğu göndərildi.",
-        "accept_tool_btn": "alıb",
-        "transfer_tool_receive_prompt": "{tool_name} aləti sizə göndərildi. Almaq üçün düyməyə toxunun.",
-        "transfer_tool_recipient_not_found": "Belə bir istifadəçi tapılmadı.",
-        "transfer_tool_invalid_recipient": "Qəbul edən @istifadəçi adı və ya telegram_id ilə qeyd olunmalıdır.",
-        "tool_received_confirmation": "Alət alındı!",
-        "objects_btn": "Obyektlər",
-        "report_empty_text": "Zəhmət olmasa, /report əmri sonrası hesabat mətni daxil edin.",
-        "report_format": (
-            "Yeni hesabat {sender} ({username})-dən:\n\n"
-            "{report}"
-        ),
-        "report_sent_confirmation": "Hesabatınız göndərildi.",
-        "foreman_workers_btn": "İşçilər",
-        "foreman_documentation_btn": "Sənədlər",
-        "foreman_photos_btn": "Obyektdən şəkillər",
-        "foreman_handover_btn": "Obyekti təhvil ver",
-        "foreman_procurement_btn": "Alqı-satqı",
-        "foreman_receipts_btn": "Çek qeydi",
-        "foreman_material_balance_btn": "Material balansı",
-        "foreman_info_btn": "Məlumat",
-        "foreman_tools_list_btn": "Alətlər siyahısı",
-        "foreman_mass_mailing_btn": "Obyekt üzrə kütləvi göndərmə",
-        "foreman_offsite_accounting_btn": "Obyektdən kənar uçot",
-        "foreman_export_xlsx_btn": "Obyekt üzrə xlsx ixrac",
-        "select_object_prompt": "Xahiş edirik, işçilərin siyahısı üçün obyekt seçin",
-        "no_objects": "Sizin üçün obyekt yoxdur",
-        "back_btn": "Geri",
-        "no_object_members": "Seçilmiş obyekt üçün işçi təyin edilməyib",
-        "worker_info_format": (
-            "Telegram ID: {telegram_id}\n"
-            "İstifadəçi adı: {username}\n"
-            "Ad, Soyad: {full_name}\n"
-            "Telefon: {phone}\n"
-            "Status: {status}\n"
-            "Obyekt: {object_name}"
-        ),
-        "select_object_action": "Obyektdə əməliyyat seçin",
-        "no_object_documents": "Bu obyekt üçün sənəd əlavə edilməyib",
-        "document_info_format": (
-            "Sənəd növü: {document_type}\n"
-            "Obyekt: {object_name}\n"
-        ),
-        "enter_handover_description": "Obyekti təhvil vermək üçün təsvir daxil edin:",
-        "object_not_found": "Obyekt tapılmadı",
-        "handover_format": (
-            "🏗 <b>Obyekti təhvil vermə</b>\n\n"
-            "🏢 Obyekt: {object_name} (ID: {object_id})\n"
-            "👤 Başçı: {foreman_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "📝 <b>Təsvir:</b>\n{description}"
-        ),
-        "handover_sent": "✅ Obyekt təhvil verilməsi məlumatı göndərildi",
-        "own_expense_true_btn": "Öz xərci - ✔",
-        "own_expense_false_btn": "Öz xərci - ❌",
-        "expense_sheet_name": "Xərc cədvəli",
-        "date_column": "Tarix",
-        "description_column": "Təsvir",
-        "amount_column": "Məbləğ",
-        "expense_type_column": "Xərc növü",
-        "user_column": "İstifadəçi",
-        "own_expense": "Öz xərci",
-        "company_expense": "Şirkət xərci",
-        "total_amount": "Cəmi:",
-        "prev_page_btn": "Əvvəlki",
-        "next_page_btn": "Növbəti",
-        "mock_data_cleared": "Bütün test məlumatları silindi",
-        "invalid_photo_format": "Zəhmət olmasa, şəkil göndərin",
-        "no_workers_found": "Mövcud işçi tapılmadı",
-        "expense_report_caption": "Xərc hesabatı\nDövr: {start_date} - {end_date}\nNöv: {expense_type}",
-        "no_expenses_found": "Verilmiş dövrdə xərc tapılmadı",
-        "all_expenses_btn": "Bütün xərclər",
-        "own_expenses_btn": "Öz xərclərim",
-        "company_expenses_btn": "Şirkət xərci",
-        "enter_start_date": "📅 Hesabat dövrünün başlanğıc tarixini daxil edin (GG.AA.İİİİ formatında)",
-        "enter_end_date": "📅 Hesabat dövrünün son tarixini daxil edin (GG.AA.İİİİ formatında)",
-        "select_expense_type": "Xərc növünü seçin:",
-        "invalid_date_format": "❌ Tarix formatı yanlışdır. Məsələn: 25.12.2024",
-        "expense_report_caption": (
-            "📊 Xərc hesabatı\n"
-            "📅 Dövr: {start_date} - {end_date}\n"
-            "💰 Xərc növü: {expense_type}"
-        ),
-        "report_processing": "⏳ Hesabat hazırlanır...",
-        "report_generation_error": "❌ Hesabat hazırlanarkən xəta",
-        "all_expenses": "Bütün xərclər",
-        "own_expenses": "Öz xərclərim",
-        "company_expenses": "Şirkət xərci",
-        "excel_date_column": "Tarix",
-        "excel_description_column": "Təsvir",
-        "excel_amount_column": "Məbləğ",
-        "excel_expense_type_column": "Xərc növü",
-        "excel_user_column": "İstifadəçi",
-        "excel_total_row": "CƏMİ:",
-        "excel_sheet_name": "Xərc hesabatı",
-        "reminder_out_btn": "Obyektdən kənar çek qeydi",
-        "tools_list_caption": "📊 Alət hesabatı\n💼 Növ: {tool_status}",
-        "select_tool_status": "Alət növünü seçin:",
-        "all_tools": "Bütün alətlər",
-        "in_work_tools": "İşləyən alətlər",
-        "free_tools": "Boş alətlər",
-        "repair_tools": "Təmir alətləri",
-        "no_tools_found": "❌ Alətlər tapılmadı",
-        "excel_tool_name": "Ad",
-        "excel_tool_description": "Təsvir",
-        "excel_tool_status": "Status",
-        "excel_tool_user": "Təyinatlı",
-        "excel_tool_date": "Təyinat tarixi",
-        "excel_tools_sheet_name": "Alətlər siyahısı",
-        "no_users_found": "❌ İstifadəçi tapılmadı",
-        "no_objects_found": "❌ Obyekt tapılmadı",
-        "no_members_found": "❌ Obyektdə iştirakçı yoxdur",
-        "select_object_for_notification": "📋 Bildiriş üçün obyekt seçin:",
-        "enter_notification_text": "📝 Bildiriş mətnini daxil edin:",
-        "sending_notifications_status": "📤 Göndərilir... {sent}/{total}",
-        "notifications_sent_status": "✅ Bildiriş göndərildi\n\n📊 Ümumi: {total}\n✅ Uğurlu: {success}\n❌ Uğursuz: {failed}",
-        "admin_notify_all_users_inline_btn": "📢 Bütün istifadəçilər",
-        "admin_notify_object_inline_btn": "🏗 Obyekt üzrə",
-        "admin_notify_all_user_w8_message": "📝 Bütün istifadəçilərə göndərmək üçün mətn daxil edin:",
-        "transfer_tool_force_format": (
-            "🔄 Məcburi alət ötürülməsi\n"
-            "🛠 Alət: {tool_name} (ID: {tool_id})\n"
-            "👤 Qəbul edən: {recipient}\n"
-            "👨‍💼 Administrator: {admin}\n"
-            "📝 Təsvir: {description}"
-        ),
-        "transfer_tool_force_complete": "✅ Alət məcburi ötürüldü",
-        "transfer_tool_force_received": "🔄 Administrator {admin} sizə {tool_name} alətini ötürdü",
-        "transfer_tool_admin_format": (
-            "Əmr formatı:\n"
-            "/transfer_tool <alət_ID> <qəbul edən> <təsvir>\n"
-            "Məcburi ötürmə (yalnız adminlər üçün):\n"
-            "/transfer_tool <alət_ID> <qəbul edən> -f <təsvir>"
-        ),
-        "admin_notify": "Göndərmə növünü seçin:",
-        "create_object_name": "📝 Obyekt adını daxil edin:",
-        "operation_cancelled": "❌ Əməliyyat ləğv olundu",
-        "caption_required": "❌ Şəkilə təsvir əlavə edilməlidir",
-        "select_document_type": "Sənəd növünü seçin:",
-        "doc_type_estimate": "📊 Qiymət təklifi",
-        "doc_type_technical": "📋 Texniki şərt",
-        "doc_type_contacts": "📞 Müştəri əlaqələri",
-        "create_object_success": "✅ Obyekt uğurla yaradıldı",
-        "notification_sent_to_all": "✅ Bütün istifadəçilərə bildiriş göndərildi",
-        "create_object_no_documents": "❌ Sənədlər yüklənmədi",
-        "create_object_description": "📝 Obyekt təsvirini daxil edin:",
-        "pagination_error": "❌ Səhifə yenilənərkən xəta",
-        "objects_list": "📋 Obyektlərin siyahısı:",
-        "object_name": "Obyekt: {name}",
-        "updated_success": "✅ Məlumatlar uğurla yeniləndi",
-        "error_occurred": "❌ Xəta baş verdi",
-        "document_upload_complete": "✅ Sənəd yükləndi",
-        "document_type_selected": "✅ Sənəd növü seçildi",
-        "document_saved": "✅ Sənəd saxlanıldı",
-        "upload_more_documents": "📤 Növbəti sənədi yükləyin və ya 'Dayandır' düyməsinə basın",
-        "foreman_panel": "👨‍💼 Başçı paneli",
-        "object_members_header": "👥 Obyekt iştirakçıları:",
-        "member_item_format": (
-            "👤 {full_name}\n"
-            "📱 {phone}\n"
-            "📧 @{username}"
-        ),
-        "admin_panel": "👨‍💼 Administrator paneli",
-        "object_control": "🏗 Obyektlərin idarəsi",
-        "user_control": "👥 İstifadəçilərin idarəsi",
-        "create_object_btn": "Obyekt yarat",
-        "edit_object_btn": "✏️ Obyekti düzəlt",
-        "delete_object_btn": "Obyekti sil",
-        "access_denied": "❌ Giriş icazəsi yoxdur",
-        "invalid_input": "❌ Yanlış daxil edilib",
-        "action_cancelled": "❌ Əməliyyat ləğv olundu",
-        "try_again": "🔄 Yenidən cəhd edin",
-        "processing": "⏳ Emal olunur...",
-        "saving_data": "💾 Məlumat saxlanılır...",
-        "loading_data": "📥 Məlumat yüklənir...",
-        "tool_status_active": "✅ İşləyir",
-        "tool_status_free": "🆓 Boş",
-        "tool_status_repair": "🔧 Təmir olunur",
-        "tool_transfer_success": "✅ Alət uğurla ötürüldü",
-        "object_active": "✅ Aktiv",
-        "object_completed": "🏁 Tamamlandı",
-        "object_suspended": "⏸ Dayandırıldı",
-        "confirm_action": "Əməliyyatı təsdiqləyin:",
-        "confirm_delete": "❗️ Silinməni təsdiqləyin",
-        "confirm_cancel": "❗️ Ləğvi təsdiqləyin",
+Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""",
+    "check": "Tekshirish",
+    "create_username": "Foydalanuvchi nomi yaratish",
+    "has_no_username": "Foydalanuvchi nomi yaratish uchun ko'rsatmalarga amal qiling",
+    "share_contact_btn": "Kontaktni ulashish 📱",
+    "no_contact": "Klaviaturadan foydalaning",
+    "cancel": "Bekor qilish",
+    "confirm": "Tasdiqlash",
+    "its_no_contact": "Iltimos, klaviaturadagi tugmadan foydalaning",
+    "reques_docs": "Hujjat rasmlarini chatga yuboring. Barcha hujjatlarni yuklagan bo'lsangiz 'To'xtatish' tugmasini bosing",
+    "stop_upload_btn": "To'xtatish",
+    "i_got_acquainted_btn": "Men tanishdim",
+    "i_got_acquainted": "Barcha ma'lumotlar bilan tanishgan bo'lsangiz 'Men tanishdim' tugmasini bosing",
+    "reques_fio": "FIO kiriting",
+    "ru": "Ruscha",
+    "az": "Ozarbayjoncha",
+    "tg": "Tojikcha",
+    "photo_received": "Rasm qabul qilindi. Jami yuklandi: {count}",
+    "photos_saved": "Barcha rasmlar ({count}) muvaffaqiyatli saqlandi!",
+    "no_photos": "Siz hech qanday rasm yuklamadingiz",
+    "solve_example": "Inson ekanligingizni tasdiqlash uchun misolni yeching:\n{example}",
+    "verification_success": "Tekshirish muvaffaqiyatli yakunlandi! Ro'yxatdan o'tish tugallandi.",
+    "wrong_answer": "Noto'g'ri javob. Boshqa misolni yeching:\n{example}",
+    "not_a_number": "Iltimos, raqam kiriting.",
+    "report_accepted": "Hisobot qabul qilindi",
+    "report_error": "Xabarni yuborishda xatolik yuz berdi.",
+    "profile_btn": "Profil",
+    "my_objects_btn": "Mening obyektlarim",
+    "material_remainder_btn": "Material qoldiqlari",
+    "material_order_btn": "Material buyurtmasi",
+    "info_btn": "Ma'lumot",
+    "instructions": "Botdan foydalanish bo'yicha ko'rsatmalar",
+    "rules": "Foydalanish qoidalari",
+    "profile_info": (
+        "👤 <b>Profil</b>\n\n"
+        "🆔 Telegram ID: <code>{telegram_id}</code>\n"
+        "📧 Foydalanuvchi nomi: @{username}\n"
+        "👨‍💼 FIO: {full_name}\n"
+        "📱 Telefon: {phone}\n"
+        "📊 Status: {role}"
+    ),
+    "tools_list_btn": "Asboblar",
+    "language_select_btn": "Til tanlash",
+    "rules_btn": "Qoidalar",
+    "no_tools": "Sizga hech qanday asbob biriktirilmagan",
+    "tools_list_header": "🛠 <b>Biriktirilgan asboblar ro'yxati:</b>",
+    "tool_item": "<b>{name}</b>\nid:<code>{tool_id}</code>\n📝 Tavsif: <i>{description}</i>",
+    "no_description": "Tavsif mavjud emas",
+        "lang_has_changed": "Bot tili o'zgartirildi",
+    "no_objects": "Sizda mavjud obyektlar yo'q",
+    "objects_list_header": "🏗 <b>Sizning obyektlaringiz:</b>",
+    "object_item": "🔹 <b>{name}</b>\n📝 <i>{description}</i>",
+    "navigation_btn": "📍 Navigatsiya",
+    "documentation_btn": "📄 Hujjatlar",
+    "notify_object_btn": "📢 Obyektni xabardor qilish",
+    "object_photo_btn": "📸 Obyektdan foto",
+    "object_checks_btn": "🧾 Cheklar hisobi",
+    "no_navigation": "Bu obyekt uchun navigatsiya qo'shilmagan",
+    "enter_notification": "Obyekt ishtirokchilariga yuborish uchun xabarni kiriting",
+    "notification_format": (
+        "📢 <b>{object_id} obyektidan xabarnoma</b>\n\n"
+        "👤 <b>Yuboruvchi:</b> {sender_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "💬 <b>Xabar:</b>\n<i>{message}</i>"
+    ),
+    "notification_sent": "✅ Xabarnoma obyektning barcha ishtirokchilariga yuborildi",
+    "send_object_photo": "📸 Obyektdan foto yuboring",
+    "enter_photo_description": "📝 Fotoga izoh kiriting",
+    "object_photo_format": (
+        "📸 <b>#{object_id} obyektdan foto</b>\n\n"
+        "👤 <b>Yuboruvchi:</b> {worker_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Izoh:</b>\n<i>{description}</i>"
+    ),
+    "photo_sent": "✅ Foto muvaffaqiyatli yuborildi",
+    "send_photo_only": "❌ Iltimos, faqat foto yuboring",
+    "send_check_photo_and_description": "📸 Chek fotosi va izohini yuboring",
+    "enter_check_amount": "💰 Chek summasini kiriting (faqat raqamlar)",
+    "invalid_amount": "❌ Summa formati noto'g'ri. Misol: 1234.56",
+    "check_format": (
+        "🧾 <b>#{object_id} obyektdan chek</b>\n\n"
+        "👤 <b>Yuboruvchi:</b> {worker_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Izoh:</b> <i>{description}</i>\n"
+        "💰 <b>Summa:</b> {amount} so'm"
+    ),
+    "check_saved": "✅ Chek muvaffaqiyatli saqlandi",
+    "enter_material_order": "📝 Kerakli materiallarni tavsiflang",
+    "enter_delivery_date": "📅 Yetkazib berish sanasini ko'rsating (format: KK.OO.YYYY)",
+    "date_must_be_future": "❌ Yetkazib berish sanasi kelajakda bo'lishi kerak",
+    "invalid_date": "❌ Noto'g'ri sana",
+    "invalid_date_format": (
+        "❌ Sana formati noto'g'ri\n\n"
+        "Format: KK.OO.YYYY\n"
+        "Misol: 25.05.2024"
+    ),
+    "material_order_format": (
+        "🛍 <b>Material buyurtmasi</b>\n\n"
+        "👤 <b>Buyurtmachi:</b> {worker_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Kerakli materiallar:</b>\n<i>{description}</i>\n"
+        "📅 <b>Yetkazib berish sanasi:</b> <i>{delivery_date}</i>"
+    ),
+    "order_saved": "✅ Material buyurtmasi muvaffaqiyatli yuborildi",
+    "send_material_photo": "📸 Material fotosini yuboring",
+    "enter_material_description": "📝 Material tavsifini kiriting",
+    "enter_storage_location": "📍 Saqlash joyini ko'rsating",
+    "material_remainder_format": (
+        "📦 <b>Material qoldig'i</b>\n\n"
+        "📝 <b>Tavsif:</b> <i>{description}</i>\n"
+        "📍 <b>Saqlash joyi:</b> <i>{location}</i>"
+    ),
+    "material_saved": "✅ Material haqidagi ma'lumot saqlandi",
+    "transfer_tool_invalid_format": "Buyruq formati noto'g'ri. Foydalaning: /transfer_tool <asbob_ID> <oluvchi> <izoh>",
+    "transfer_tool_invalid_tool_id": "Asbob ID raqam bo'lishi kerak",
+    "transfer_tool_not_found": "Ko'rsatilgan ID bilan asbob topilmadi",
+    "transfer_tool_format": (
+        "Asbob uzatish:\n"
+        "Asbob: {tool_name} (ID: {tool_id})\n"
+        "Oluvchi: {recipient}\n"
+        "Yuboruvchi: {sender}\n"
+        "Izoh: {description}"
+    ),
+    "transfer_tool_request_sent": "Asbobni uzatish so'rovi yuborildi",
+    "accept_tool_btn": "asbobni qabul qilish",
+    "transfer_tool_receive_prompt": "Sizga {tool_name} asbobi uzatilmoqda. Qabul qilish uchun quyidagi tugmani bosing",
+    "transfer_tool_recipient_not_found": "Bunday nomli foydalanuvchi topilmadi",
+    "transfer_tool_invalid_recipient": "Oluvchi @username yoki telegram_id orqali ko'rsatilishi kerak",
+    "tool_received_confirmation": "Asbob qabul qilindi!",
+    "objects_btn": "Obyektlar",
+    "report_empty_text": "Iltimos, /report buyrug'idan keyin hisobot matnini kiriting",
+    "report_format": (
+        "Yangi hisobot {sender}dan ({username}):\n\n"
+        "{report}"
+    ),
+    "report_sent_confirmation": "Hisobotingiz yuborildi",
+    "foreman_workers_btn": "Ishchilar",
+    "foreman_documentation_btn": "Hujjatlar",
+    "foreman_photos_btn": "Obyektdan fotolar",
+    "foreman_handover_btn": "Obyektni topshirish",
+    "foreman_procurement_btn": "Xarid",
+    "foreman_receipts_btn": "Cheklar hisobi",
+    "foreman_material_balance_btn": "Material balansi",
+    "foreman_info_btn": "Ma'lumot",
+    "foreman_tools_list_btn": "Asboblar ro'yxati",
+    "foreman_mass_mailing_btn": "Obyekt bo'yicha tarqatma",
+    "foreman_offsite_accounting_btn": "Obyektdan tashqari hisob",
+    "foreman_export_xlsx_btn": "Obyekt bo'yicha xlsx eksport",
+    "select_object_prompt": "Iltimos, ishchilar ro'yxatini ko'rish uchun obyektni tanlang",
+    "back_btn": "Orqaga",
+    "no_object_members": "Tanlangan obyektga biriktirilgan ishchilar yo'q",
+    "worker_info_format": (
+        "Telegram ID: {telegram_id}\n"
+        "Foydalanuvchi nomi: {username}\n"
+        "FIO: {full_name}\n"
+        "Telefon: {phone}\n"
+        "Status: {status}\n"
+        "Obyekt: {object_name}"
+    ),
+    "select_object_action": "Obyekt bilan amalni tanlang",
+    "no_object_documents": "Bu obyekt uchun hech qanday hujjat qo'shilmagan",
+    "document_info_format": (
+        "Hujjat turi: {document_type}\n"
+        "Obyektga biriktirilgan: {object_name}\n"
+    ),
+    "enter_handover_description": "Obyektni topshirish tavsifini kiriting:",
+    "object_not_found": "Obyekt topilmadi",
+    "handover_format": (
+        "🏗 <b>Obyektni topshirish</b>\n\n"
+        "🏢 Obyekt: {object_name} (ID: {object_id})\n"
+        "👤 Prоrab: {foreman_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Tavsif:</b>\n{description}"
+    ),
+    "handover_sent": "✅ Obyektni topshirish haqidagi ma'lumot muvaffaqiyatli yuborildi",
+    "own_expense_true_btn": "O'z hisobidan - ✔",
+    "own_expense_false_btn": "O'z hisobidan - ❌",
+    "expense_sheet_name": "Xarajatlar hisoboti",
+    "date_column": "Sana",
+    "description_column": "Tavsif",
+    "amount_column": "Summa",
+    "expense_type_column": "Xarajat turi",
+    "user_column": "Foydalanuvchi",
+    "own_expense": "O'z hisobidan",
+    "company_expense": "Kompaniya hisobidan",
+    "total_amount": "Jami:",
+    "prev_page_btn": "Oldingi",
+    "next_page_btn": "Keyingi",
+    "mock_data_cleared": "Barcha sinov ma'lumotlari o'chirildi",
+    "invalid_photo_format": "Iltimos, foto yuboring",
+    "no_workers_found": "Ma'lumotlar bazasida mavjud ishchilar yo'q",
+    "expense_report_caption": "Xarajatlar hisoboti\nDavr: {start_date} - {end_date}\nTur: {expense_type}",
+    "no_expenses_found": "Ko'rsatilgan davr uchun xarajatlar topilmadi",
+    "all_expenses_btn": "Barcha xarajatlar",
+    "own_expenses_btn": "O'z hisobidan",
+    "company_expenses_btn": "Kompaniya hisobidan",
+    "enter_start_date": "📅 Hisobot davrining boshlanish sanasini kiriting (format: KK.OO.YYYY)",
+    "enter_end_date": "📅 Hisobot davrining tugash sanasini kiriting (format: KK.OO.YYYY)",
+    "select_expense_type": "Eksport uchun xarajat turini tanlang:",
+    "invalid_date_format": "❌ Sana formati noto'g'ri. Format: KK.OO.YYYY (misol: 25.12.2024)",
+    "expense_report_caption": (
+        "📊 Xarajatlar hisoboti\n"
+        "📅 Davr: {start_date} - {end_date}\n"
+        "💰 Xarajat turi: {expense_type}"
+    ),
+    "report_processing": "⏳ Hisobot tayyorlanmoqda...",
+    "report_generation_error": "❌ Hisobot tayyorlashda xatolik yuz berdi",
+    "all_expenses": "Barcha xarajatlar",
+    "own_expenses": "O'z hisobidan",
+    "company_expenses": "Kompaniya hisobidan",
         "tmc_template_instruction": (
-            "📝 Doldurma təlimatı:\n\n"
-            "1. Ad* - alətin adı\n"
-            "2. Say* - ədəd\n"
-            "3. Təsvir - əlavə məlumat\n"
-            "4. Status - boş/təyin edilmiş/təmirdə\n"
-            "5. File ID - alətin şəkil ID-si\n\n"
-            "* - məcburi sahədir"
-        ),
-        "tmc_template_sheet": "Alət şablonu",
-        "excel_tool_quantity": "Say*",
-        "excel_tool_file_id": "Şəkil File ID",
-        "tmc_enter_name": "📝 Alət adını daxil edin",
-        "tmc_enter_quantity": "🔢 Alət sayını daxil edin",
-        "tmc_enter_description": "📝 Alət təsvirini (isteğe bağlı) daxil edin",
-        "tmc_upload_complete": "✅ {name} alətindən {count} ədəd əlavə edildi",
-        "tmc_file_error": "❌ Fayl işlənərkən xəta baş verdi",
-        "tmc_invalid_quantity": "❌ Say müsbət ədəd olmalıdır",
-        "tmc_save_error": "❌ Alətlərin saxlanılmasında xəta",
-        "materials_sheet_name": "Material qalıqları",
-        "excel_material_id": "ID",
-        "excel_material_description": "Təsvir",
-        "excel_material_location": "Saxlanma yeri",
-        "no_materials_found": "❌ Material tapılmadı",
-        "materials_export_complete": "✅ {count} material ixrac edildi",
-        "materials_export_error": "❌ Material ixracında xəta",
-        "material_card_format": (
-            "📦 Material #{id}\n\n"
-            "📝 Təsvir: {description}\n"
-            "📍 Saxlanma yeri: {location}\n"
-        ),
-        "send_photo_for_file_id": "📸 File ID əldə etmək üçün şəkil göndərin",
-        "file_id_generated": "✅ File ID əldə edildi:\n{file_id}",
-        "file_id_generation_error": "❌ File ID yaradılarkən xəta",
-        "stop_btn": "⛔️ Dayandır",
-        "generate_file_id_btn": "🆔 File ID əldə et",
-        "materials_excel_btn": "📊 Material ixracı",
-        "bulk_transfer_btn": "📦 Kütləvi ötürmə",
-        "template_error": "❌ Şablon yaradılarkən xəta",
-        "template_instruction": "📝 Təlimata uyğun şablonu doldurun və yenidən yükləyin",
-        "bulk_transfer_instruction": "📝 Kütləvi alət ötürülməsi təlimatı",
-        "bulk_transfer_report": (
-            "📊 Ötürmə hesabatı:\n\n"
-            "✅ Uğurlu:\n{success}\n\n"
-            "❌ Xətalar:\n{failed}"
-        ),
-        "bulk_transfer_no_file": "❌ Fayl yüklənmədi",
-        "bulk_transfer_complete": "✅ Alət ötürülməsi tamamlandı",
-        "check_out_object_format": (
-            "🧾 <b>Obyektdən kənar çek</b>\n\n"
-            "👤 <b>Göndərən:</b> {worker_name}\n"
-            "📧 İstifadəçi adı: {username}\n\n"
-            "📝 <b>Təsvir:</b> <i>{description}</i>\n"
-            "💰 <b>Məbləğ:</b> {amount} AZN"
-        ),
-        "choose_reminder": (
-            "📦 <b>Material haqqında məlumat:</b>\n\n"
-            "📝 <b>Təsvir:</b> <i>{description}</i>\n"
-            "📍 <b>Saxlanma yeri:</b> <i>{storage_location}</i>\n"
-        ),
-        "send_file": "📤 Fayl göndərin",
-        "file_processing": "⏳ Fayl işlənir...",
-        "file_error": "❌ Fayl işlənərkən xəta",
-        "enter_new_photo": "📸 Yeni şəkil göndərin",
-        "reminder_photo_updated": "✅ Materialın şəkli yeniləndi",
-        "reminder_description_updated": "✅ Materialın təsviri yeniləndi",
-        "reminder_location_updated": "✅ Saxlanma yeri yeniləndi",
-        "excel_bulk_transfer_sheet": "Kütləvi ötürmə",
-        "excel_bulk_transfer_tool_id": "Alət ID*",
-        "excel_bulk_transfer_recipient": "Qəbul edən*",
-        "excel_bulk_transfer_description": "Təsvir",
-        "invalid_recipient": "❌ Qəbul edən düzgün qeyd edilməyib",
-        "invalid_tool_id": "❌ Alət ID səhvdir",
-        "tool_not_found": "❌ Alət tapılmadı",
-        "recipient_not_found": "❌ Qəbul edən tapılmadı",
-        "success_transfer": "✅ Uğurla ötürüldü",
-        "out_object_check_saved": "✅ Çek saxlanıldı və qrupa göndərildi",
-        "profic_accounting_btn": "💰 Mənfəət uçotu",
-        "select_object_for_profic": "📋 Mənfəət üçün obyekt seçin:",
-        "select_payment_type": "💳 Əməliyyat növünü seçin:",
-        "enter_payment_amount": "💰 Məbləği daxil edin:",
-        "enter_payment_purpose": "📝 Ödənişin məqsədini daxil edin:",
-        "invalid_amount": "❌ Məbləğin formatı yanlışdır. Məsələn: 1234.56",
-        "profic_saved": "✅ {type} üçün {amount} AZN əlavə edildi",
-        "profic_save_error": "❌ Əməliyyatın saxlanılmasında xəta",
-        "reminder_out_object_btn": "Obyektdən kənar qalıqlar",
-        "instrument_control_btn": "Alətlərin idarəsi",
-        "material_remainder_control_btn": "Material qalıqları idarəsi",
-        "reminder_btn": "Qalıqlar",
-        "object_control_btn": "Obyektlərin idarəsi",
-        "notify_btn": "Bildiriş",
-        "cancel_btn": "❌ Ləğv et",
-        "add_worker_to_object_btn": "İşçi əlavə et",
-        "bulk_transfer_btn": "Kütləvi ötürmə",
-        "user_tools_list_btn": "Alətlər siyahısı",
-        "change_reminder_btn": "✏️ Qalıqları dəyiş",
-        "deactivate_reminder_btn": "❌ Qalıqları deaktiv et",
-        "create_material_reminder_btn": "➕ Material qalıqları yarat",
-        "excel_view_btn": "📊 Excel baxışı",
-        "change_deactivate_btn": "✏️ Dəyiş/Deaktiv et",
-        "add_worker_to_object_text": "📋 İşçi əlavə etmək üçün obyekt seçin:",
-        "add_worker_to_object_w8_ids": (
-            "🏗 Obyekt: <b>{object_name}</b>\n\n"
-            "📝 İşçilərin Telegram ID-lərini vergül ilə daxil edin (məsələn: 123456789, 987654321)"
-        ),
-        "no_valid_user_ids": "❌ Düzgün Telegram ID tapılmadı",
-        "no_valid_users_found": "❌ Daxil edilmiş ID-lərlə uyğun istifadəçi tapılmadı",
-        "members_added_successfully": (
-            "📊 İşçilərin əlavə olunma nəticəsi:\n\n"
-            "✅ Uğurla əlavə edildi: {success_count}\n"
-            "❌ Əlavə edilmədi: {failed_count}\n\n"
-            "❗️ Xəta səbəbləri:\n{failed_reasons}"
-        ),
-        "enter_new_description": "📝 Yeni təsvir daxil edin",
-        "reminder_deactivated": "✅ Qalıqlar deaktiv edildi",
-        "reminder_updated": "✅ Qalıqlar yeniləndi",
-        "object_control_title": "🏗 Obyektlərin idarəsi",
-        "object_deleted": "✅ Obyekt silindi",
-        "object_updated": "✅ Məlumatlar yeniləndi",
-        "added_to_object_notification": (
-            "👋 Sizə yeni obyekt əlavə edildi!\n\n"
-            "🏗 <b>Obyekt:</b> {object_name}\n"
-            "ℹ️ İndi bu obyekt 'Mənim obyektlərim' bölməsində görünəcək"
-        ),
-        "create_object_documents": "📸 Obyektə aid sənəd şəkillərini yükləyin.\n\nBütün sənədləri yüklədikdən sonra 'Dayandır' düyməsinə basın",
-        "create_object_document_has_received": "✅ Sənəd alındı. Yükləməyə davam edin və ya 'Dayandır' düyməsinə basın",
-        "create_object_document_no_received": "❌ Zəhmət olmasa, sənədin şəklini göndərin",
-        "doc_type_select": "🔍 Sənəd növünü seçin:",
-        "doc_type_контакты заказчика": "📞 Müştəri əlaqələri",
-        "doc_type_смета": "📊 Qiymət təklifi",
-        "doc_type_техническое задание": "📋 Texniki şərt",
-        "doc_type_other": "📄 Digər",
-        "create_object_uploading": "📤 Sənədlər yüklənir...",
-        "create_object_saving": "💾 Obyekt saxlanılır...",
-        "create_object_complete": "✅ Obyekt uğurla yaradıldı",
-        "create_object_error": "❌ Obyekt yaradılarkən xəta baş verdi",
-        "continue_btn": "➡️ Davam et",
-        "stop_upload_btn": "🛑 Yükləməni dayandır",
-        "upload_without_docs_btn": "📄 Sənədsiz yarat",
-        "no_users_tg_id": "❌ İstifadəçi ID daxil edin: /user_tools_xlsx <user_id>",
-        "tg_id_must_be_number": "❌ İstifadəçi ID rəqəm olmalıdır",
-        "create_object_w8_documents": "🗂 Obyektə aid sənədləri yükləyin və ya 'Sənədsiz yarat' düyməsinə basın",
-        "upload_document_first": "❌ Əvvəlcə sənəd yükləyin",
-        "tmc_upload_btn": "TMC",
-        "tmc_upload_instruction": "📝 Alət məlumatlarını ehtiva edən Excel faylını yükləyin",
-        "invalid_file_type": "❌ Fayl formatı yanlışdır. Excel (.xlsx) fayl göndərin",
-        "tools_export_btn": "Alətlər ixracı",
-        "enter_reminder_description": "📝 Material/alət təsvirini daxil edin",
-        "enter_reminder_location": "📍 Saxlanma yerini daxil edin",
-        "reminder_created": "✅ Qalıqlar yaradıldı",
-        "object_data_header": "🏗 Obyekt haqqında məlumat:",
-        "object_data_format": (
-            "📝 Ad: {name}\n"
-            "ℹ️ Təsvir: {description}\n"
-            "📅 Yaradılma tarixi: {created_at}\n"
-            "👤 Yaradıcı: {creator}"
-        ),
-        "handover_confirmation": "❓ Obyekti təhvil verməyi təsdiqləyin",
-        "handover_cancelled": "❌ Obyekt təhvili ləğv olundu",
-        "notification_to_user": "📬 {sender} tərəfindən yeni bildiriş",
-        "notification_failed": "❌ Bildiriş göndərilərkən xəta",
-        "page_info": "Səhifə {current} / {total}",
-        "no_more_pages": "❌ Daha səhifə yoxdur",
-        "back_to_menu": "◀️ Menyuga qayıt",
-        "operation_in_progress": "⏳ Əməliyyat davam edir...",
-        "data_not_found": "❌ Məlumat tapılmadı",
-        "setup_complete": "✅ Quraşdırma tamamlandı",
-        "setup_cancelled": "❌ Quraşdırma ləğv olundu",
-        "document_delete_confirm": "❓ Sənədin silinməsini təsdiqləyin",
-        "document_deleted": "✅ Sənəd silindi",
-        "document_download_error": "❌ Sənəd endirilərkən xəta baş verdi",
-        "tmc_upload_start": "📤 Alət əlavə etmək üsulunu seçin:",
-        "tmc_upload_stopped": "✅ Alətlər yüklənməsi dayandırıldı",
-        "tmc_invalid_file": "❌ Fayl uyğunsuzdur",
-        "no_valid_tools": "❌ Faylda düzgün alət məlumatı yoxdur",
-        "tmc_bulk_upload_complete": "✅ Alətlər yükləndi: {success}\n❌ Xətalar: {errors}",
-        "return_to_tools_control": "🔄 Alət idarəsinə qayıt",
-        "tmc_manual_btn": "✍️ Əl ilə daxil et",
-        "tmc_template_btn": "📄 Şablonu yüklə",
-        "download_template_btn": "📥 Şablonu yüklə",
-        "start_transfer_btn": "🔄 Ötürməyə başla",
-        "tool_status_all": "🔍 Bütün alətlər",
-        "yes_btn": "✅ Bəli",
-        "no_btn": "❌ Xeyr",
-        "accounting_type_income": "📈 Gəlir",
-        "accounting_type_expense": "📉 Xərc",
-        "change_description_material_reminder_btn": "✏️ Təsviri dəyiş",
-        "change_photo_material_reminder_btn": "📸 Şəkili dəyiş",
-        "change_storage_location_material_reminder_btn": "📍 Saxlanma yerini dəyiş",
-        "user_tools_list": "Alətlər siyahısı - {full_name}",
-        "excel_material_file_id": "Şəkil File ID",
-        "finance_report_btn": "Maliyyə hesabatı",
-        "report_by_objects_btn": "📊 Obyektlər üzrə",
-        "report_no_objects_btn": "📋 Obyektsiz",
-        "this_month_btn": "📅 Son 30 gün",
-        "all_time_btn": "📆 Bütün vaxt",
-        "custom_period_btn": "⚙️ Dövr təyin et",
-        "select_report_type": "Hesabat növünü seçin:",
-        "select_period": "Hesabat dövrünü seçin:",
-        "enter_period": "Dövrü daxil edin (GG.AA.İİİİ-GG.AA.İİİİ formatında)\nMəsələn: 01.01.2025-09.06.2025",
-        "invalid_period_format": "❌ Dövr formatı yanlışdır. Yenidən cəhd edin.",
-        "generating_report": "⏳ Hesabat hazırlanır...",
-        "report_ready": "✅ Hesabat hazırdır!",
-        "export_error": "❌ Hesabat hazırlanarkən xəta",
-        "select_object": "Obyekt seçin:",
-        "financial_report": "Maliyyə hesabatı",
-        "financial_report_title": "Əməliyyatlara görə maliyyə hesabatı",
-        "date_column": "Tarix",
-        "transaction_type": "Əməliyyat növü",
-        "object_column": "Obyekt",
-        "description_column": "Təsvir",
-        "amount_column": "Məbləğ",
-        "user_column": "İstifadəçi",
-        "check_expense": "Çek xərc",
-        "total_income": "Ümumi gəlir:",
-        "total_expense": "Ümumi xərc:",
-        "total_profit": "Ümumi mənfəət:"
+        "📝 Ko'rsatmalar:\n\n"
+        "1. Nomi* - asbob nomi\n"
+        "2. Soni* - birliklar soni\n"
+        "3. Tavsif - qo'shimcha ma'lumot\n"
+        "4. Holati - bo'sh/band/ta'mirda\n"
+        "5. File ID - asbob fotosi ID\n\n"
+        "* - majburiy maydonlar"
+    ),
+    "tmc_template_sheet": "Asboblar shabloni",
+    "excel_tool_quantity": "Soni*",
+    "excel_tool_file_id": "Foto File ID",
+    "tmc_enter_name": "📝 Asbob nomini kiriting",
+    "tmc_enter_quantity": "🔢 Asboblar sonini kiriting",
+    "tmc_enter_description": "📝 Asbob tavsifini kiriting (ixtiyoriy)",
+    "tmc_upload_complete": "✅ Qo'shildi: {name} x{count}",
+    "tmc_file_error": "❌ Faylni qayta ishlashda xatolik yuz berdi",
+    "tmc_invalid_quantity": "❌ Son musbat bo'lishi kerak",
+    "tmc_save_error": "❌ Asboblarni saqlashda xatolik yuz berdi",
+    "materials_sheet_name": "Material qoldiqlari",
+    "excel_material_id": "ID",
+    "excel_material_description": "Tavsif",
+    "excel_material_location": "Saqlash joyi",
+    "no_materials_found": "❌ Materiallar topilmadi",
+    "materials_export_complete": "✅ Eksport qilingan materiallar: {count}",
+    "materials_export_error": "❌ Materiallarni eksport qilishda xatolik yuz berdi",
+    "material_card_format": (
+        "📦 Material #{id}\n\n"
+        "📝 Tavsif: {description}\n"
+        "📍 Saqlash joyi: {location}\n"
+    ),
+    "send_photo_for_file_id": "📸 File ID olish uchun rasm yuboring",
+    "file_id_generated": "✅ File ID yaratildi:\n{file_id}",
+    "file_id_generation_error": "❌ File ID yaratishda xatolik yuz berdi",
+    "stop_btn": "⛔️ To'xtatish",
+    "generate_file_id_btn": "🆔 File ID olish",
+    "materials_excel_btn": "📊 Qoldiqlarni eksport qilish",
+    "bulk_transfer_btn": "📦 Ommaviy o'tkazish",
+    "template_error": "❌ Shablon yaratishda xatolik yuz berdi",
+    "template_instruction": "📝 Shablonni ko'rsatmalarga muvofiq to'ldiring va qayta yuklang",
+    "bulk_transfer_instruction": "📝 Asboblarni ommaviy o'tkazish bo'yicha ko'rsatmalar",
+    "bulk_transfer_report": (
+        "📊 O'tkazish hisoboti:\n\n"
+        "✅ Muvaffaqiyatli:\n{success}\n\n"
+        "❌ Xatolar:\n{failed}"
+    ),
+    "bulk_transfer_no_file": "❌ Fayl yuklanmagan",
+    "bulk_transfer_complete": "✅ Asboblarni o'tkazish yakunlandi",
+    "check_out_object_format": (
+        "🧾 <b>Obyektdan tashqari chek</b>\n\n"
+        "👤 <b>Yuboruvchi:</b> {worker_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Tavsif:</b> <i>{description}</i>\n"
+        "💰 <b>Summa:</b> {amount} so'm"
+    ),
+    "send_file": "📤 Fayl yuboring",
+    "file_processing": "⏳ Fayl qayta ishlanmoqda...",
+    "file_error": "❌ Faylni qayta ishlashda xatolik yuz berdi",
+    "enter_new_photo": "📸 Yangi rasm yuboring",
+    "reminder_photo_updated": "✅ Material rasmi yangilandi",
+    "reminder_description_updated": "✅ Material tavsifi yangilandi",
+    "reminder_location_updated": "✅ Saqlash joyi yangilandi",
+    "excel_bulk_transfer_sheet": "Ommaviy o'tkazish",
+    "excel_bulk_transfer_tool_id": "Asbob ID*",
+    "excel_bulk_transfer_recipient": "Oluvchi*",
+    "excel_bulk_transfer_description": "Tavsif",
+    "invalid_recipient": "❌ Oluvchi noto'g'ri ko'rsatilgan",
+    "invalid_tool_id": "❌ Asbob ID noto'g'ri",
+    "tool_not_found": "❌ Asbob topilmadi",
+    "recipient_not_found": "❌ Oluvchi topilmadi",
+    "success_transfer": "✅ Muvaffaqiyatli o'tkazildi",
+    "out_object_check_saved": "✅ Chek saqlandi va guruhga yuborildi",
+    "profic_accounting_btn": "💰 Foyda hisobi",
+    "select_object_for_profic": "📋 Hisob uchun obyektni tanlang:",
+    "select_payment_type": "💳 Operatsiya turini tanlang:",
+    "enter_payment_amount": "💰 Summani kiriting:",
+    "enter_payment_purpose": "📝 To'lov maqsadini kiriting:",
+    "profic_saved": "✅ {type} {amount} so'm miqdorida qo'shildi",
+    "profic_save_error": "❌ Operatsiyani saqlashda xatolik yuz berdi",
+    "reminder_out_object_btn": "Obyektdan tashqari qoldiqlar",
+    "instrument_control_btn": "Asboblarni boshqarish",
+    "material_remainder_control_btn": "Material qoldiqlarini boshqarish",
+    "reminder_btn": "Qoldiqlar",
+    "object_control_btn": "Obyektlarni boshqarish",
+    "notify_btn": "Xabarnomalar",
+    "cancel_btn": "❌ Bekor qilish",
+    "add_worker_to_object_btn": "Ishchi qo'shish",
+    "user_tools_list_btn": "Asboblar ro'yxati",
+    "change_reminder_btn": "✏️ Qoldiqlarni o'zgartirish",
+    "deactivate_reminder_btn": "❌ Qoldiqlarni faolsizlantirish",
+    "create_material_reminder_btn": "➕ Qoldiqlarni yaratish",
+    "excel_view_btn": "📊 Excel ko'rinishi",
+    "change_deactivate_btn": "✏️ O'zgartirish/Faolsizlantirish",
+    "tmc_upload_start": "📤 Asboblarni qo'shish usulini tanlang:",
+    "tmc_manual_btn": "✍️ Qo'lda kiritish",
+    "tmc_template_btn": "📄 Shablonni yuklash",
+    "download_template_btn": "📥 Shablonni yuklash",
+    "start_transfer_btn": "🔄 O'tkazishni boshlash",
+    "tool_status_all": "🔍 Barcha asboblar",
+    "yes_btn": "✅ Ha",
+    "no_btn": "❌ Yo'q",
+    "accounting_type_income": "📈 Kirim",
+    "accounting_type_expense": "📉 Chiqim",
+    "change_description_material_reminder_btn": "✏️ Tavsifni o'zgartirish",
+    "change_photo_material_reminder_btn": "📸 Rasmni o'zgartirish",
+    "change_storage_location_material_reminder_btn": "📍 Saqlash joyini o'zgartirish",
+    "user_tools_list": "{full_name}ga biriktirilgan asboblar ro'yxati",
+    "excel_material_file_id": "Foto File ID",
+    "finance_report_btn": "Moliyaviy hisobot",
+    "report_by_objects_btn": "📊 Obyektlar bo'yicha",
+    "report_no_objects_btn": "📋 Obyektsiz",
+    "this_month_btn": "📅 Oxirgi 30 kun",
+    "all_time_btn": "📆 Barcha vaqt",
+    "custom_period_btn": "⚙️ Davrni belgilash",
+    "select_report_type": "Hisobot turini tanlang:",
+    "select_period": "Hisobot davrini tanlang:",
+    "enter_period": "Davrni KK.OO.YYYY-KK.OO.YYYY formatida kiriting\nMasalan: 01.01.2025-09.06.2025",
+    "invalid_period_format": "❌ Davr formati noto'g'ri. Qayta urinib ko'ring.",
+    "generating_report": "⏳ Hisobot tayyorlanmoqda...",
+    "report_ready": "✅ Hisobot tayyor!",
+    "export_error": "❌ Hisobotni tayyorlashda xatolik yuz berdi",
+    "select_object": "Obyektni tanlang:",
+    "financial_report": "Moliyaviy hisobot",
+    "financial_report_title": "Operatsiyalar bo'yicha moliyaviy hisobot",
+    "date_column": "Sana",
+    "transaction_type": "Operatsiya turi",
+    "object_column": "Obyekt",
+    "description_column": "Tavsif",
+    "amount_column": "Summa",
+    "user_column": "Foydalanuvchi",
+    "check_expense": "Chek bo'yicha xarajat",
+    "total_income": "Jami kirimlar:",
+    "total_expense": "Jami chiqimlar:",
+    "total_profit": "Jami foyda:",
+    "access_denied": "❌ Kirish taqiqlangan",
+    "action_cancelled": "❌ Harakat bekor qilindi",
+    "add_worker_to_object_text": "📋 Ishchi qo'shish kerak bo'lgan obyektni tanlang:",
+    "add_worker_to_object_w8_ids": (
+        "🏗 Obyekt: <b>{object_name}</b>\n\n"
+        "📝 Ishchilarning Telegram ID larini vergul orqali kiriting (masalan: 123456789, 987654321)"
+    ),
+    "added_to_object_notification": (
+        "👋 Siz yangi obyektga qo'shildingiz!\n\n"
+        "🏗 <b>Obyekt:</b> {object_name}\n"
+        "ℹ️ Endi siz bu obyektni 'Mening obyektlarim' bo'limida ko'rishingiz mumkin"
+    ),
+    "admin_notify": "Xabar turini tanlang:",
+    "admin_notify_all_user_w8_message": "📝 Barcha foydalanuvchilarga yuborish uchun matnni kiriting:",
+    "admin_notify_all_users_inline_btn": "📢 Barcha foydalanuvchilarga",
+    "admin_notify_object_inline_btn": "🏗 Obyekt bo'yicha",
+    "admin_panel": "👨‍💼 Administrator paneli",
+    "all_tools": "Barcha asboblar",
+    "back_to_menu": "◀️ Menyuga qaytish",
+    "caption_required": "❌ Rasmga tavsif qo'shish kerak",
+    "choose_reminder": (
+        "📦 <b>Material haqida ma'lumot:</b>\n\n"
+        "📝 <b>Tavsif:</b> <i>{description}</i>\n"
+        "📍 <b>Saqlash joyi:</b> <i>{storage_location}</i>\n"
+    ),
+    "confirm_action": "Harakatni tasdiqlang:",
+    "confirm_cancel": "❗️ Bekor qilishni tasdiqlang",
+    "confirm_delete": "❗️ O'chirishni tasdiqlang",
+    "continue_btn": "➡️ Davom etish",
+    "create_object_btn": "Obyekt yaratish",
+    "create_object_complete": "✅ Obyekt muvaffaqiyatli yaratildi",
+    "create_object_description": "📝 Obyekt tavsifini kiriting:",
+    "create_object_document_has_received": "✅ Hujjat qabul qilindi. Yuklashni davom ettiring yoki 'To'xtatish' tugmasini bosing",
+    "create_object_document_no_received": "❌ Iltimos, hujjat rasmini yuboring",
+    "create_object_documents": "📸 Obyekt hujjatlarini yuklang.\n\nBarcha hujjatlarni yuklaganingizdan so'ng 'To'xtatish' tugmasini bosing",
+    "create_object_error": "❌ Obyekt yaratishda xatolik yuz berdi",
+    "create_object_name": "📝 Obyekt nomini kiriting:",
+    "create_object_no_documents": "❌ Hujjatlar yuklanmadi",
+    "create_object_saving": "💾 Obyekt saqlanmoqda...",
+    "create_object_success": "✅ Obyekt muvaffaqiyatli yaratildi",
+    "create_object_uploading": "📤 Hujjatlar yuklanmoqda...",
+    "create_object_w8_documents": "🗂 Obyekt hujjatlarini yuklang yoki 'Hujjatlarsiz yaratish' tugmasini bosing",
+    "data_not_found": "❌ Ma'lumotlar topilmadi",
+    "delete_object_btn": "Obyektni o'chirish",
+    "doc_type_contacts": "📞 Buyurtmachi kontaktlari",
+    "doc_type_estimate": "📊 Smeta",
+    "doc_type_other": "📄 Boshqa",
+    "doc_type_select": "🔍 Hujjat turini tanlang:",
+    "doc_type_technical": "📋 Texnik topshiriq",
+    "doc_type_контакты заказчика": "📞 Buyurtmachi kontaktlari",
+    "doc_type_смета": "📊 Smeta",
+    "doc_type_техническое задание": "📋 Texnik topshiriq",
+    "document_delete_confirm": "❓ Hujjatni o'chirishni tasdiqlaysizmi?",
+    "document_deleted": "✅ Hujjat o'chirildi",
+    "document_download_error": "❌ Hujjatni yuklashda xatolik yuz berdi",
+    "document_saved": "✅ Hujjat saqlandi",
+    "document_type_selected": "✅ Hujjat turi tanlandi",
+    "document_upload_complete": "✅ Hujjatlarni yuklash yakunlandi",
+    "edit_object_btn": "✏️ Obyektni tahrirlash",
+    "enter_new_description": "📝 Yangi tavsifni kiriting",
+    "enter_notification_text": "📝 Xabar matnini kiriting:",
+    "enter_reminder_description": "📝 Material/asbob tavsifini kiriting",
+    "enter_reminder_location": "📍 Saqlash joyini kiriting",
+    "error_occurred": "❌ Xatolik yuz berdi",
+    "excel_amount_column": "Summa",
+    "excel_date_column": "Sana",
+    "excel_description_column": "Tavsif",
+    "excel_expense_type_column": "Xarajat turi",
+    "excel_sheet_name": "Xarajatlar hisoboti",
+    "excel_tool_date": "Tayinlash sanasi",
+    "excel_tool_description": "Tavsif",
+    "excel_tool_name": "Nomi",
+    "excel_tool_status": "Holati",
+    "excel_tool_user": "Biriktirilgan",
+    "excel_tools_sheet_name": "Asboblar ro'yxati",
+    "excel_total_row": "JAMI:",
+    "excel_user_column": "Foydalanuvchi",
+    "foreman_panel": "👨‍💼 Prоrab paneli",
+    "free_tools": "Bo'sh asboblar",
+    "handover_cancelled": "❌ Obyektni topshirish bekor qilindi",
+    "handover_confirmation": "❓ Obyektni topshirishni tasdiqlang",
+    "in_work_tools": "Ishdagi asboblar",
+    "invalid_file_type": "❌ Fayl formati noto'g'ri. Excel (.xlsx) faylini yuklang",
+    "invalid_input": "❌ Noto'g'ri kiritish",
+    "loading_data": "📥 Ma'lumotlar yuklanmoqda...",
+    "member_item_format": (
+        "👤 {full_name}\n"
+        "📱 {phone}\n"
+        "📧 @{username}"
+    ),
+    "members_added_successfully": (
+        "📊 Ishchilarni qo'shish natijasi:\n\n"
+        "✅ Muvaffaqiyatli qo'shildi: {success_count}\n"
+        "❌ Qo'shilmadi: {failed_count}\n\n"
+        "❗️ Rad etish sabablari:\n"
+        "{failed_reasons}"
+    ),
+    "no_members_found": "❌ Obyektda ishtirokchilar yo'q",
+    "no_more_pages": "❌ Boshqa sahifalar yo'q",
+    "no_objects_found": "❌ Obyektlar topilmadi",
+    "no_tools_found": "❌ Asboblar topilmadi",
+    "no_users_found": "❌ Foydalanuvchilar topilmadi",
+    "no_users_tg_id": "❌ Foydalanuvchi ID sini ko'rsating: /user_tools_xlsx <user_id>",
+    "no_valid_tools": "❌ Faylda asboblar haqida to'g'ri ma'lumotlar yo'q",
+    "no_valid_user_ids": "❌ To'g'ri Telegram ID lar topilmadi",
+    "no_valid_users_found": "❌ Ko'rsatilgan ID lar bo'yicha foydalanuvchilar topilmadi",
+    "notification_failed": "❌ Xabarni yuborishda xatolik yuz berdi",
+    "notification_sent_to_all": "✅ Xabar barcha foydalanuvchilarga yuborildi",
+    "notification_to_user": "📬 {sender}dan yangi xabar",
+    "notifications_sent_status": "✅ Yuborish yakunlandi\n\n📊 Jami: {total}\n✅ Muvaffaqiyatli: {success}\n❌ Yetib bormadi: {failed}",
+    "object_active": "✅ Faol",
+    "object_completed": "🏁 Yakunlangan",
+    "object_control": "🏗 Obyektlarni boshqarish",
+    "object_control_title": "🏗 Obyektlarni boshqarish",
+    "object_data_format": (
+        "📝 Nomi: {name}\n"
+        "ℹ️ Tavsif: {description}\n"
+        "📅 Yaratildi: {created_at}\n"
+        "👤 Yaratuvchi: {creator}"
+    ),
+    "object_data_header": "🏗 Obyekt haqida ma'lumot:",
+    "object_deleted": "✅ Obyekt o'chirildi",
+    "object_members_header": "👥 Obyekt ishtirokchilari:",
+    "object_name": "Obyekt: {name}",
+    "object_suspended": "⏸ To'xtatilgan",
+    "object_updated": "✅ Obyekt ma'lumotlari yangilandi",
+    "objects_list": "📋 Obyektlar ro'yxati:",
+    "operation_cancelled": "❌ Operatsiya bekor qilindi",
+    "operation_in_progress": "⏳ Operatsiya bajarilmoqda...",
+    "page_info": "Sahifa {current} / {total}",
+    "pagination_error": "❌ Sahifani yangilashda xatolik",
+    "processing": "⏳ Qayta ishlanmoqda...",
+    "reminder_created": "✅ Eslatma yaratildi",
+    "reminder_deactivated": "✅ Eslatma faolsizlantirildi",
+    "reminder_out_btn": "Obyektdan tashqari cheklar hisobi",
+    "reminder_updated": "✅ Eslatma yangilandi",
+    "repair_tools": "Ta'mirdagi asboblar",
+    "return_to_tools_control": "🔄 Asboblarni boshqarishga qaytish",
+    "saving_data": "💾 Ma'lumotlar saqlanmoqda...",
+    "select_document_type": "Hujjat turini tanlang:",
+    "select_object_for_notification": "📋 Xabar yuborish uchun obyektni tanlang:",
+    "select_tool_status": "Eksport uchun asboblar turini tanlang:",
+    "sending_notifications_status": "📤 Xabarlar yuborilmoqda... {sent}/{total}",
+    "setup_cancelled": "❌ Sozlash bekor qilindi",
+    "setup_complete": "✅ Sozlash yakunlandi",
+    "tg_id_must_be_number": "❌ Foydalanuvchi ID si raqam bo'lishi kerak",
+    "tmc_bulk_upload_complete": "✅ Yuklandi: asboblar: {success}\n❌ Xatolar: {errors}",
+    "tmc_invalid_file": "❌ Noto'g'ri fayl",
+    "tmc_upload_btn": "TMC",
+    "tmc_upload_instruction": "📝 To'ldirilgan Excel faylini asboblar bilan yuklang",
+    "tmc_upload_stopped": "✅ Asboblarni yuklash to'xtatildi",
+    "tool_status_active": "✅ Ishda",
+    "tool_status_free": "🆓 Bo'sh",
+    "tool_status_repair": "🔧 Ta'mirda",
+    "tool_transfer_success": "✅ Asbob muvaffaqiyatli uzatildi",
+    "tools_export_btn": "Asboblarni eksport qilish",
+    "tools_list_caption": "📊 Asboblar hisoboti\n💼 Turi: {tool_status}",
+    "transfer_tool_admin_format": (
+        "Buyruq formati:\n"
+        "/transfer_tool <asbob_ID> <oluvchi> <tavsif>\n"
+        "Majburiy uzatish uchun (faqat adminlar):\n"
+        "/transfer_tool <asbob_ID> <oluvchi> -f <tavsif>"
+    ),
+    "transfer_tool_force_complete": "✅ Asbob majburan uzatildi",
+    "transfer_tool_force_format": (
+        "🔄 Asbobni majburiy uzatish\n"
+        "🛠 Asbob: {tool_name} (ID: {tool_id})\n"
+        "👤 Oluvchi: {recipient}\n"
+        "👨‍💼 Administrator: {admin}\n"
+        "📝 Tavsif: {description}"
+    ),
+    "transfer_tool_force_received": "🔄 Administrator {admin} sizga {tool_name} asbobini uzatdi",
+    "try_again": "🔄 Qayta urinib ko'ring",
+    "updated_success": "✅ Ma'lumotlar muvaffaqiyatli yangilandi",
+    "upload_document_first": "❌ Avval hujjatni yuklang",
+    "upload_more_documents": "📤 Keyingi hujjatni yuklang yoki 'Yakunlash' tugmasini bosing",
+    "upload_without_docs_btn": "📄 Hujjatlarsiz yaratish",
+    "user_control": "👥 Foydalanuvchilarni boshqarish"
     },
     "tg": {
          "reminder_delete_canceled": "Бекор кардани нест кардани бақияҳо",
@@ -1128,7 +1125,7 @@ Botdan istifadə etmək üçün istifadəçi adı yaratmalısınız. Təlimatlar
     "start": "Салом, {name}! Ман бот ҳастам",
     "language_select": "Забонро интихоб кунед:",
     "language_ru": "Русӣ",
-    "language_az": "Озарбойҷонӣ",
+    "language_uz": "Узбек",
     "language_tg": "Тоҷикӣ",
     "request_contact": "Лутфан, рақами телефони худро тавассути тугмаи зерин мубодила кунед.",
     "username_instruction": """
@@ -1583,6 +1580,110 @@ Botdan istifadə etmək üçün istifadəçi adı yaratmalısınız. Təlimatlar
     "check_expense": "Хароҷоти чек",
     "total_income": "Даромади умумӣ:",
     "total_expense": "Хароҷоти умумӣ:",
-    "total_profit": "Фоидаи умумӣ:"   
+    "total_profit": "Фоидаи умумӣ:",
+    "add_worker_to_object_text": "📋 Объектеро, ки ба он коргар илова кардан лозим аст, интихоб кунед:", 
+    "add_worker_to_object_w8_ids": (
+        "🏗 Объект: <b>{object_name}</b>\n\n"
+        "📝 Telegram ID-и коргаронро тавассути вергул дохил кунед (масалан: 123456789, 987654321)"
+    ),
+    "added_to_object_notification": (
+        "👋 Шумо ба объекти нав илова карда шудед!\n\n"
+        "🏗 <b>Объект:</b> {object_name}\n"
+        "ℹ️ Акнун шумо метавонед ин объектро дар қисмати 'Объектҳои ман' бинед"
+    ),
+    "back_to_menu": "◀️ Бозгашт ба меню",
+    "choose_reminder": (
+        "📦 <b>Маълумот дар бораи масолеҳ:</b>\n\n"
+        "📝 <b>Тавсиф:</b> <i>{description}</i>\n"
+        "📍 <b>Ҷойи нигоҳдорӣ:</b> <i>{storage_location}</i>\n"
+    ),
+    "continue_btn": "➡️ Давом додан",
+    "create_object_complete": "✅ Объект бомуваффақият сохта шуд",
+    "create_object_document_has_received": "✅ Ҳуҷҷат қабул шуд. Боркуниро давом диҳед ё 'Қатъ'-ро пахш кунед",
+    "create_object_document_no_received": "❌ Лутфан, расми ҳуҷҷатро фиристед",
+    "create_object_documents": "📸 Расмҳои ҳуҷҷатҳои объектро бор кунед.\n\nВақте ки ҳамаи ҳуҷҷатҳоро бор кардед, 'Қатъ'-ро пахш кунед",
+    "create_object_error": "❌ Ҳангоми сохтани объект хато рух дод",
+    "create_object_saving": "💾 Нигоҳдории объект...",
+    "create_object_uploading": "📤 Боркунии ҳуҷҷатҳо...",
+    "create_object_w8_documents": "🗂 Ҳуҷҷатҳои объектро бор кунед ё 'Бе ҳуҷҷатҳо сохтан'-ро пахш кунед",
+    "data_not_found": "❌ Маълумот ёфт нашуд",
+    "doc_type_other": "📄 Дигар",
+    "doc_type_select": "🔍 Намуди ҳуҷҷатро интихоб кунед:",
+    "doc_type_контакты заказчика": "📞 Тамосҳои фармоишгар",
+    "doc_type_смета": "📊 Смета",
+    "doc_type_техническое задание": "📋 Супориши техникӣ",
+    "document_delete_confirm": "❓ Нест кардани ҳуҷҷатро тасдиқ кунед",
+    "document_deleted": "✅ Ҳуҷҷат нест карда шуд",
+    "document_download_error": "❌ Ҳангоми боргирии ҳуҷҷат хато рух дод",
+    "enter_new_description": "📝 Тавсифи навро дохил кунед",
+    "enter_reminder_description": "📝 Тавсифи масолеҳ/асбобро дохил кунед",
+    "enter_reminder_location": "📍 Ҷойи нигоҳдориро дохил кунед",
+    "handover_cancelled": "❌ Супоридани объект бекор карда шуд",
+    "handover_confirmation": "❓ Супоридани объектро тасдиқ кунед",
+    "invalid_file_type": "❌ Формати файл нодуруст аст. Файли Excel (.xlsx) бор кунед",
+    "members_added_successfully": (
+        "📊 Натиҷаи илова кардани коргарон:\n\n"
+        "✅ Бомуваффақият илова шуд: {success_count}\n"
+        "❌ Илова нашуд: {failed_count}\n\n"
+        "❗️ Сабабҳои рад кардан:\n"
+        "{failed_reasons}"
+    ),
+    "no_more_pages": "❌ Дигар саҳифаҳо нестанд",
+    "no_users_tg_id": "❌ ID-и корбарро нишон диҳед: /user_tools_xlsx <user_id>",
+    "no_valid_tools": "❌ Дар файл маълумоти дуруст дар бораи асбобҳо нест",
+    "no_valid_user_ids": "❌ ID-ҳои дурусти Telegram ёфт нашуданд",
+    "no_valid_users_found": "❌ Корбарон бо ID-ҳои нишондодашуда ёфт нашуданд",
+    "notification_failed": "❌ Ҳангоми фиристодани огоҳинома хато рух дод",
+    "notification_to_user": "📬 Огоҳиномаи нав аз {sender}",
+    "object_control_title": "🏗 Идоракунии объектҳо",
+    "object_data_format": (
+        "📝 Ном: {name}\n"
+        "ℹ️ Тавсиф: {description}\n"
+        "📅 Сохта шуд: {created_at}\n"
+        "👤 Созанда: {creator}"
+    ),
+    "object_data_header": "🏗 Маълумот дар бораи объект:",
+    "object_deleted": "✅ Объект нест карда шуд",
+    "object_updated": "✅ Маълумоти объект нав карда шуд",
+    "operation_in_progress": "⏳ Амалиёт иҷро шуда истодааст...",
+    "page_info": "Саҳифаи {current} аз {total}",
+    "reminder_created": "✅ Ёдоварӣ сохта шуд",
+    "reminder_deactivated": "✅ Ёдоварӣ ғайрифаъол карда шуд",
+    "reminder_updated": "✅ Ёдоварӣ нав карда шуд",
+    "return_to_tools_control": "🔄 Бозгашт ба идоракунии асбобҳо",
+    "setup_cancelled": "❌ Танзимот бекор карда шуд",
+    "setup_complete": "✅ Танзимот анҷом ёфт",
+    "tg_id_must_be_number": "❌ ID-и корбар бояд рақам бошад",
+    "tmc_bulk_upload_complete": "✅ Бор карда шуд: асбобҳо: {success}\n❌ Хатоҳо: {errors}",
+    "tmc_invalid_file": "❌ Файли нодуруст",
+    "tmc_upload_btn": "TMC",
+    "tmc_upload_instruction": "📝 Файли пуркардашудаи Excel-ро бо асбобҳо бор кунед",
+    "tmc_upload_stopped": "✅ Боркунии асбобҳо қатъ карда шуд",
+    "tools_export_btn": "Содироти асбобҳо",
+    "upload_document_first": "❌ Аввал ҳуҷҷатро бор кунед",
+    "upload_without_docs_btn": "📄 Бе ҳуҷҷатҳо сохтан"
     },
 }
+
+if __name__ == "__main__":
+    ru_keys = set(TEXTS_TRANSLITE["ru"].keys())
+    uz_keys = set(TEXTS_TRANSLITE["uz"].keys())
+    tg_keys = set(TEXTS_TRANSLITE["tg"].keys())
+    
+    # Находим ключи, которых нет в узбекском переводе
+    missing_in_uz = ru_keys - uz_keys
+    # Находим ключи, которых нет в таджикском переводе
+    missing_in_tg = ru_keys - tg_keys
+    
+    print("Количество ключей:")
+    print(f"Русский: {len(ru_keys)}")
+    print(f"Узбекский: {len(uz_keys)}")
+    print(f"Таджикский: {len(tg_keys)}")
+    
+    print("\nОтсутствующие ключи в узбекском переводе:")
+    for key in sorted(missing_in_uz):
+        print(f"- {key}")
+        
+    print("\nОтсутствующие ключи в таджикском переводе:")
+    for key in sorted(missing_in_tg):
+        print(f"- {key}")

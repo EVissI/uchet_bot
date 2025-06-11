@@ -76,7 +76,7 @@ def lang_select_kbd(lang: str = "ru") -> InlineKeyboardMarkup:
         text=get_text("ru", lang), callback_data=LanguageCallback(lang="ru").pack()
     )
     kb.button(
-        text=get_text("az", lang), callback_data=LanguageCallback(lang="az").pack()
+        text=get_text("uz", lang), callback_data=LanguageCallback(lang="uz").pack()
     )
     kb.button(
         text=get_text("tg", lang), callback_data=LanguageCallback(lang="tg").pack()
