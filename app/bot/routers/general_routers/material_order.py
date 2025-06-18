@@ -51,7 +51,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
     try:
         day, month, year = map(int, message.text.split("."))
         input_date = datetime(year, month, day)
-        if input_date < datetime.now():
+        if input_date <= datetime.now():
             await message.answer(
                 text=get_text("date_must_be_future", user_info.language)
             )
