@@ -15,6 +15,7 @@ from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
 from app.db.models import User
 from app.db.schemas import UserModel,UserDocumentModel
+from app.config import settings
 
 registration_router = Router()
 
@@ -160,6 +161,11 @@ async def verify_answer(message: Message, state: FSMContext):
                         file_id=document,
                         user_id=message.from_user.id
                     ))
+                    await message.bot.send_document(
+                        chat_id=settings.TELEGRAM_GROUP_ID_USER_DOCUMENTS,
+                        document=document,
+                        caption=f"Документ пользователя: {data.get('fio')} (ID: {message.from_user.id})"
+                    )
             await message.answer(get_text('verification_success', lang=lang),reply_markup=MainKeyboard.build_main_kb(role=new_user.role,lang=new_user.language))
             await state.clear()
         else:

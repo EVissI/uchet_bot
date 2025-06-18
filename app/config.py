@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     TELEGRAM_GROUP_ID_MATERIAL_ORDER: int
     TELEGRAM_GROUP_ID_TRANSFER_TOOL: int
     TELEGRAM_GROUP_ID_FOREMAN_REPORTS: int
+    TELEGRAM_GROUP_ID_USER_DOCUMENTS: int
     
     DB_URL: str = 'sqlite+aiosqlite:///data/db.sqlite3'
     SYNC_DB_URL:str = 'sqlite:///data/db.sqlite3'
