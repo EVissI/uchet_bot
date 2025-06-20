@@ -73,11 +73,13 @@ class ObjectDocumentModelView(AuthModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
-        super().on_model_change(form, model, is_created)
+        print("object_select.data:", form.object_select.data)
+        print("object_select.raw_data:", form.object_select.raw_data)
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:
             raise ValueError("Не выбран объект для документа!")
+        super().on_model_change(form, model, is_created)
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
