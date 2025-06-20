@@ -66,7 +66,7 @@ async def process_admin_check_btn(
 ):
     """Handler for admin check button"""
     logger.info(f"Admin {user_info.telegram_id} started check upload for object {callback_data.object_id}")
-    await state.update_data(object_id=callback_data.object_id)
+    await state.update_data(object_id=callback_data.id)
     await state.set_state(AdminCheckStates.waiting_photo_and_description)
     
     await callback.message.answer(
