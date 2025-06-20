@@ -28,18 +28,19 @@ class ObjectDocumentModelView(AuthModelView):
     column_searchable_list = ["id", "file_id"]
     column_filters = ["object_id", "document_type"]
 
-    # Используем object_id, а не object_select!
     form_columns = ["file_id", "object_select", "document_type"]
-
     form_overrides = {
         "file_id": StringField,
         "document_type": SelectField,
     }
 
+    def get_object_query(self):
+        return self.session.query(Object).all()
+
     form_extra_fields = {
         "object_select": QuerySelectField(
             "Объект",
-            query_factory=lambda: Object.query.all(),
+            query_factory=lambda: [],
             get_label="name",
             allow_blank=False,
         )
@@ -55,6 +56,19 @@ class ObjectDocumentModelView(AuthModelView):
             ],
         },
     }
+
+    def create_form(self, obj=None):
+        form = super().create_form(obj)
+        form.object_select.query_factory = self.get_object_query
+        return form
+
+    def edit_form(self, obj=None):
+        form = super().edit_form(obj)
+        form.object_select.query_factory = self.get_object_query
+        # При редактировании подставляем выбранный объект
+        if obj and obj.object:
+            form.object_select.data = obj.object
+        return form
 
     def on_model_change(self, form, model, is_created):
         super().on_model_change(form, model, is_created)
