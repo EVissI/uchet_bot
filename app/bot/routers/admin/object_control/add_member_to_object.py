@@ -99,6 +99,7 @@ async def process_user_ids(message: Message, state: FSMContext, user_info: User)
     async with async_session_maker() as session:
         object_members:list[User] = await ObjectMemberDAO.find_object_members(session, object_id)
         object_info:Object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=object_id))
+        add_users = []
         for user_id in user_ids:
             try:
                 user_id = int(user_id)
@@ -114,9 +115,8 @@ async def process_user_ids(message: Message, state: FSMContext, user_info: User)
                     failed_reasons[user_id] = f"Уже добавлен на объект ({user.user_enter_fio})"
                     continue
                 
-                await ObjectMemberDAO.add(
-                    session, 
-                    ObjectMemberModel(
+                 
+                add_users.append(ObjectMemberModel(
                         object_id=object_id,
                         user_id=user.telegram_id
                     )
@@ -131,7 +131,7 @@ async def process_user_ids(message: Message, state: FSMContext, user_info: User)
                 logger.error(f"Error adding user {user_id}: {e}")
                 failed_count += 1
                 failed_reasons[user_id] = "Ошибка при добавлении"
-
+        await ObjectMemberDAO.add_many(session, add_users)
         failed_text = "\n".join(
             f"• ID {user_id}: {reason}" 
             for user_id, reason in failed_reasons.items()
