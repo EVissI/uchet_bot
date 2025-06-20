@@ -37,22 +37,21 @@ admin_reminder_object_router = Router()
 
 @admin_reminder_object_router.message(F.text.in_(get_all_texts('reminder_btn')), UserInfo())
 async def process_reminder_object(
-    callback: Message,
+    message: Message,
     state: FSMContext,
     user_info: User
 ):
     """Handle object selection for notification"""
-    await callback.message.delete()
     async with async_session_maker() as session:
         objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel(is_active=True))
         if not objects:
-            await callback.message.answer(
+            await message.answer(
                 text=get_text('no_objects_found', user_info.language),
                 reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
             )
             return
             
-        await callback.message.answer(
+        await message.answer(
             text=get_text('select_object_for_notification', user_info.language),
             reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj")
         )
