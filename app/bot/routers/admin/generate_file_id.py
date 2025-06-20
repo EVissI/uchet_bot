@@ -8,7 +8,7 @@ from app.db.models import User
 
 generate_file_id_router = Router()
 
-@generate_file_id_router.message(F.photo,StateFilter(None,AdminPanelStates))
+@generate_file_id_router.message(F.photo,StateFilter(None))
 async def process_photo_for_file_id(message: Message, user_info: User):
     """Generate and return file_id from photo"""
     try:
