@@ -43,7 +43,8 @@ async def process_profile_callback(message: Message, user_info: User):
 
 @profile_router.callback_query(ProfileCallback.filter(F.action == "tools"), UserInfo())
 async def process_tools_btn(callback: CallbackQuery, user_info: User):
-    async with async_session_maker() as session:
+    async with async_session_maker() as session:     
+        await callback.answer()
         tools = await ToolDAO.find_all(
             session, ToolFilterModel(user_id=user_info.telegram_id)
         )
