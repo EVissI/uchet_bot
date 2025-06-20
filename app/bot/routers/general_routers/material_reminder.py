@@ -18,7 +18,7 @@ material_router.message.filter(RoleFilter([User.Role.worker.value,
                                           User.Role.foreman.value]))
 
 @material_router.message(
-    F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()
+    F.text.in_(get_all_texts("material_remainder_btn") + get_all_texts("reminder_btn")), UserInfo()
 )
 async def process_material_remainder(message: Message, state: FSMContext, user_info:User):
     await state.set_state(MaterialRemainderStates.waiting_photo)
