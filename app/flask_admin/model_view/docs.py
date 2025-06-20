@@ -3,6 +3,7 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 from wtforms import StringField, SelectField
 from app.db.models import Object, ObjectDocument, User
 from flask_admin import BaseView, expose
+from wtforms.validators import DataRequired
 
 from app.flask_admin.model_view.base import AuthModelView
 
@@ -43,6 +44,7 @@ class ObjectDocumentModelView(AuthModelView):
             query_factory=lambda: [],
             get_label="name",
             allow_blank=False,
+            validators=[DataRequired()],
         )
     }
 
@@ -75,7 +77,7 @@ class ObjectDocumentModelView(AuthModelView):
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:
-            model.object_id = None
+            raise ValueError("Не выбран объект для документа!")
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
