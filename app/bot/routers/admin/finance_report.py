@@ -118,7 +118,7 @@ async def process_period_selection(
 ):
     """Process period selection"""
     await callback.answer()
-
+    await callback.message.delete()
     if callback_data.action == "month":
         end_date = datetime.now()
         start_date = end_date - timedelta(days=30)
