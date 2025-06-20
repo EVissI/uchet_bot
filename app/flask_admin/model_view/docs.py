@@ -29,18 +29,23 @@ class ObjectDocumentModelView(AuthModelView):
     column_filters = ["object_id", "document_type"]
 
     # Используем object_id, а не object_select!
-    form_columns = ["file_id", "object_id", "document_type"]
+    form_columns = ["file_id", "object_select", "document_type"]
+
     form_overrides = {
         "file_id": StringField,
         "document_type": SelectField,
     }
+
+    form_extra_fields = {
+        "object_select": QuerySelectField(
+            "Объект",
+            query_factory=lambda: Object.query.all(),
+            get_label="name",
+            allow_blank=False,
+        )
+    }
+
     form_args = {
-        "object_id": {
-            "label": "Объект",
-            "query_factory": lambda: Object.query.all(),
-            "get_label": "name",
-            "allow_blank": False,
-        },
         "document_type": {
             "label": "Тип документа",
             "choices": [
@@ -50,6 +55,13 @@ class ObjectDocumentModelView(AuthModelView):
             ],
         },
     }
+
+    def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
+        if hasattr(form, "object_select") and form.object_select.data:
+            model.object_id = form.object_select.data.id
+        else:
+            model.object_id = None
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
