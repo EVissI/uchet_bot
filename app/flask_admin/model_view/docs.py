@@ -52,10 +52,11 @@ class ObjectDocumentModelView(AuthModelView):
         "document_type": {
             "label": "Тип документа",
             "choices": [
-                ("estimate", "смета"),
-                ("technical_task", "техническое задание"),
-                ("customer_contacts", "контакты заказчика"),
+                (ObjectDocument.DocumentType.estimate, "смета"),
+                (ObjectDocument.DocumentType.technical_task, "техническое задание"),
+                (ObjectDocument.DocumentType.customer_contacts, "контакты заказчика"),
             ],
+            "coerce": ObjectDocument.DocumentType, 
         },
     }
 
@@ -83,8 +84,17 @@ class ObjectDocumentModelView(AuthModelView):
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
+    
+    def _document_type_formatter(self, context, model, name):
 
-    column_formatters = {"object": _object_formatter}
+        choices = dict(self.form_args["document_type"]["choices"])
+        doc_type = model.document_type
+        key = doc_type.value if hasattr(doc_type, "value") else doc_type
+        return choices.get(key, key) if isinstance(choices, dict) else key
+    column_formatters = {
+        "object": _object_formatter,
+        "document_type": _document_type_formatter,
+    }
 
     def is_visible(self):
         return False
