@@ -171,7 +171,6 @@ async def create_object_with_documents(message: Message, state: FSMContext, user
             name=data['name'],
             description=data['description'],
             is_active=True,
-            creator_id=user_info.telegram_id,
         )
         
         await ObjectDAO.add(session, object_model)
