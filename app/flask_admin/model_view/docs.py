@@ -28,45 +28,28 @@ class ObjectDocumentModelView(AuthModelView):
     column_searchable_list = ["id", "file_id"]
     column_filters = ["object_id", "document_type"]
 
-    form_columns = ["file_id", "object_select", "document_type"]
+    # Используем object_id, а не object_select!
+    form_columns = ["file_id", "object_id", "document_type"]
     form_overrides = {
         "file_id": StringField,
         "document_type": SelectField,
     }
-
-    def get_object_query(self):
-        return self.session.query(Object).all()
-
-    form_extra_fields = {
-        "object_select": QuerySelectField(
-            "Объект",
-            query_factory=lambda: [],
-            get_label="name",
-            allow_blank=False,
-        ),
-        "document_type": SelectField(
-            "Тип документа",
-            choices=[
+    form_args = {
+        "object_id": {
+            "label": "Объект",
+            "query_factory": lambda: Object.query.all(),
+            "get_label": "name",
+            "allow_blank": False,
+        },
+        "document_type": {
+            "label": "Тип документа",
+            "choices": [
                 ("estimate", "смета"),
                 ("technical_task", "техническое задание"),
                 ("customer_contacts", "контакты заказчика"),
             ],
-        ),
+        },
     }
-
-    def create_form(self, obj=None):
-        form = super().create_form(obj)
-        form.object_select.query_factory = self.get_object_query
-        return form
-
-    def on_model_change(self, form, model, is_created):
-        super().on_model_change(form, model, is_created)
-        if hasattr(form, "object_select") and form.object_select.data:
-            model.object_id = form.object_select.data.id
-        else:
-            raise Exception("Не выбран объект для документа!")
-        if hasattr(form, "document_type") and form.document_type.data:
-            model.document_type = form.document_type.data
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
