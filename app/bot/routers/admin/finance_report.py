@@ -209,14 +209,10 @@ async def generate_report(
                     session, start_date=start_date, end_date=end_date
                 )
 
-            profic_records_data = [ProficAccountingDAO.serialize_for_report(r) for r in profic_records]
-            object_checks_data = [ObjectCheckDAO.serialize_for_report(r) for r in object_checks] if object_checks else None
-            non_object_checks_data = [CheckDAO.serialize_for_report(r) for r in non_object_checks] if non_object_checks else None
-
             excel_file = create_profic_report(
-                profic_records=profic_records_data,
-                object_checks=object_checks_data,
-                non_object_checks=non_object_checks_data,
+                profic_records=profic_records,
+                object_checks=object_checks,
+                non_object_checks=non_object_checks,
                 start_date=start_date,
                 end_date=end_date,
                 lang=user_info.language,
