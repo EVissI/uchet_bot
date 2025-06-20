@@ -70,9 +70,13 @@ class MainKeyboard:
 
     __foreman_kb_texts_list = ['profile_btn','objects_btn', 'material_remainder_btn','material_order_btn', 'reminder_out_object_btn']
 
-    __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn'
-                             ,'reminder_out_object_btn','reminder_btn','object_control_btn',
+    __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn','object_control_btn'
+                             ,'reminder_out_object_btn','reminder_btn',
                              'finance_report_btn']
+
+    __mini_admin_kb_texts_list = [
+        'material_remainder_control_btn','reminder_out_object_btn',
+    ]
 
     @staticmethod
     def get_worker_kb_texts(lang: str = 'ru') -> dict:
@@ -105,6 +109,16 @@ class MainKeyboard:
         }
     
     @staticmethod
+    def get_mini_admin_kb_texts(lang: str = 'ru') -> dict:
+        """
+        Returns dictionary with worker keyboard texts based on language
+        """
+        return {
+            text: get_text(text, lang) 
+            for text in MainKeyboard.__mini_admin_kb_texts_list
+        }
+
+    @staticmethod
     def build_main_kb(role:User.Role, lang:str) -> ReplyKeyboardMarkup:
         kb = ReplyKeyboardBuilder()
         match role:
@@ -120,6 +134,11 @@ class MainKeyboard:
                 return kb.as_markup(resize_keyboard=True)
             case User.Role.admin.value:
                 for val in MainKeyboard.get_admin_kb_texts(lang).values():
+                    kb.button(text=val)
+                kb.adjust(1,3,1)
+                return kb.as_markup(resize_keyboard=True)
+            case User.Role.buyer.value:
+                for val in MainKeyboard.get_mini_admin_kb_texts(lang).values():
                     kb.button(text=val)
                 kb.adjust(1)
                 return kb.as_markup(resize_keyboard=True)
