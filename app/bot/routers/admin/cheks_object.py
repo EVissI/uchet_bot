@@ -66,6 +66,7 @@ async def process_admin_check_btn(
 ):
     """Handler for admin check button"""
     await state.update_data(object_id=callback_data.id)
+    await callback.message.delete()
     await state.set_state(AdminCheckStates.waiting_photo_and_description)
     
     await callback.message.answer(
@@ -78,7 +79,6 @@ async def process_admin_check_description(message: Message, state: FSMContext, u
     await state.update_data(photo_id=message.photo[-1].file_id)
     await state.update_data(description=message.caption)
     await state.set_state(AdminCheckStates.waiting_amount)
-    
     await message.answer(
         text=get_text('enter_check_amount', user_info.language)
     )

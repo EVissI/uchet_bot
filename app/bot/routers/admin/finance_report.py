@@ -1,6 +1,6 @@
 ﻿from datetime import datetime, timedelta
 from aiogram import F, Router
-from aiogram.types import Message, CallbackQuery,BufferedInputFile
+from aiogram.types import Message, CallbackQuery, BufferedInputFile
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
@@ -19,7 +19,7 @@ from app.bot.kbds.inline_kbds import (
     FinanceReportObjectCallback,
 )
 from app.db.database import async_session_maker
-from app.db.dao import ProficAccountingDAO, ObjectCheckDAO, ObjectDAO,CheckDAO
+from app.db.dao import ProficAccountingDAO, ObjectCheckDAO, ObjectDAO, CheckDAO
 from app.db.models import User, Object
 from app.db.schemas import ObjectFilterModel
 
@@ -40,8 +40,10 @@ async def start_finance_report(message: Message, user_info: User):
     )
 
 
-@finance_report_router.callback_query(FinanceReportTypeCallback.filter(),
-    UserInfo(),)
+@finance_report_router.callback_query(
+    FinanceReportTypeCallback.filter(),
+    UserInfo(),
+)
 async def process_report_type(
     callback: CallbackQuery,
     callback_data: FinanceReportTypeCallback,
@@ -68,8 +70,10 @@ async def process_report_type(
         await state.update_data(report_type="no_object")
 
 
-@finance_report_router.callback_query(FinanceReportObjectCallback.filter(),
-    UserInfo(),)
+@finance_report_router.callback_query(
+    FinanceReportObjectCallback.filter(),
+    UserInfo(),
+)
 async def process_object_selection(
     callback: CallbackQuery,
     callback_data: FinanceReportObjectCallback,
@@ -96,14 +100,16 @@ async def process_object_selection(
     if callback_data.action == "back":
         await callback.message.edit_text(
             text=get_text("select_report_type", user_info.language),
-            reply_markup=get_finance_report_type_kbd(user_info.language)
+            reply_markup=get_finance_report_type_kbd(user_info.language),
         )
         await state.clear()
         return
 
 
-@finance_report_router.callback_query(FinanceReportPeriodCallback.filter(),
-    UserInfo(),)
+@finance_report_router.callback_query(
+    FinanceReportPeriodCallback.filter(),
+    UserInfo(),
+)
 async def process_period_selection(
     callback: CallbackQuery,
     callback_data: FinanceReportPeriodCallback,
@@ -114,14 +120,13 @@ async def process_period_selection(
     await callback.answer()
 
     if callback_data.action == "month":
-        now = datetime.now()
+        end_date = datetime.now()
         start_date = end_date - timedelta(days=30)
-        end_date = now
         await generate_report(callback.message, start_date, end_date, state, user_info)
 
     if callback_data.action == "all_time":
         end_date = datetime.now()
-        start_date = datetime(2024, 1, 1)  
+        start_date = datetime(2024, 1, 1)
         await generate_report(callback.message, start_date, end_date, state, user_info)
 
     if callback_data.action == "custom":
@@ -136,18 +141,22 @@ async def process_period_selection(
                 objects = await ObjectDAO.find_all(session, ObjectFilterModel())
                 await callback.message.edit_text(
                     text=get_text("select_object", user_info.language),
-                    reply_markup=get_finance_objects_kbd(objects, lang=user_info.language)
+                    reply_markup=get_finance_objects_kbd(
+                        objects, lang=user_info.language
+                    ),
                 )
         else:
             await callback.message.edit_text(
                 text=get_text("select_report_type", user_info.language),
-                reply_markup=get_finance_report_type_kbd(user_info.language)
+                reply_markup=get_finance_report_type_kbd(user_info.language),
             )
         return
 
 
-@finance_report_router.message(StateFilter(AdminPanelStates.enter_period),
-    UserInfo(),)
+@finance_report_router.message(
+    StateFilter(AdminPanelStates.enter_period),
+    UserInfo(),
+)
 async def process_custom_period(message: Message, state: FSMContext, user_info: User):
     """Process custom period input"""
     try:
@@ -204,7 +213,7 @@ async def generate_report(
             excel_file = create_profic_report(
                 profic_records=profic_records,
                 object_checks=object_checks,
-                non_object_checks=non_object_checks, 
+                non_object_checks=non_object_checks,
                 start_date=start_date,
                 end_date=end_date,
                 lang=user_info.language,
