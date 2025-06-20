@@ -65,7 +65,6 @@ async def process_admin_check_btn(
     user_info: User
 ):
     """Handler for admin check button"""
-    logger.info(f"Admin {user_info.telegram_id} started check upload for object {callback_data.object_id}")
     await state.update_data(object_id=callback_data.id)
     await state.set_state(AdminCheckStates.waiting_photo_and_description)
     
@@ -76,7 +75,6 @@ async def process_admin_check_btn(
 
 @admin_reminder_object_router.message(F.photo, StateFilter(AdminCheckStates.waiting_photo_and_description), UserInfo())
 async def process_admin_check_description(message: Message, state: FSMContext, user_info: User):
-    logger.info(f"Admin {user_info.telegram_id} uploaded check photo with description")
     await state.update_data(photo_id=message.photo[-1].file_id)
     await state.update_data(description=message.caption)
     await state.set_state(AdminCheckStates.waiting_amount)
