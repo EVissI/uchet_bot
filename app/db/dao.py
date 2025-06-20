@@ -283,6 +283,17 @@ class CheckDAO(BaseDAO):
             logger.error(f"Error in get_by_date_range: {e}")
             return []
 
+    @staticmethod
+    def serialize_for_report(record: Check) -> dict:
+        return {
+            "created_at": record.created_at,
+            "amount": getattr(record, "amount", None),
+            "description": getattr(record, "description", None),
+            "own_expense": getattr(record, "own_expense", None),
+            "user_fio": getattr(record.user, "user_enter_fio", None) if hasattr(record, "user") else None,
+        }
+
+
 class ObjectCheckDAO(BaseDAO):
     model = ObjectCheck
 
@@ -332,6 +343,8 @@ class ObjectCheckDAO(BaseDAO):
         except SQLAlchemyError as e:
             logger.error(f"Error in get_filtered_expenses: {e}")
             return []
+        
+
     @staticmethod
     async def get_by_date_range(
         session: AsyncSession,
@@ -352,6 +365,17 @@ class ObjectCheckDAO(BaseDAO):
             
         result = await session.execute(query)
         return result.scalars().all()
+    
+    @staticmethod
+    def serialize_for_report(record: ObjectCheck) -> dict:
+        return {
+            "created_at": record.created_at,
+            "amount": getattr(record, "amount", None),
+            "description": getattr(record, "description", None),
+            "own_expense": getattr(record, "own_expense", None),
+            "object_name": getattr(record.object, "name", None) if hasattr(record, "object") else None,
+            "user_fio": getattr(record.user, "user_enter_fio", None) if hasattr(record, "user") else None,
+        }
 
 class ObjectPhotoDAO(BaseDAO):
     model = ObjectPhoto
@@ -388,3 +412,14 @@ class ProficAccountingDAO(BaseDAO):
             
         result = await session.execute(query)
         return result.scalars().all()
+    
+    @staticmethod
+    def serialize_for_report(record: ProficAccounting) -> dict:
+        return {
+            "created_at": record.created_at,
+            "payment_type": getattr(record, "payment_type", None),
+            "object_name": getattr(record.object, "name", None) if hasattr(record, "object") else None,
+            "purpose": getattr(record, "purpose", None),
+            "amount": getattr(record, "amount", None),
+            "user_fio": getattr(record.user, "user_enter_fio", None) if hasattr(record, "user") else None,
+        }
