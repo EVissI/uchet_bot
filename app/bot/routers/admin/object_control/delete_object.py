@@ -34,4 +34,4 @@ async def process_delete_obj(callback: CallbackQuery, callback_data: ObjListCall
     async with async_session_maker() as session:
         deleted_object:Object = await ObjectDAO.find_one_or_none(session,ObjectFilterModel(id = callback_data.id))
         await ObjectDAO.delete(session,ObjectFilterModel.model_validate(deleted_object.to_dict()))
-    await callback.message.answer(get_text('object_has_been_deleted', object_id = callback_data.id))
+    await callback.message.answer(get_text('object_has_been_deleted', lang=user_info.language))

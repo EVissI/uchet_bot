@@ -27,6 +27,7 @@ def get_all_texts(text_code: str) -> list[str]:
 
 TEXTS_TRANSLITE = {
     "ru": {
+        "object_has_been_deleted": "Объект удален",
         'reminder_delete_canceled': 'Удаление остатков отменено',
         'reminder_deleted': 'Остатки деактивированны',
         'reminder_not_found': 'Остатки не были найденны',
