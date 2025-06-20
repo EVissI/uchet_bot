@@ -4,11 +4,12 @@ from aiogram.types import Message
 from loguru import logger
 from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_text
+from app.bot.filters.user_info import UserInfo
 from app.db.models import User
 
 generate_file_id_router = Router()
 
-@generate_file_id_router.message(F.photo,StateFilter(None))
+@generate_file_id_router.message(F.photo,StateFilter(None, AdminPanelStates),UserInfo())
 async def process_photo_for_file_id(message: Message, user_info: User):
     """Generate and return file_id from photo"""
     try:
