@@ -6,50 +6,52 @@ from flask_admin import BaseView, expose
 
 from app.flask_admin.model_view.base import AuthModelView
 
+
 class DocumentsMenuView(BaseView):
-    @expose('/')
+    @expose("/")
     def index(self):
-        return self.render('admin/doc_menu.html')
+        return self.render("admin/doc_menu.html")
+
 
 class ObjectDocumentModelView(AuthModelView):
     can_create = True
     can_edit = False
     can_delete = True
 
-    column_list = ['id', 'file_id', 'object', 'document_type']
+    column_list = ["id", "file_id", "object", "document_type"]
     column_labels = {
-        'id': 'ID',
-        'file_id': 'file_id',
-        'object': 'Объект',
-        'document_type': 'Тип документа'
+        "id": "ID",
+        "file_id": "file_id",
+        "object": "Объект",
+        "document_type": "Тип документа",
     }
-    column_searchable_list = ['id', 'file_id']
-    column_filters = ['object_id', 'document_type']
+    column_searchable_list = ["id", "file_id"]
+    column_filters = ["object_id", "document_type"]
 
-    form_columns = ['file_id', 'object_select', 'document_type']
+    form_columns = ["file_id", "object_select", "document_type"]
     form_overrides = {
-        'file_id': StringField,
-        'document_type': SelectField,
+        "file_id": StringField,
+        "document_type": SelectField,
     }
 
     def get_object_query(self):
         return self.session.query(Object).all()
 
     form_extra_fields = {
-        'object_select': QuerySelectField(
-            'Объект',
+        "object_select": QuerySelectField(
+            "Объект",
             query_factory=lambda: [],
-            get_label='name',
+            get_label="name",
             allow_blank=False,
         ),
-        'document_type': SelectField(
-            'Тип документа',
+        "document_type": SelectField(
+            "Тип документа",
             choices=[
-                ('estimate', 'смета'),
-                ('technical_task', 'техническое задание'),
-                ('customer_contacts', 'контакты заказчика')
-            ]
-        )
+                ("estimate", "смета"),
+                ("technical_task", "техническое задание"),
+                ("customer_contacts", "контакты заказчика"),
+            ],
+        ),
     }
 
     def create_form(self, obj=None):
@@ -59,49 +61,45 @@ class ObjectDocumentModelView(AuthModelView):
 
     def on_model_change(self, form, model, is_created):
         super().on_model_change(form, model, is_created)
-        if hasattr(form, 'object_select') and form.object_select.data:
+        if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:
-            model.object_id = None
-        if hasattr(form, 'document_type') and form.document_type.data:
+            raise Exception("Не выбран объект для документа!")
+        if hasattr(form, "document_type") and form.document_type.data:
             model.document_type = form.document_type.data
 
     def _object_formatter(self, context, model, name):
-        return model.object.name if model.object else '—'
+        return model.object.name if model.object else "—"
 
-    column_formatters = {
-        'object': _object_formatter
-    }
+    column_formatters = {"object": _object_formatter}
+
     def is_visible(self):
         return False
-    
+
+
 class UserDocumentModelView(AuthModelView):
     can_create = True
     can_edit = False
     can_delete = True
 
-    column_list = ['id', 'file_id', 'user']
-    column_labels = {
-        'id': 'ID',
-        'file_id': 'file_id',
-        'user': 'Пользователь'
-    }
-    column_searchable_list = ['id', 'file_id']
-    column_filters = ['user_id']
+    column_list = ["id", "file_id", "user"]
+    column_labels = {"id": "ID", "file_id": "file_id", "user": "Пользователь"}
+    column_searchable_list = ["id", "file_id"]
+    column_filters = ["user_id"]
 
-    form_columns = ['file_id', 'user_select']
+    form_columns = ["file_id", "user_select"]
     form_overrides = {
-        'file_id': StringField,
+        "file_id": StringField,
     }
 
     def get_user_query(self):
         return self.session.query(User).all()
 
     form_extra_fields = {
-        'user_select': QuerySelectField(
-            'Пользователь',
+        "user_select": QuerySelectField(
+            "Пользователь",
             query_factory=lambda: [],
-            get_label='user_enter_fio',
+            get_label="user_enter_fio",
             allow_blank=False,
         )
     }
@@ -113,16 +111,15 @@ class UserDocumentModelView(AuthModelView):
 
     def on_model_change(self, form, model, is_created):
         super().on_model_change(form, model, is_created)
-        if hasattr(form, 'user_select') and form.user_select.data:
+        if hasattr(form, "user_select") and form.user_select.data:
             model.user_id = form.user_select.data.telegram_id
         else:
             model.user_id = None
 
     def _user_formatter(self, context, model, name):
-        return model.user.user_enter_fio if model.user else '—'
+        return model.user.user_enter_fio if model.user else "—"
 
-    column_formatters = {
-        'user': _user_formatter
-    }
+    column_formatters = {"user": _user_formatter}
+
     def is_visible(self):
         return False
