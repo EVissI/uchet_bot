@@ -61,7 +61,6 @@ class ObjectModel(BaseModel):
     name: str
     description: Optional[str] = None
     is_active: bool = True
-    creator_id: int
 
     class Config:
         from_attributes = True
@@ -73,7 +72,6 @@ class ObjectFilterModel(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
-    creator_id: Optional[int] = None
 
 
 class ObjectDocumentModel(BaseModel):
