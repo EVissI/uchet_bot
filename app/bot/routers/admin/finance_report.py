@@ -195,7 +195,6 @@ async def generate_report(
             profic_records = await ProficAccountingDAO.get_by_date_range(
                 session, start_date=start_date, end_date=end_date, object_id=object_id
             )
-
             if report_type == "by_object":
                 object_checks = await ObjectCheckDAO.get_by_date_range(
                     session,
@@ -210,22 +209,31 @@ async def generate_report(
                     session, start_date=start_date, end_date=end_date
                 )
 
-            excel_file = create_profic_report(
-                profic_records=profic_records,
-                object_checks=object_checks,
-                non_object_checks=non_object_checks,
-                start_date=start_date,
-                end_date=end_date,
-                lang=user_info.language,
+            # Сериализуем данные до выхода из сессии!
+            profic_records_data = [r.to_dict() for r in profic_records]
+            object_checks_data = (
+                [r.to_dict() for r in object_checks] if object_checks else None
+            )
+            non_object_checks_data = (
+                [r.to_dict() for r in non_object_checks] if non_object_checks else None
             )
 
-            await message.answer_document(
-                document=BufferedInputFile(
-                    excel_file.read(),
-                    filename=f"financial_report_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}.xlsx",
-                ),
-                caption=get_text("report_ready", user_info.language),
-            )
+        excel_file = create_profic_report(
+            profic_records=profic_records_data,
+            object_checks=object_checks_data,
+            non_object_checks=non_object_checks_data,
+            start_date=start_date,
+            end_date=end_date,
+            lang=user_info.language,
+        )
+
+        await message.answer_document(
+            document=BufferedInputFile(
+                excel_file.read(),
+                filename=f"financial_report_{start_date.strftime('%Y%m%d')}_{end_date.strftime('%Y%m%d')}.xlsx",
+            ),
+            caption=get_text("report_ready", user_info.language),
+        )
     except Exception as e:
         logger.error(f"Error generating report: {e}")
         await message.answer(text=get_text("export_error", user_info.language))
