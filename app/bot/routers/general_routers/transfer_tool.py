@@ -17,16 +17,15 @@ from app.bot.kbds.inline_kbds import (
     AcceptToolCallback,
     get_confirm_transfer_tool_kbd,
 )
-from app.bot.common.fsm_managment import DialogMessageManager
+from app.bot.common.fsm_managment import DialogMessageManager, StateHistoryMixin
 
 
-class TransferToolRouter(Router, DialogMessageManager):
+class TransferToolRouter(Router, StateHistoryMixin, DialogMessageManager):
     def __init__(self):
         super().__init__()
 
 
 transfer_tool_router = TransferToolRouter()
-
 
 class TransferToolStates(StatesGroup):
     waiting_tool_id = State()
