@@ -57,6 +57,7 @@ async def process_object_selection(
 async def process_accouting_type(
     callback: CallbackQuery, callback_data:AccountingTypeCallback, state: FSMContext, user_info: User
 ):
+    await callback.message.delete()
     await callback.message.answer(
         text=get_text("enter_payment_amount", user_info.language),
     )
@@ -110,7 +111,7 @@ async def process_purpose(message: Message, state: FSMContext, user_info: User):
                     "profic_saved",
                     user_info.language,
                     amount=data["amount"],
-                    type=data["payment_type"],
+                    type=data["type"],
                 )
             )
             await state.set_state(AdminPanelStates.main)
@@ -121,6 +122,7 @@ async def process_purpose(message: Message, state: FSMContext, user_info: User):
 
 @profic_router.callback_query(F.data == "profic_general", UserInfo())
 async def start_general_accounting(callback: CallbackQuery, state: FSMContext, user_info: User):
+    await callback.message.delete()
     await state.update_data(object_id=None)
     await callback.message.answer(
         text=get_text("select_payment_type", user_info.language),
