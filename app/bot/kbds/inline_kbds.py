@@ -121,13 +121,14 @@ def object_keyboard(object_id: int, lang: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
 
     buttons = [
-        ("navigate", "navigation_btn"),
         ("docs", "documentation_btn"),
         ("notify", "notify_object_btn"),
         ("photo", "object_photo_btn"),
         ("checks", "object_checks_btn"),
     ]
-
+    kb.button(
+        text=get_text("navigation_btn", lang),url="https://www.google.com/search?newwindow=1&sca_esv=c258e1c0eae32aae&sxsrf=AE3TifM8d9GSJVsBLWHTaa6Q3jX9CLPhNg:1750705975247&q=%D0%BA%D0%BE%D1%82%D1%8F%D1%82%D0%B0&udm=2&fbs=AIIjpHyXXa-jR7m04g-bjvdj4k5-Vu3thElMpfRBVcMe0k2JrE5odrMqNgCgijMYA8L8BKYFOPKWasYb6Sc66gofWnAFgtvjmOgtSzH56oaGGp2x7ipLkG6mGLQeI_e1XL-anLGCTnp332Xw4whWM7_EqQkVACciM6dYpfOME3lzEUhxCFYTJX_O8MhoTT-KCYdL4O2C5XMgfX3GYGD6Kc86QKWMYt-fD9JdlCsUKsMCKWSM1mjSF6Qo5GvbxmjNwgxyXr36BBYuXrRUFA60LVywm-_orWFDsg&sa=X&ved=2ahUKEwiQ44r-n4iOAxWHrlYBHcsPKRgQtKgLKAF6BAgTEAE&biw=1920&bih=919&dpr=1"
+    )
     for action, text_code in buttons:
         kb.button(
             text=get_text(text_code, lang),
