@@ -11,7 +11,7 @@ from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import AccountingTypeCallback, ObjListCallback, build_accounting_type_kb, build_paginated_list_kbd
 from app.db.dao import ObjectDAO, ProficAccountingDAO
 from app.db.models import User
-from app.db.schemas import ProficAccountingModel
+from app.db.schemas import ProficAccountingModel,ObjectFilterModel
 from app.db.database import async_session_maker
 
 profic_router = Router()
@@ -24,7 +24,7 @@ profic_router = Router()
 async def start_profic_accounting(message: Message, state: FSMContext, user_info: User):
     """Start profit accounting process"""
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session)
+        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel())
 
         if not objects:
             await message.answer(get_text("no_objects_found", user_info.language))

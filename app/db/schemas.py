@@ -71,7 +71,7 @@ class ObjectFilterModel(BaseModel):
 
     name: Optional[str] = None
     description: Optional[str] = None
-    is_active: Optional[bool] = None
+    is_active: bool = True
 
 
 class ObjectDocumentModel(BaseModel):

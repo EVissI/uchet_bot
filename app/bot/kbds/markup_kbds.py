@@ -168,7 +168,7 @@ class AdminToolsControlKeyboard:
     
 
 class AdminObjectControlKeyboard:        
-    __object_control_texts = ['create_object_btn', 'add_worker_to_object_btn','delete_object_btn','back_btn']
+    __object_control_texts = ['create_object_btn', 'add_worker_to_object_btn','back_btn']
 
     @staticmethod
     def get_object_control_texts(lang: str = 'ru') -> dict:
