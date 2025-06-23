@@ -7,10 +7,6 @@ from app.bot.routers.worker.object_logic.photo_from_object_router import photo_f
 from app.db.models import User
 
 main_worker_object_router = Router()
-main_worker_object_router.message.filter(RoleFilter([User.Role.admin.value,
-                                          User.Role.foreman.value,
-                                          User.Role.buyer.value]))
-
 main_worker_object_router.include_routers(worker_docs_router,
                                           checks_router,
                                           notify_worker_object,

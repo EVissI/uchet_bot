@@ -5,6 +5,7 @@ from aiogram.filters import StateFilter
 
 from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_text, get_all_texts
+from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.markup_kbds import AdminObjectControlKeyboard,MainKeyboard
 from app.bot.routers.general_routers.object_control.create_object_router import create_object_router
@@ -14,6 +15,10 @@ from app.db.models import User
 
 
 setup_object_control_router = Router()
+setup_object_control_router.message.filter(RoleFilter([User.Role.admin.value,
+                                          User.Role.foreman.value,
+                                          User.Role.buyer.value]))
+
 setup_object_control_router.include_routers(
     create_object_router,
     add_member_to_object_router,
