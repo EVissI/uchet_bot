@@ -11,7 +11,8 @@ from app.db.models import User
 
 main_worker_router = Router()
 main_worker_router.message.filter(RoleFilter(User.Role.worker.value))
-main_worker_router.include_routers(my_object_router,main_worker_object_router)
+main_worker_router.include_routers(my_object_router,
+                                   main_worker_object_router)
 
 @main_worker_router.message(F.video_note,StateFilter(None))
 async def handle_circle(message: Message):

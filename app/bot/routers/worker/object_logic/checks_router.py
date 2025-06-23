@@ -32,7 +32,6 @@ async def process_check_btn(
         text=get_text('send_check_photo_and_description', user_info.language)
     )
     
-    await callback.answer()
 
 
 @checks_router.message(F.photo,StateFilter(ObjectCheckStates.waiting_photo_and_desription), UserInfo())

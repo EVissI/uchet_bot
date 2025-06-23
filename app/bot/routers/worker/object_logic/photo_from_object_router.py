@@ -30,7 +30,6 @@ async def process_photo_btn(
     await callback.message.answer(
         text=get_text('send_object_photo', user_info.language)
     )
-    await callback.answer()
 
 @photo_from_object_router.message(F.photo, StateFilter(ObjectPhotoStates.waiting_photo), UserInfo())
 async def process_object_photo(message: Message, state: FSMContext, user_info: User):

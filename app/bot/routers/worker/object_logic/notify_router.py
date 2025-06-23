@@ -31,7 +31,6 @@ async def process_notify_btn(
         text=get_text('enter_notification', user_info.language)
     )
     
-    await callback.answer()
 
 
 @notify_worker_object.message(F.text, StateFilter(NotifyObjectStates.waiting_message), UserInfo())

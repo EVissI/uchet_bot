@@ -35,4 +35,3 @@ async def process_object_docs(callback: CallbackQuery, callback_data: WorkerObje
                 photo=doc.file_id,
                 caption=doc_text,
             )
-    await callback.answer()
