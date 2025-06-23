@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from app.bot.common.texts import get_text, get_all_texts
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.markup_kbds import get_back_keyboard
+from app.bot.kbds.markup_kbds import MainKeyboard, get_back_keyboard
 from app.db.models import User, Tool
 from app.db.dao import ToolDAO
 from app.db.database import async_session_maker
@@ -40,7 +40,7 @@ class TransferToolStates(StatesGroup):
 async def transfer_tool_start(message: Message, state: FSMContext, user_info: User):
     await transfer_tool_router.save_message(state, message.message_id)  
     msg = await message.answer(
-        get_text("enter_tool_id", user_info.language), reply_markup=get_back_keyboard()
+        get_text("enter_tool_id", user_info.language), reply_markup=get_back_keyboard(user_info.language)
     )
     await transfer_tool_router.save_message(state, msg.message_id)
     await state.set_state(TransferToolStates.waiting_tool_id)
@@ -51,7 +51,7 @@ async def transfer_tool_back(message: Message, state: FSMContext, user_info: Use
     await transfer_tool_router.save_message(state, message.message_id)  
     msg = await message.answer(
         get_text("transfer_tool_back", user_info.language),
-        reply_markup=get_back_keyboard(),
+        reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
     )
     await transfer_tool_router.save_message(state, msg.message_id)
     await transfer_tool_router.clear_messages(state, message.chat.id, message.bot)

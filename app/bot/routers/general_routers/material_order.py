@@ -25,7 +25,7 @@ material_order_router.message.filter(RoleFilter([User.Role.worker.value,
 async def process_material_order(message: Message, state: FSMContext, user_info: User):
     """Handler for starting material order process"""
     await state.set_state(MaterialOrderStates.waiting_description)
-    await message.answer(text=get_text("enter_material_order", user_info.language),reply_markup=get_back_keyboard())
+    await message.answer(text=get_text("enter_material_order", user_info.language),reply_markup=get_back_keyboard(user_info.language))
 
 
 @material_order_router.message(F.text.in_(get_all_texts("back_btn")),UserInfo())
