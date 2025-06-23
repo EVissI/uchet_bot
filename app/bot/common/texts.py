@@ -77,6 +77,7 @@ TEXTS_TRANSLITE = {
         "profile_btn": "Профиль",
         "my_objects_btn": "Мои объекты",
         "material_remainder_btn": "Остаток материалов",
+        "no_documents": "Для этого объекта не добавлено ни одного документа",
         "material_order_btn": "Заказ материалов",
         "info_btn": "Информация",
         "instructions": "Инструкции по использованию бота",
