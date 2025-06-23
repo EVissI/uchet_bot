@@ -1,5 +1,5 @@
 ﻿import asyncio
-from app.bot.filters.logs import FSMStateLoggerMiddleware
+from app.bot.middlewares.logs import FSMStateLoggerMiddleware
 from app.bot.routers.setup_router import main_router
 
 from app.config import setup_logger

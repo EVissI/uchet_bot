@@ -78,10 +78,13 @@ TEXTS_TRANSLITE = {
         "my_objects_btn": "Мои объекты",
         "material_remainder_btn": "Остаток материалов",
         "out_object_check_btn": "Учет чеков вне объектов",
+        'transfer_tool_btn': "Передача инструмента",
         "no_documents": "Для этого объекта не добавлено ни одного документа",
         "material_order_btn": "Заказ материалов",
         "info_btn": "Информация",
         "instructions": "Инструкции по использованию бота",
+        "enter_tool_id": "Введите ID инструмента",
+        "enter_recipient": "Введите @username или telegram_id получателя:",
         "rules": "Правила использования",
         "profile_info": (
             "👤 <b>Профиль</b>\n\n"
@@ -163,6 +166,8 @@ TEXTS_TRANSLITE = {
             "📍 <b>Место хранения:</b> <i>{location}</i>"
         ),
         "material_saved": "✅ Информация о материале сохранена",
+        "confirm_transfer_tool": "Подтвердите передачу инструмента:",
+        "transfer_tool_forced": "Инструмент принудительно передан выбранному пользователю.",
         "transfer_tool_invalid_format": "Неверный формат команды. Используйте: /transfer_tool <ID инструмента> <получатель> <описание>",
         "transfer_tool_invalid_tool_id": "ID инструмента должно быть числом.",
         "transfer_tool_not_found": "Инструмент с указанным ID не найден.",
@@ -171,7 +176,6 @@ TEXTS_TRANSLITE = {
             "Инструмент: {tool_name} (ID: {tool_id})\n"
             "Получатель: {recipient}\n"
             "Отправитель: {sender}\n"
-            "Описание: {description}"
         ),
         "transfer_tool_request_sent": "Запрос на передачу инструмента отправлен.",
         "accept_tool_btn": "получить инструмент",
@@ -722,7 +726,6 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
         "Asbob: {tool_name} (ID: {tool_id})\n"
         "Oluvchi: {recipient}\n"
         "Yuboruvchi: {sender}\n"
-        "Izoh: {description}"
     ),
     "transfer_tool_request_sent": "Asbobni uzatish so'rovi yuborildi",
     "accept_tool_btn": "asbobni qabul qilish",
@@ -1266,7 +1269,6 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
         "Асбоб: {tool_name} (ID: {tool_id})\n"
         "Гиранда: {recipient}\n"
         "Фиристанда: {sender}\n"
-        "Тавсиф: {description}"
     ),
     "transfer_tool_request_sent": "Дархост барои интиқоли асбоб фиристода шуд.",
     "accept_tool_btn": "қабул кардани асбоб",

@@ -711,3 +711,27 @@ def build_profic_start_kbd(lang):
     kb.button(text=get_text("object_accounting_btn", lang), callback_data="profic_object")
     kb.adjust(1)
     return kb.as_markup()
+
+class ConfirmTransferToolCallback(CallbackData, prefix="confirm_transfer_tool"):
+    tool_id: int
+    recipient_id: int
+    action: str 
+
+def get_confirm_transfer_tool_kbd(tool_id: int, recipient_id: int, user_role: str, lang: str = "ru"):
+    from aiogram.utils.keyboard import InlineKeyboardBuilder
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text="✅ Подтвердить",
+        callback_data=ConfirmTransferToolCallback(tool_id=tool_id, recipient_id=recipient_id, action="confirm").pack()
+    )
+    kb.button(
+        text="❌ Отменить",
+        callback_data=ConfirmTransferToolCallback(tool_id=tool_id, recipient_id=recipient_id, action="cancel").pack()
+    )
+    if user_role == User.Role.admin.value or user_role == User.Role.buyer.value:
+        kb.button(
+            text="⚡ Принудительно",
+            callback_data=ConfirmTransferToolCallback(tool_id=tool_id, recipient_id=recipient_id, action="force").pack()
+        )
+    kb.adjust(1)
+    return kb.as_markup()
