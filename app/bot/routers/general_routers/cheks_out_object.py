@@ -6,6 +6,7 @@ from loguru import logger
 
 from app.bot.common.states import AdminPanelStates, CheckOutObjectStates
 from app.bot.common.texts import get_all_texts, get_text
+from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
 from app.db.dao import CheckDAO
 from app.db.models import User, Check
@@ -16,11 +17,17 @@ from app.config import settings
 
 
 checks_out_object_check_router = Router()
+checks_out_object_check_router.message.filter(RoleFilter(
+                                        [
+                                          User.Role.foreman.value,
+                                          User.Role.admin.value,
+                                          User.Role.buyer.value
+                                        ]
+                                        ))
 
 
 @checks_out_object_check_router.message(
     F.text.in_(get_all_texts("out_object_check_btn")),
-    StateFilter(AdminPanelStates),
     UserInfo(),
 )
 async def process_out_object_check_btn(
