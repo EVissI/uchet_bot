@@ -197,7 +197,7 @@ TEXTS_TRANSLITE = {
         "foreman_mass_mailing_btn": "Рассылка по объекту",
         "foreman_offsite_accounting_btn": "Учёт вне объекта",
         "foreman_export_xlsx_btn": "Выгрузка xlsx по объекту",
-        "select_object_prompt": "Пожалуйста, выберите объект для просмотра списка рабочих",
+        "select_object_prompt": "Пожалуйста, выберите объект:",
         "no_objects": "У вас нет доступных объектов",
         "back_btn": "Назад",
         "no_object_members": "Для выбранного объекта нет закрепленных рабочих.",
