@@ -51,11 +51,10 @@ async def transfer_tool_start(message: Message, state: FSMContext, user_info: Us
                             UserInfo())
 async def transfer_tool_back(message: Message, state: FSMContext, user_info: User):
     await transfer_tool_router.save_message(state, message.message_id)  
-    msg = await message.answer(
+    await message.answer(
         message.text,
         reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
     )
-    await transfer_tool_router.save_message(state, msg.message_id)
     await transfer_tool_router.clear_messages(state, message.chat.id, message.bot)
     await state.clear()
 
@@ -143,9 +142,11 @@ async def process_confirm_transfer_tool(
     tool_id = callback_data.tool_id
     recipient_id = callback_data.recipient_id
     action = callback_data.action
-
+    await callback.message.delete()
     if action == "cancel":
-        await callback.message.edit_text("Передача отменена.")
+        await callback.message.answer(get_text('operation_cancelled',lang=user_info.language),
+                                    reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language))
+
         await transfer_tool_router.clear_messages(
             state, callback.message.chat.id, callback.bot
         )
@@ -157,8 +158,9 @@ async def process_confirm_transfer_tool(
             session, ToolFilterModel(id=tool_id)
         )
         if not tool:
-            await callback.message.edit_text(
-                get_text("transfer_tool_not_found", user_info.language)
+            await callback.message.answer(
+                get_text("transfer_tool_not_found", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
             )
             await transfer_tool_router.clear_messages(
                 state, callback.message.chat.id, callback.bot
@@ -173,8 +175,9 @@ async def process_confirm_transfer_tool(
                 filters=ToolFilterModel(id=tool.id),
                 values=ToolFilterModel.model_validate(tool.to_dict()),
             )
-            await callback.message.edit_text(
-                get_text("transfer_tool_forced", user_info.language)
+            await callback.message.answer(
+                get_text("transfer_tool_forced", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
             )
             await transfer_tool_router.clear_messages(
                 state, callback.message.chat.id, callback.bot
@@ -204,8 +207,9 @@ async def process_confirm_transfer_tool(
                 ),
                 reply_markup=kb,
             )
-            await callback.message.edit_text(
-                get_text("transfer_tool_request_sent", user_info.language)
+            await callback.message.answer(
+                get_text("transfer_tool_request_sent", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
             )
             await transfer_tool_router.clear_messages(
                 state, callback.message.chat.id, callback.bot
