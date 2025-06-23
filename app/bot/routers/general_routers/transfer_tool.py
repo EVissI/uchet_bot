@@ -2,6 +2,7 @@
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.filters import StateFilter
 
 from app.bot.common.texts import get_text, get_all_texts
 from app.bot.filters.user_info import UserInfo
@@ -45,11 +46,13 @@ async def transfer_tool_start(message: Message, state: FSMContext, user_info: Us
     await state.set_state(TransferToolStates.waiting_tool_id)
 
 
-@transfer_tool_router.message(F.text.in_(get_all_texts("back_btn")), UserInfo())
+@transfer_tool_router.message(F.text.in_(get_all_texts("back_btn")), 
+                            StateFilter(TransferToolStates),
+                            UserInfo())
 async def transfer_tool_back(message: Message, state: FSMContext, user_info: User):
     await transfer_tool_router.save_message(state, message.message_id)  
     msg = await message.answer(
-        get_text("transfer_tool_back", user_info.language),
+        message.text,
         reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
     )
     await transfer_tool_router.save_message(state, msg.message_id)
@@ -57,7 +60,9 @@ async def transfer_tool_back(message: Message, state: FSMContext, user_info: Use
     await state.clear()
 
 
-@transfer_tool_router.message(TransferToolStates.waiting_tool_id, UserInfo())
+@transfer_tool_router.message(F.text, 
+                            StateFilter(TransferToolStates.waiting_tool_id), 
+                            UserInfo())
 async def transfer_tool_get_tool_id(
     message: Message, state: FSMContext, user_info: User
 ):
@@ -88,7 +93,7 @@ async def transfer_tool_get_tool_id(
     await state.set_state(TransferToolStates.waiting_user_id)
 
 
-@transfer_tool_router.message(TransferToolStates.waiting_user_id, UserInfo())
+@transfer_tool_router.message(F.text, StateFilter(TransferToolStates.waiting_user_id), UserInfo())
 async def transfer_tool_get_user_id(
     message: Message, state: FSMContext, user_info: User
 ):

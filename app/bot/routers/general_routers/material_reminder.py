@@ -27,7 +27,9 @@ async def process_material_remainder(message: Message, state: FSMContext, user_i
         text=get_text("send_material_photo", user_info.language),reply_markup=get_back_keyboard(user_info.language)
     )
 
-@material_router.message(F.text.in_(get_all_texts("back_btn")), UserInfo())
+@material_router.message(F.text.in_(get_all_texts("back_btn")), 
+                        StateFilter(MaterialRemainderStates), 
+                        UserInfo())
 async def cmd_back(message: Message, state: FSMContext, user_info: User):
     await state.clear()
     await message.answer(

@@ -42,7 +42,7 @@ async def process_out_object_check_btn(
 
 
 @checks_out_object_check_router.message(
-    F.photo,F.caption, StateFilter(CheckOutObjectStates.waiting_photo), UserInfo()
+    F.photo, F.caption, StateFilter(CheckOutObjectStates.waiting_photo), UserInfo()
 )
 async def process_check_photo(message: Message, state: FSMContext, user_info: User):
     """Handle check photo with description"""

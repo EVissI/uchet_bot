@@ -28,7 +28,9 @@ async def process_material_order(message: Message, state: FSMContext, user_info:
     await message.answer(text=get_text("enter_material_order", user_info.language),reply_markup=get_back_keyboard(user_info.language))
 
 
-@material_order_router.message(F.text.in_(get_all_texts("back_btn")),UserInfo())
+@material_order_router.message(F.text.in_(get_all_texts("back_btn")),
+                            StateFilter(MaterialOrderStates),
+                            UserInfo())
 async def cmd_back(message: Message, state: FSMContext, user_info: User):
     """Handler for back button in material order process"""
     await state.clear()
