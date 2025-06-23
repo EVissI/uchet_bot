@@ -60,6 +60,9 @@ class User(Base):
     object_profic_accounting: Mapped[list["ObjectProficAccounting"]] = relationship(
         "ObjectProficAccounting", back_populates="user"
     )
+    profic_accounting: Mapped[list["ProficAccounting"]] = relationship(
+        "ProficAccounting", back_populates="user"
+    )
 
 
 class Tool(Base):
@@ -289,7 +292,7 @@ class ProficAccounting(Base):
     created_by: Mapped[int] = mapped_column(
         ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False
     )
-    user: Mapped["User"] = relationship("User", back_populates="object_profic_accounting")
+    user: Mapped["User"] = relationship("User", back_populates="profic_accounting")
 
 
 class AdminUser(Base):
