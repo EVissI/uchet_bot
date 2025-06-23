@@ -7,9 +7,9 @@ from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_text, get_all_texts
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.markup_kbds import AdminObjectControlKeyboard,MainKeyboard
-from app.bot.routers.admin.object_control.create_object_router import create_object_router
-from app.bot.routers.admin.object_control.add_member_to_object import add_member_to_object_router
-from app.bot.routers.admin.object_control.delete_object import delete_object_router
+from app.bot.routers.general_routers.object_control.create_object_router import create_object_router
+from app.bot.routers.general_routers.object_control.add_member_to_object import add_member_to_object_router
+from app.bot.routers.general_routers.object_control.delete_object import delete_object_router
 from app.db.models import User
 
 

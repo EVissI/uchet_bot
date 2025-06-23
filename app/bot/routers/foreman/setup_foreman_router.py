@@ -1,12 +1,25 @@
-﻿from aiogram import Router
+﻿from aiogram import Router,F
+from aiogram.types import Message
+from aiogram.filters import StateFilter
 from app.bot.filters.role_filter import RoleFilter
 from app.bot.routers.foreman.object_logic.main_object_router import foreman_router
+from app.bot.routers.general_routers.object_control.setup_object_control import setup_object_control_router
 from app.bot.routers.foreman.report import report_router
 from app.db.models import User
+from app.config import settings
 
 main_foreman_router = Router()
 main_foreman_router.message.filter(RoleFilter(User.Role.foreman.value))
 main_foreman_router.include_routers(
         foreman_router,
         report_router,
+        setup_object_control_router
 )
+
+@main_foreman_router.message(F.video_note,StateFilter(None))
+async def handle_circle(message: Message):
+    try:
+        await message.forward(settings.TELEGRAM_GROUP_ID_VIDEO_OTCHET)
+        await message.reply("Отчет принят")
+    except Exception as e:
+        await message.reply("Произошла ошибка при пересылке сообщения.")

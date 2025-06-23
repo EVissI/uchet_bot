@@ -68,14 +68,14 @@ def stop_kb(lang:str = 'ru') -> ReplyKeyboardMarkup:
 class MainKeyboard:
     __worker_kb_texts_list = ['profile_btn','my_objects_btn', 'material_remainder_btn','material_order_btn', 'info_btn']
 
-    __foreman_kb_texts_list = ['profile_btn','objects_btn', 'material_remainder_btn','material_order_btn', 'reminder_out_object_btn']
+    __foreman_kb_texts_list = ['profile_btn','objects_btn', 'material_remainder_btn','material_order_btn', 'reminder_out_object_btn','object_control_btn']
 
     __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn','object_control_btn'
                              ,'reminder_out_object_btn','reminder_btn','profic_accounting_btn',
                              'finance_report_btn']
 
     __mini_admin_kb_texts_list = [
-        'material_remainder_control_btn','reminder_out_object_btn',"profic_accounting_btn"
+        'material_remainder_control_btn','reminder_out_object_btn',"profic_accounting_btn",'object_control_btn'
     ]
 
     @staticmethod
