@@ -8,6 +8,7 @@ from app.bot.common.states import MaterialOrderStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
+from app.bot.kbds.markup_kbds import get_back_keyboard,MainKeyboard
 from app.db.dao import MaterialOrderDAO
 from app.db.models import User
 from app.db.database import async_session_maker
@@ -24,8 +25,17 @@ material_order_router.message.filter(RoleFilter([User.Role.worker.value,
 async def process_material_order(message: Message, state: FSMContext, user_info: User):
     """Handler for starting material order process"""
     await state.set_state(MaterialOrderStates.waiting_description)
-    await message.answer(text=get_text("enter_material_order", user_info.language))
+    await message.answer(text=get_text("enter_material_order", user_info.language),reply_markup=get_back_keyboard())
 
+
+@material_order_router.message(F.text.in_(get_all_texts("back_btn")),UserInfo())
+async def cmd_back(message: Message, state: FSMContext, user_info: User):
+    """Handler for back button in material order process"""
+    await state.clear()
+    await message.answer(
+        text=get_text(message.text, user_info.language),
+        reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
+    )
 
 @material_order_router.message(
     F.text,

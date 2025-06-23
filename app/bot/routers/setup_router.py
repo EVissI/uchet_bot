@@ -19,6 +19,7 @@ from app.bot.routers.general_routers.profile_router import profile_router
 from app.bot.routers.general_routers.material_reminder import material_router
 from app.bot.routers.general_routers.material_order import material_order_router
 from app.bot.routers.general_routers.transfer_tool import transfer_router
+from app.bot.routers.general_routers.cheks_out_object import checks_out_object_check_router
 from app.bot.routers.general_routers.object_control.setup_object_control import setup_object_control_router
 from app.db.dao import UserDAO,UserDocumentDAO
 from app.db.database import async_session_maker
@@ -35,7 +36,8 @@ main_router.include_routers(main_worker_router,
                             material_router,
                             material_order_router,
                             transfer_router,
-                            setup_object_control_router
+                            setup_object_control_router,
+                            checks_out_object_check_router
                             )
 
 
