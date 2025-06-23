@@ -23,13 +23,13 @@ async def process_photo_btn(
     user_info: User
 ):
     """Handler for photo button"""
+    await callback.message.delete()
     await state.update_data(object_id=callback_data.object_id)
     await state.set_state(ObjectPhotoStates.waiting_photo)
     
     await callback.message.answer(
         text=get_text('send_object_photo', user_info.language)
     )
-    
     await callback.answer()
 
 @photo_from_object_router.message(F.photo, StateFilter(ObjectPhotoStates.waiting_photo), UserInfo())

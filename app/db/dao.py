@@ -151,23 +151,14 @@ class ObjectDocumentDAO(BaseDAO):
     ) -> list[ObjectDocument]:
         """
         Find all documents attached to a specific object.
-
-        Args:
-            session: AsyncSession - DB session
-            object_id: int - ID of the object
-            user_role: User.Role - Role of user (not used currently)
-
-        Returns:
-            list[ObjectDocument]: List of documents attached to object
+        For workers, return only technical_task documents.
         """
         try:
-            result = await session.execute(
-                select(cls.model)
-                .where(cls.model.object_id == object_id)
-                .order_by(cls.model.created_at)
-            )
+            query = select(cls.model).where(cls.model.object_id == object_id)
+            if user_role == User.Role.worker:
+                query = query.where(cls.model.document_type == ObjectDocument.DocumentType.technical_task)
+            result = await session.execute(query.order_by(cls.model.created_at))
             return list(result.scalars().all())
-
         except SQLAlchemyError as e:
             logger.error(f"Error in find_object_documents: {e}")
             return []

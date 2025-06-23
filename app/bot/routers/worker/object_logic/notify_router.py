@@ -23,6 +23,7 @@ async def process_notify_btn(
     state: FSMContext
 ):
     """Handler for notification button"""
+    await callback.message.delete()
     await state.update_data(object_id=callback_data.object_id)
     await state.set_state(NotifyObjectStates.waiting_message)
     
@@ -36,6 +37,7 @@ async def process_notify_btn(
 @notify_worker_object.message(F.text, StateFilter(NotifyObjectStates.waiting_message), UserInfo())
 async def process_notification_message(message: Message, state: FSMContext, user_info: User):
     """Handler for processing notification message"""
+    
     data = await state.get_data()
     object_id = data.get('object_id')
     

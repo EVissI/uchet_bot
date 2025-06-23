@@ -24,6 +24,7 @@ async def process_check_btn(
     user_info: User
 ):
     """Handler for check button"""
+    await callback.message.delete()
     await state.update_data(object_id=callback_data.object_id)
     await state.set_state(ObjectCheckStates.waiting_photo_and_desription)
     

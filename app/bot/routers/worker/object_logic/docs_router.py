@@ -13,6 +13,7 @@ worker_docs_router = Router()
 @worker_docs_router.callback_query(WorkerObjectActionCallback.filter(F.action == "docs"), UserInfo())
 async def process_object_docs(callback: CallbackQuery, callback_data: WorkerObjectActionCallback, user_info: User):
     """Handler for displaying object documents"""
+    await callback.message.delete()
     async with async_session_maker() as session:
         documents = await ObjectDocumentDAO.find_object_documents(session, callback_data.object_id, user_info.role)
         
