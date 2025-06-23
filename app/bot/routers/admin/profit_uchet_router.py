@@ -19,7 +19,6 @@ profic_router = Router()
 
 @profic_router.message(
     F.text.in_(get_all_texts("profic_accounting_btn")),
-    StateFilter(AdminPanelStates.main),
     UserInfo(),
 )
 async def start_profic_accounting(message: Message, state: FSMContext, user_info: User):
