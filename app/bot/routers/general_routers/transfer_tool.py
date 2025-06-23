@@ -14,6 +14,7 @@ from app.bot.kbds.inline_kbds import get_accept_tool_keyboard, AcceptToolCallbac
 transfer_router = Router()
 
 
+
 @transfer_router.message(Command("transfer_tool"), UserInfo())
 async def transfer_tool(message: Message, user_info: User) -> None:
     """

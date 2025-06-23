@@ -1,17 +1,13 @@
 ﻿from aiogram import Router, F
-from aiogram.types import Message,CallbackQuery
-from aiogram.filters import Command,StateFilter
-from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
-from app.bot.common.states import NotifyObjectStates, ObjectCheckStates, ObjectPhotoStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import WorkerObjectActionCallback, object_keyboard
-from app.db.dao import ObjectCheckDAO, ObjectDocumentDAO, ObjectMemberDAO, ObjectPhotoDAO
+from app.bot.kbds.inline_kbds import object_keyboard
+from app.db.dao import ObjectMemberDAO
 from app.db.database import async_session_maker
 from app.db.models import User
-from app.config import settings
-from app.db.schemas import ObjectCheckModel, ObjectPhotoModel
+
 
 my_object_router = Router()
 

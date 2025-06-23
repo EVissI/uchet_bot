@@ -20,7 +20,7 @@ checks_out_object_check_router = Router()
 
 @checks_out_object_check_router.message(
     F.text.in_(get_all_texts("out_object_check_btn")),
-    StateFilter(AdminPanelStates.main),
+    StateFilter(AdminPanelStates),
     UserInfo(),
 )
 async def process_out_object_check_btn(
