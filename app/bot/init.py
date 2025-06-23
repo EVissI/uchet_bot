@@ -1,4 +1,5 @@
 ﻿import asyncio
+from app.bot.filters.logs import FSMStateLoggerMiddleware
 from app.bot.routers.setup_router import main_router
 
 from app.config import setup_logger
@@ -50,6 +51,8 @@ async def stop_bot():
 
 
 async def main():
+    dp.message.middleware(FSMStateLoggerMiddleware())
+    dp.callback_query.middleware(FSMStateLoggerMiddleware())
     dp.include_router(main_router)
 
     dp.startup.register(start_bot)
