@@ -19,7 +19,7 @@ from app.bot.kbds.inline_kbds import (
     FinanceReportObjectCallback,
 )
 from app.db.database import async_session_maker
-from app.db.dao import ProficAccountingDAO, ObjectCheckDAO, ObjectDAO, CheckDAO
+from app.db.dao import ObjectProficAccountingDAO, ObjectCheckDAO, ObjectDAO, CheckDAO, ProficAccountingDAO
 from app.db.models import User, Object
 from app.db.schemas import ObjectFilterModel
 
@@ -192,10 +192,10 @@ async def generate_report(
         )
 
         async with async_session_maker() as session:
-            profic_records = await ProficAccountingDAO.get_by_date_range(
-                session, start_date=start_date, end_date=end_date, object_id=object_id
-            )
             if report_type == "by_object":
+                profic_records = await ObjectProficAccountingDAO.get_by_date_range(
+                session, start_date=start_date, end_date=end_date, object_id=object_id
+                )
                 object_checks = await ObjectCheckDAO.get_by_date_range(
                     session,
                     start_date=start_date,
@@ -204,7 +204,17 @@ async def generate_report(
                 )
                 non_object_checks = None
             else:
-                object_checks = None
+                profic_records_obj = await ObjectProficAccountingDAO.get_by_date_range(
+                    session, start_date=start_date, end_date=end_date
+                )
+                profic_records_general = await ProficAccountingDAO.get_by_date_range(
+                    session, start_date=start_date, end_date=end_date
+                )
+                profic_records = list(profic_records_obj) + list(profic_records_general)
+
+                object_checks = await ObjectCheckDAO.get_by_date_range(
+                    session, start_date=start_date, end_date=end_date
+                )
                 non_object_checks = await CheckDAO.get_by_date_range(
                     session, start_date=start_date, end_date=end_date
                 )

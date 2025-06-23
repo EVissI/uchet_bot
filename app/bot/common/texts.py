@@ -574,6 +574,9 @@ TEXTS_TRANSLITE = {
         "total_income": "Итого доходы:",
         "total_expense": "Итого расходы:",
         "total_profit": "Итого прибыль:",
+        "general_accounting_btn": "Общий учёт",
+        "object_accounting_btn": "Учёт по объекту",
+        "choose_accounting_mode": "Выберите режим учёта:",
     },
     "uz": {
             "reminder_delete_canceled": "Qoldiqlarni o'chirish bekor qilindi",

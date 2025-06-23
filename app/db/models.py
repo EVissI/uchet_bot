@@ -57,8 +57,8 @@ class User(Base):
     documents: Mapped[list["UserDocument"]] = relationship(
         "UserDocument", back_populates="user"
     )
-    profic_accounting: Mapped[list["ProficAccounting"]] = relationship(
-        "ProficAccounting", back_populates="user"
+    object_profic_accounting: Mapped[list["ObjectProficAccounting"]] = relationship(
+        "ObjectProficAccounting", back_populates="user"
     )
 
 
@@ -126,8 +126,8 @@ class Object(Base):
     photos: Mapped[list["ObjectPhoto"]] = relationship(
         "ObjectPhoto", back_populates="object", cascade="all, delete"
     )
-    profic_accounting: Mapped[list["ProficAccounting"]] = relationship(
-        "ProficAccounting", back_populates="object", cascade="all, delete"
+    object_profic_accounting: Mapped[list["ObjectProficAccounting"]] = relationship(
+        "ObjectProficAccounting", back_populates="object", cascade="all, delete"
     )
 
 
@@ -252,8 +252,8 @@ class MaterialOrder(Base):
     message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
 
 
-class ProficAccounting(Base):
-    __tablename__ = "profic_accounting"
+class ObjectProficAccounting(Base):
+    __tablename__ = "object_profic_accounting"
 
     class PaymentType(enum.Enum):
         income = "приход"
@@ -271,9 +271,25 @@ class ProficAccounting(Base):
     )
 
     object: Mapped["Object"] = relationship(
-        "Object", back_populates="profic_accounting"
+        "Object", back_populates="object_profic_accounting"
     )
-    user: Mapped["User"] = relationship("User", back_populates="profic_accounting")
+    user: Mapped["User"] = relationship("User", back_populates="object_profic_accounting")
+
+class ProficAccounting(Base):
+    __tablename__ = "profic_accounting"
+
+    class PaymentType(enum.Enum):
+        income = "приход"
+        expense = "расход"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    amount: Mapped[float] = mapped_column(nullable=False)
+    purpose: Mapped[str] = mapped_column(String, nullable=False)
+    payment_type: Mapped[PaymentType] = mapped_column(String(20), nullable=False)
+    created_by: Mapped[int] = mapped_column(
+        ForeignKey("users.telegram_id", ondelete="CASCADE"), nullable=False
+    )
+    user: Mapped["User"] = relationship("User", back_populates="object_profic_accounting")
 
 
 class AdminUser(Base):

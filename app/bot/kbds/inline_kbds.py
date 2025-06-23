@@ -605,7 +605,7 @@ def build_accounting_type_kb(lang:str):
     kb = InlineKeyboardBuilder()
     for type in ProficAccounting.PaymentType:
         kb.button(
-            text=get_text(f"accounting_type_{type.value}", lang),
+            text=get_text(f"{type.value.capitalize()}", lang),
             callback_data=AccountingTypeCallback(
                 type=type.value
             ),
@@ -702,4 +702,11 @@ def get_finance_objects_kbd(
             kb.button(text=text, callback_data=callback)
             
     kb.adjust(1)  
+    return kb.as_markup()
+
+def build_profic_start_kbd(lang):
+    kb = InlineKeyboardBuilder()
+    kb.button(text=get_text("general_accounting_btn", lang), callback_data="profic_general")
+    kb.button(text=get_text("object_accounting_btn", lang), callback_data="profic_object")
+    kb.adjust(1)
     return kb.as_markup()

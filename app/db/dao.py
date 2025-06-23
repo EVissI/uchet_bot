@@ -20,7 +20,8 @@ from app.db.models import (
     WorkerNotification,
     ForemanNotification,
     MaterialOrder,
-    ProficAccounting,
+    ObjectProficAccounting,
+    ProficAccounting
 )
 
 from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterModel
@@ -409,6 +410,54 @@ class MaterialOrderDAO(BaseDAO):
     model = MaterialOrder
 
 
+class ObjectProficAccountingDAO(BaseDAO):
+    model = ObjectProficAccounting
+
+    @staticmethod
+    async def get_by_date_range(
+        session: AsyncSession,
+        start_date: datetime,
+        end_date: datetime,
+        object_id: int | None = None,
+    ) -> list[ObjectProficAccounting]:
+        """Get profic accounting records by date range and optionally by object"""
+        query = (
+            select(ObjectProficAccounting)
+            .where(
+                and_(
+                    ObjectProficAccounting.created_at >= start_date,
+                    ObjectProficAccounting.created_at <= end_date,
+                )
+            )
+            .options(
+                joinedload(ObjectProficAccounting.user), joinedload(ObjectProficAccounting.object)
+            )
+        )
+        if object_id is not None:
+            query = query.where(ObjectProficAccounting.object_id == object_id)
+        result = await session.execute(query)
+        return result.scalars().all()
+
+    @staticmethod
+    def serialize_for_report(record: ObjectProficAccounting) -> dict:
+        return {
+            "created_at": record.created_at,
+            "payment_type": getattr(record, "payment_type", None),
+            "object_name": (
+                getattr(record.object, "name", None)
+                if hasattr(record, "object")
+                else None
+            ),
+            "purpose": getattr(record, "purpose", None),
+            "amount": getattr(record, "amount", None),
+            "user_fio": (
+                getattr(record.user, "user_enter_fio", None)
+                if hasattr(record, "user")
+                else None
+            ),
+        }
+
+
 class ProficAccountingDAO(BaseDAO):
     model = ProficAccounting
 
@@ -436,22 +485,3 @@ class ProficAccountingDAO(BaseDAO):
             query = query.where(ProficAccounting.object_id == object_id)
         result = await session.execute(query)
         return result.scalars().all()
-
-    @staticmethod
-    def serialize_for_report(record: ProficAccounting) -> dict:
-        return {
-            "created_at": record.created_at,
-            "payment_type": getattr(record, "payment_type", None),
-            "object_name": (
-                getattr(record.object, "name", None)
-                if hasattr(record, "object")
-                else None
-            ),
-            "purpose": getattr(record, "purpose", None),
-            "amount": getattr(record, "amount", None),
-            "user_fio": (
-                getattr(record.user, "user_enter_fio", None)
-                if hasattr(record, "user")
-                else None
-            ),
-        }

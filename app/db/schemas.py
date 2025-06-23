@@ -234,7 +234,7 @@ class CheckFilterModel(BaseModel):
     user_id: Optional[int] = None
 
 
-class ProficAccountingModel(BaseModel):
+class ObjectProficAccountingModel(BaseModel):
     object_id: int
     amount: float
     purpose: str
@@ -245,7 +245,7 @@ class ProficAccountingModel(BaseModel):
         from_attributes = True
 
 
-class ProficAccountingFilterModel(BaseModel):
+class ObjectProficAccountingFilterModel(BaseModel):
     id: Optional[int] = None
     object_id: Optional[int] = None
     amount: Optional[float] = None
@@ -283,3 +283,19 @@ class AdminActionLogModel(BaseModel):
         "arbitrary_types_allowed": True,
         "from_attributes": True
     }
+
+class ProficAccountingModel(BaseModel):
+    amount: float
+    purpose: str
+    payment_type: str 
+    created_by: int
+
+    class Config:
+        from_attributes = True
+
+class ProficAccountingFilterModel(BaseModel):
+    id: Optional[int] = None
+    amount: Optional[float] = None
+    purpose: Optional[str] = None
+    payment_type: Optional[str] = None
+    created_by: Optional[int] = None
