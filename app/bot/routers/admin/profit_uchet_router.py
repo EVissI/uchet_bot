@@ -36,7 +36,7 @@ async def start_profic_accounting(message: Message, state: FSMContext, user_info
         )
 
 
-@profic_router.callback_query(ObjListCallback.filter((F.action == 'select') & (F.context== 'admin_profic_accounting')))
+@profic_router.callback_query(ObjListCallback.filter((F.action == 'select') & (F.context== 'admin_profic_accounting')),UserInfo())
 async def process_object_selection(
     callback: CallbackQuery, callback_data:ObjListCallback, state: FSMContext, user_info: User
 ):
@@ -58,7 +58,7 @@ async def process_accouting_type(
     await state.set_state(ProficAccountingStates.enter_amount)
 
 
-@profic_router.message(F.text, StateFilter(ProficAccountingStates.enter_amount))
+@profic_router.message(F.text, StateFilter(ProficAccountingStates.enter_amount),UserInfo())
 async def process_amount(message: Message, state: FSMContext, user_info: User):
     """Handle amount input"""
     try:
@@ -74,7 +74,7 @@ async def process_amount(message: Message, state: FSMContext, user_info: User):
         await message.answer(get_text("invalid_amount", user_info.language))
 
 
-@profic_router.message(StateFilter(ProficAccountingStates.enter_purpose))
+@profic_router.message(StateFilter(ProficAccountingStates.enter_purpose),UserInfo())
 async def process_purpose(message: Message, state: FSMContext, user_info: User):
     """Handle purpose input and save record"""
     data = await state.get_data()
