@@ -131,7 +131,7 @@ class MainKeyboard:
             case User.Role.foreman.value:
                 for val in MainKeyboard.get_foreman_kb_texts(lang).values():
                     kb.button(text=val)
-                kb.adjust(1)
+                kb.adjust(1,1,3,1)
                 return kb.as_markup(resize_keyboard=True)
             case User.Role.admin.value:
                 for val in MainKeyboard.get_admin_kb_texts(lang).values():
