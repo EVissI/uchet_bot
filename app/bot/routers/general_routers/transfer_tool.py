@@ -165,70 +165,71 @@ async def process_confirm_transfer_tool(
                 session, ToolFilterModel(id=tool_id)
             )
             recipient: User = await UserDAO.find_by_telegram_id(session, recipient_id)
-            if not tool:
-                await callback.message.answer(
-                    get_text("transfer_tool_not_found", user_info.language),
-                    reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
-                )
-                await transfer_tool_router.clear_messages(
-                    state, callback.message.chat.id, callback.bot
-                )
-                await state.clear()
-                return
+        if not tool:
+            await callback.message.answer(
+                get_text("transfer_tool_not_found", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
+            )
+            await transfer_tool_router.clear_messages(
+                state, callback.message.chat.id, callback.bot
+            )
+            await state.clear()
+            return
 
-            if action == "force" and user_info.role == User.Role.admin.value:
-                tool.user_id = recipient_id
-                tool.status = Tool.Status.in_work.value
+        if action == "force" and user_info.role == User.Role.admin.value:
+            tool.user_id = recipient_id
+            tool.status = Tool.Status.in_work.value
+            async with async_session_maker() as session:
                 await ToolDAO.update(
                     session,
                     filters=ToolFilterModel(id=tool.id),
                     values=ToolFilterModel.model_validate(tool.to_dict()),
                 )
-                await callback.message.answer(
-                    get_text("transfer_tool_forced", user_info.language),
-                    reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
-                )
-                await callback.bot.send_message(
-                    chat_id=recipient_id,
-                    text=get_text(
-                        "transfer_tool_receive_force_prompt",
-                        recipient.language,
-                        tool_name=tool.name,
-                    ),
-                )
-                await transfer_tool_router.clear_messages(
-                    state, callback.message.chat.id, callback.bot
-                )
-                return
-
-            if action == "confirm":
-                transfer_text = get_text(
-                    "transfer_tool_format",
-                    user_info.language,
+            await callback.message.answer(
+                get_text("transfer_tool_forced", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
+            )
+            await callback.bot.send_message(
+                chat_id=recipient_id,
+                text=get_text(
+                    "transfer_tool_receive_force_prompt",
+                    recipient.language,
                     tool_name=tool.name,
-                    tool_id=tool_id,
-                    recipient=recipient_id,
-                    sender=user_info.user_enter_fio,
-                )
-                await callback.bot.send_message(
-                    chat_id=settings.TELEGRAM_GROUP_ID_TRANSFER_TOOL, text=transfer_text
-                )
-                await callback.bot.send_message(
-                    chat_id=recipient_id,
-                    text=get_text(
-                        "transfer_tool_receive_prompt",
-                        recipient.language,
-                        tool_name=tool.name,
-                    ),
-                    reply_markup=get_accept_tool_keyboard(tool_id, user_info.language)
-                )
-                await callback.message.answer(
-                    get_text("transfer_tool_request_sent", user_info.language),
-                    reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
-                )
-                await transfer_tool_router.clear_messages(
-                    state, callback.message.chat.id, callback.bot
-                )
+                ),
+            )
+            await transfer_tool_router.clear_messages(
+                state, callback.message.chat.id, callback.bot
+            )
+            return
+
+        if action == "confirm":
+            transfer_text = get_text(
+                "transfer_tool_format",
+                user_info.language,
+                tool_name=tool.name,
+                tool_id=tool_id,
+                recipient=recipient_id,
+                sender=user_info.user_enter_fio,
+            )
+            await callback.bot.send_message(
+                chat_id=settings.TELEGRAM_GROUP_ID_TRANSFER_TOOL, text=transfer_text
+            )
+            await callback.bot.send_message(
+                chat_id=recipient_id,
+                text=get_text(
+                    "transfer_tool_receive_prompt",
+                    recipient.language,
+                    tool_name=tool.name,
+                ),
+                reply_markup=get_accept_tool_keyboard(tool_id, user_info.language)
+            )
+            await callback.message.answer(
+                get_text("transfer_tool_request_sent", user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
+            )
+            await transfer_tool_router.clear_messages(
+                state, callback.message.chat.id, callback.bot
+            )
                 
     except Exception as e:
         logger.error(str(e))
