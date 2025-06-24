@@ -114,7 +114,7 @@ async def process_purpose(message: Message, state: FSMContext, user_info: User):
                     type=data["type"],
                 )
             )
-            await state.set_state(AdminPanelStates.main)
+            await state.clear()
 
     except Exception as e:
         logger.error(f"Error saving profic record: {e}")
