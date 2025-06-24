@@ -665,35 +665,36 @@ def create_profic_report(
     current_row = 5
     total_income = 0
     total_expense = 0
-    
-    # Process profic records
     for record in profic_records:
-        if isinstance(record, ObjectProficAccounting) and record.object:
+        if hasattr(record, "object") and getattr(record, "object", None):
             object_name = record.object.name
         else:
             object_name = "-"
         row_data = [
             record.created_at.strftime("%d.%m.%Y"),
-            record.payment_type.value,
+            record.payment_type.value if hasattr(record.payment_type, "value") else record.payment_type,
             object_name,
             record.purpose,
             record.amount,
             "-",
             record.user.user_enter_fio
         ]
-        
-        style = income_style if record.payment_type == ProficAccounting.PaymentType.income.value else expense_style
-        
+        style = income_style if (
+            getattr(record, "payment_type", None) == ProficAccounting.PaymentType.income or
+            getattr(record, "payment_type", None) == ProficAccounting.PaymentType.income.value
+        ) else expense_style
+
         for col, value in enumerate(row_data, 1):
             cell = ws.cell(row=current_row, column=col, value=value)
             for style_attr, style_value in style.items():
                 setattr(cell, style_attr, style_value)
-        
-        if record.payment_type == ProficAccounting.PaymentType.income.value:
+
+        if getattr(record, "payment_type", None) == ProficAccounting.PaymentType.income or \
+        getattr(record, "payment_type", None) == ProficAccounting.PaymentType.income.value:
             total_income += record.amount
         else:
             total_expense += record.amount
-            
+
         current_row += 1
 
     # Process object checks
