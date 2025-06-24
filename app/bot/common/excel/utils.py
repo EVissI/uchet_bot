@@ -5,7 +5,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from datetime import datetime
 
 from app.bot.common.texts import get_text
-from app.db.models import Check, Object, ObjectCheck, ProficAccounting, Tool, User
+from app.db.models import Check, Object, ObjectCheck, ObjectProficAccounting, ProficAccounting, Tool, User
 
 
 def create_expense_report(expenses: list[ObjectCheck], lang: str) -> io.BytesIO:
@@ -668,7 +668,7 @@ def create_profic_report(
     
     # Process profic records
     for record in profic_records:
-        if hasattr(record, "object") and record.object:
+        if isinstance(record, ObjectProficAccounting) and record.object:
             object_name = record.object.name
         else:
             object_name = "-"
@@ -682,14 +682,14 @@ def create_profic_report(
             record.user.user_enter_fio
         ]
         
-        style = income_style if record.payment_type == ProficAccounting.PaymentType.income else expense_style
+        style = income_style if record.payment_type == ProficAccounting.PaymentType.income.value else expense_style
         
         for col, value in enumerate(row_data, 1):
             cell = ws.cell(row=current_row, column=col, value=value)
             for style_attr, style_value in style.items():
                 setattr(cell, style_attr, style_value)
         
-        if record.payment_type == ProficAccounting.PaymentType.income:
+        if record.payment_type == ProficAccounting.PaymentType.income.value:
             total_income += record.amount
         else:
             total_expense += record.amount
