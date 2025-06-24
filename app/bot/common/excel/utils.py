@@ -289,7 +289,7 @@ def create_tools_export(tools: list[Tool], lang: str) -> io.BytesIO:
     for row, tool in enumerate(tools, 2):
         ws.cell(row=row, column=1, value=tool.id)
         ws.cell(row=row, column=2, value=tool.name)
-        ws.cell(row=row, column=3, value=get_text(f"tool_status_{tool.status}", lang))
+        ws.cell(row=row, column=3, value=tool.status)
         ws.cell(row=row, column=4, value=tool.user.user_enter_fio if tool.user else "-")
         ws.cell(row=row, column=5, value=tool.description or "-")
 
