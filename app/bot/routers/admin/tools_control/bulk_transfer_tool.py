@@ -149,7 +149,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                     logger.info(
                         f"Transferring tool {tool_id} to user {recipient.telegram_id}"
                     )
-                    tool.user_id = recipient.id
+                    tool.user_id = recipient.telegram_id
                     await ToolDAO.update(
                         session,
                         ToolFilterModel(id=tool_id),
