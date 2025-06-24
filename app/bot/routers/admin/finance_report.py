@@ -183,7 +183,7 @@ async def generate_report(
 ):
     """Generate and send financial report"""
     try:
-        await message.answer(text=get_text("generating_report", user_info.language))
+        msg = await message.answer(text=get_text("generating_report", user_info.language))
 
         state_data = await state.get_data()
         report_type = state_data.get("report_type")
@@ -235,6 +235,7 @@ async def generate_report(
             ),
             caption=get_text("report_ready", user_info.language),
         )
+        await msg.delete()
     except Exception as e:
         logger.error(f"Error generating report: {e}")
         await message.answer(text=get_text("export_error", user_info.language))
