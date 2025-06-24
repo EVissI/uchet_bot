@@ -668,10 +668,14 @@ def create_profic_report(
     
     # Process profic records
     for record in profic_records:
+        if hasattr(record, "object") and record.object:
+            object_name = record.object.name
+        else:
+            object_name = "-"
         row_data = [
             record.created_at.strftime("%d.%m.%Y"),
             record.payment_type.value,
-            record.object.name if record.object else "-",
+            object_name,
             record.purpose,
             record.amount,
             "-",

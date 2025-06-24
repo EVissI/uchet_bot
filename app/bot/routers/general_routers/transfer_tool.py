@@ -76,9 +76,14 @@ async def transfer_tool_get_tool_id(
         return
 
     async with async_session_maker() as session:
-        tool: Tool = await ToolDAO.find_one_or_none(
-            session, ToolFilterModel(id=tool_id, user_id=user_info.telegram_id)
-        )
+        if user_info.role == User.Role.admin.value or user_info.role == User.Role.buyer.value:
+            tool: Tool = await ToolDAO.find_one_or_none(
+                session, ToolFilterModel()
+            )
+        else:
+            tool: Tool = await ToolDAO.find_one_or_none(
+                session, ToolFilterModel(id=tool_id, user_id=user_info.telegram_id)
+            )
         if not tool:
             msg = await message.answer(
                 get_text("transfer_tool_not_found", user_info.language)
