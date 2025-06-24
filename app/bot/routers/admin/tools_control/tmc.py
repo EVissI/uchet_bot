@@ -130,7 +130,7 @@ async def process_tmc_quantity(message: Message, state: FSMContext, user_info: U
         data = await state.get_data()
         async with async_session_maker() as session:
             tools = []
-            for i in quantity:
+            for _ in range(quantity):
                 tools.append(
                     ToolModel(
                         name=data.get("name"),
