@@ -6,7 +6,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from app.bot.common.excel.utils import create_user_tools_report
 from app.bot.common.states import AdminPanelStates
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import ObjListCallback,build_paginated_list_kbd
+from app.bot.kbds.inline_kbds import ObjListCallback, build_paginated_list_kbd
 from app.db.dao import ObjectDAO, ObjectMemberDAO, UserDAO, ToolDAO
 from app.db.schemas import ObjectFilterModel, ToolFilterModel
 from app.db.models import User

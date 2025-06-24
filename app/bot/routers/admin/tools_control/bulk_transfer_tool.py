@@ -61,7 +61,7 @@ async def process_template_download(callback: CallbackQuery, user_info: User):
 
 
 @bulk_transfer_router.callback_query(
-    BulkTransferCallback.filter(F.action == "transfer"),UserInfo()
+    BulkTransferCallback.filter(F.action == "transfer"), UserInfo()
 )
 async def process_transfer_start(
     callback: CallbackQuery, state: FSMContext, user_info: User
@@ -82,7 +82,9 @@ async def process_transfer_start(
         )
 
 
-@bulk_transfer_router.message(F.document, StateFilter(BulkTransferStates.waiting_file),UserInfo())
+@bulk_transfer_router.message(
+    F.document, StateFilter(BulkTransferStates.waiting_file), UserInfo()
+)
 async def process_transfer_file(message: Message, state: FSMContext, user_info: User):
     """Process uploaded transfer file"""
     logger.info(f"Processing transfer file from user {user_info.telegram_id}")
@@ -112,7 +114,6 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                 try:
                     tool_id = row[0].value
                     recipient_identifier = row[1].value
-                    description = row[2].value or ""
 
                     logger.debug(
                         f"Processing row: tool_id={tool_id}, recipient={recipient_identifier}"
@@ -149,7 +150,6 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                         f"Transferring tool {tool_id} to user {recipient.telegram_id}"
                     )
                     tool.user_id = recipient.id
-                    tool.description = description
                     await ToolDAO.update(
                         session,
                         ToolFilterModel(id=tool_id),

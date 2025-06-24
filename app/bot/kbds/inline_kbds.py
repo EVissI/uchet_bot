@@ -45,8 +45,7 @@ class ForemanExpenseTypeCallback(CallbackData, prefix="expense_type"):
     object_id: int
 
 
-class ToolStatusCallback(CallbackData, prefix="tool_status"):
-    status: str
+
 
 
 class ObjectDocumentTypeCallback(CallbackData, prefix="doc_type"):
@@ -271,20 +270,22 @@ def get_expense_type_kbd(lang: str, object_id: int) -> InlineKeyboardMarkup:
     kb.adjust(1)
     return kb.as_markup()
 
+class ForemanToolStatusCallback(CallbackData, prefix="foreman_tool_status"):
+    status: str
 
 def get_tool_status_kbd(language: str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(
         text=get_text("in_work_tools", language),
-        callback_data=ToolStatusCallback(status="in_work").pack(),
+        callback_data=ForemanToolStatusCallback(status="in_work").pack(),
     )
     kb.button(
         text=get_text("free_tools", language),
-        callback_data=ToolStatusCallback(status="free").pack(),
+        callback_data=ForemanToolStatusCallback(status="free").pack(),
     )
     kb.button(
         text=get_text("repair_tools", language),
-        callback_data=ToolStatusCallback(status="repair").pack(),
+        callback_data=ForemanToolStatusCallback(status="repair").pack(),
     )
     kb.adjust(1)
     return kb.as_markup()
@@ -344,6 +345,8 @@ def bulk_transfer_tool_btn(lang: str) -> InlineKeyboardMarkup:
     kb.adjust(2)
     return kb.as_markup()
 
+class AdminToolStatusCallback(CallbackData, prefix="admin_tool_status"):
+    status: str
 
 def get_tools_status_export_kbd(language: str) -> InlineKeyboardMarkup:
     """Get keyboard for tools export by status"""
@@ -351,19 +354,19 @@ def get_tools_status_export_kbd(language: str) -> InlineKeyboardMarkup:
 
     kb.button(
         text=get_text("tool_status_all", language),
-        callback_data=ToolStatusCallback(status="all").pack(),
+        callback_data=AdminToolStatusCallback(status="all").pack(),
     )
     kb.button(
         text=get_text("in_work_tools", language),
-        callback_data=ToolStatusCallback(status="in_work").pack(),
+        callback_data=AdminToolStatusCallback(status="in_work").pack(),
     )
     kb.button(
         text=get_text("free_tools", language),
-        callback_data=ToolStatusCallback(status="free").pack(),
+        callback_data=AdminToolStatusCallback(status="free").pack(),
     )
     kb.button(
         text=get_text("repair_tools", language),
-        callback_data=ToolStatusCallback(status="repair").pack(),
+        callback_data=AdminToolStatusCallback(status="repair").pack(),
     )
     kb.adjust(1)
     return kb.as_markup()

@@ -9,12 +9,12 @@ from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import (
     ForemanObjectCallback,
     get_tool_status_kbd,
-    ToolStatusCallback
+    ForemanToolStatusCallback
 )
 from app.db.dao import ToolDAO
 from app.db.models import User, Tool
 from app.db.database import async_session_maker
-from app.bot.common.excel.utils import create_tools_report
+from app.bot.common.excel.utils import create_tools_export, create_tools_report
 
 tools_list_router = Router()
 
@@ -36,10 +36,10 @@ async def process_tools_list_btn(
     )
 
 
-@tools_list_router.callback_query(ToolStatusCallback.filter(), UserInfo())
+@tools_list_router.callback_query(ForemanToolStatusCallback.filter(), UserInfo())
 async def process_tool_status(
     callback: CallbackQuery,
-    callback_data: ToolStatusCallback,
+    callback_data: ForemanToolStatusCallback,
     state: FSMContext,
     user_info: User
 ) -> None:
@@ -56,7 +56,7 @@ async def process_tool_status(
             )
             return
 
-        excel_file = create_tools_report(tools, user_info.language)
+        excel_file = create_tools_export(tools, user_info.language)
         
         input_file = BufferedInputFile(
             excel_file.getvalue(),
