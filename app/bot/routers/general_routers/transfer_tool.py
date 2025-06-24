@@ -78,7 +78,7 @@ async def transfer_tool_get_tool_id(
     async with async_session_maker() as session:
         if user_info.role == User.Role.admin.value or user_info.role == User.Role.buyer.value:
             tool: Tool = await ToolDAO.find_one_or_none(
-                session, ToolFilterModel()
+                session, ToolFilterModel(id=tool_id)
             )
         else:
             tool: Tool = await ToolDAO.find_one_or_none(
