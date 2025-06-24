@@ -457,7 +457,6 @@ class ProficAccountingDAO(BaseDAO):
         session: AsyncSession,
         start_date: datetime,
         end_date: datetime,
-        object_id: int | None = None,
     ) -> list[ProficAccounting]:
         """Get profic accounting records by date range and optionally by object"""
         query = (
@@ -469,10 +468,8 @@ class ProficAccountingDAO(BaseDAO):
                 )
             )
             .options(
-                joinedload(ProficAccounting.user), joinedload(ProficAccounting.object)
+                joinedload(ProficAccounting.user)
             )
         )
-        if object_id is not None:
-            query = query.where(ProficAccounting.object_id == object_id)
         result = await session.execute(query)
         return result.scalars().all()
