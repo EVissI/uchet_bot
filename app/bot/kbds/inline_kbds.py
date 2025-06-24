@@ -741,8 +741,10 @@ def get_confirm_transfer_tool_kbd(tool_id: int, recipient_id: int, user_role: st
 def inforamtion_buttons(lang:str) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     kb.button(
-        text=get_text("info_block_1",lang)
+        text=get_text("info_block_1",lang),
+        callback_data="None"
     )
     kb.button(
-        text=get_text("info_block_2",lang)
+        text=get_text("info_block_2",lang),
+        callback_data="None"
     )
