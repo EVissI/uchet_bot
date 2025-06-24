@@ -199,7 +199,6 @@ async def process_confirm_transfer_tool(
                 await transfer_tool_router.clear_messages(
                     state, callback.message.chat.id, callback.bot
                 )
-                await state.clear()
                 return
 
             if action == "confirm":
