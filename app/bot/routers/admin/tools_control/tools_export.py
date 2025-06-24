@@ -12,6 +12,7 @@ from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import get_tools_status_export_kbd, AdminToolStatusCallback
 from app.db.dao import ToolDAO
 from app.db.models import User
+from app.db.schemas import ToolFilterModel
 from app.db.database import async_session_maker
 
 
@@ -38,9 +39,9 @@ async def process_tools_export(callback: CallbackQuery, callback_data: AdminTool
     try:
         async with async_session_maker() as session:
             if callback_data.status == "all":
-                tools = await ToolDAO.find_all(session)
+                tools = await ToolDAO.find_all(session,ToolFilterModel())
             else:
-                tools = await ToolDAO.get_filtered_tools(session, callback_data.status)
+                tools = await ToolDAO.get_filtered_tools(session, ToolFilterModel(status = callback_data.status))
 
             if not tools:
                 await callback.message.edit_text(get_text("no_tools_found", user_info.language))
