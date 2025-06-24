@@ -23,14 +23,15 @@ change_reminder_router = Router()
 )
 async def change_reminder(message: Message, user_info: User):
     async with async_session_maker() as session:
-        page, total_pages, reminder_id = (
-            await MaterialReminderDAO.find_material_reminder_by_page(session, 1)
-        )
-        if not reminder_id:
+        reminders = await MaterialReminderDAO.find_all(session,MaterialReminderFilter())
+        if not reminders:
             await message.answer(
                 text=get_text("no_material_reminders", user_info.language)
             )
             return
+        page, total_pages, reminder_id = (
+            await MaterialReminderDAO.find_material_reminder_by_page(session, 1)
+        )
         reminder:MaterialReminder = await MaterialReminderDAO.find_one_or_none_by_id(session, reminder_id)
         await message.answer_photo(
             photo=reminder.file_id,
