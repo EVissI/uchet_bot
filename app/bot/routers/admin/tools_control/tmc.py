@@ -47,7 +47,7 @@ async def process_tmc_stop(message: Message, state: FSMContext, user_info: User)
     await state.set_state(AdminPanelStates.tools_control)
     await message.answer(
         text=get_text("tmc_upload_stopped", user_info.language),
-        reply_markup=AdminToolsControlKeyboard.build_tools_control_kb(
+        reply_markup=AdminToolsControlKeyboard.build_tool_control_kb(
             user_info.language
         ),
     )
