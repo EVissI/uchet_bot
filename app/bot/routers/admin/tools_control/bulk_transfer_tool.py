@@ -190,7 +190,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                 failed="\n".join(failed_transfers) if failed_transfers else "нет",
             )
         )
-        await state.set_state(AdminPanelStates.tools_contro)
+        await state.set_state(AdminPanelStates.tools_control)
     except Exception as e:
         logger.error(
             f"Critical error processing file from user {user_info.telegram_id}: {str(e)}"
