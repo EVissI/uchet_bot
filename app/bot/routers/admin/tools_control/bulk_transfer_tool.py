@@ -36,7 +36,7 @@ async def process_bulk_transfer_btn(
 
 
 @bulk_transfer_router.callback_query(
-    BulkTransferCallback.filter(F.action == "template")
+    BulkTransferCallback.filter(F.action == "template"),UserInfo()
 )
 async def process_template_download(callback: CallbackQuery, user_info: User):
     """Handle template download button"""
@@ -61,7 +61,7 @@ async def process_template_download(callback: CallbackQuery, user_info: User):
 
 
 @bulk_transfer_router.callback_query(
-    BulkTransferCallback.filter(F.action == "transfer")
+    BulkTransferCallback.filter(F.action == "transfer"),UserInfo()
 )
 async def process_transfer_start(
     callback: CallbackQuery, state: FSMContext, user_info: User
@@ -82,7 +82,7 @@ async def process_transfer_start(
         )
 
 
-@bulk_transfer_router.message(F.document, StateFilter(BulkTransferStates.waiting_file))
+@bulk_transfer_router.message(F.document, StateFilter(BulkTransferStates.waiting_file),UserInfo())
 async def process_transfer_file(message: Message, state: FSMContext, user_info: User):
     """Process uploaded transfer file"""
     logger.info(f"Processing transfer file from user {user_info.telegram_id}")
