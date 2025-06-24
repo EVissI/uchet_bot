@@ -130,7 +130,7 @@ async def process_period_selection(
         await generate_report(callback.message, start_date, end_date, state, user_info)
 
     if callback_data.action == "custom":
-        await callback.message.edit_text(
+        await callback.message.answer(
             text=get_text("enter_period", user_info.language)
         )
         await state.set_state(AdminPanelStates.enter_period)
@@ -139,14 +139,14 @@ async def process_period_selection(
         if state_data.get("report_type") == "by_object":
             async with async_session_maker() as session:
                 objects = await ObjectDAO.find_all(session, ObjectFilterModel())
-                await callback.message.edit_text(
+                await callback.message.answer(
                     text=get_text("select_object", user_info.language),
                     reply_markup=get_finance_objects_kbd(
                         objects, lang=user_info.language
                     ),
                 )
         else:
-            await callback.message.edit_text(
+            await callback.message.answer(
                 text=get_text("select_report_type", user_info.language),
                 reply_markup=get_finance_report_type_kbd(user_info.language),
             )
