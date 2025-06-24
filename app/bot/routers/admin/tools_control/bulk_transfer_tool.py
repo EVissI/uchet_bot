@@ -108,9 +108,9 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
         success_transfers = []
         failed_transfers = []
 
-        async with async_session_maker() as session:
-            logger.debug(f"Processing rows for user {user_info.telegram_id}")
-            for row in list(ws.rows)[1:]:
+        logger.debug(f"Processing rows for user {user_info.telegram_id}")
+        for row in list(ws.rows)[1:]:
+            async with async_session_maker() as session:
                 try:
                     tool_id = row[0].value
                     recipient_identifier = row[1].value
