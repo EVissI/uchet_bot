@@ -55,7 +55,7 @@ class ToolFilterModel(BaseModel):
     description: Optional[str] = None
     file_id: Optional[str] = None
     user_id: Optional[int] = None
-
+    status: str = None
 
 class ObjectModel(BaseModel):
     name: str
