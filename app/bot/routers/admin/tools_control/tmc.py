@@ -77,7 +77,7 @@ async def process_tmc_name(message: Message, state: FSMContext, user_info: User)
     await state.update_data(name=message.text)
     await state.set_state(TMCStates.input_description)
     bot_message = await message.answer(
-        get_text("tmc_enter_quantity", user_info.language)
+        get_text("tmc_enter_description", user_info.language)
     )
     await tmc_router.save_message(state, bot_message.message_id)
 
@@ -88,7 +88,7 @@ async def process_tmc_unit(message: Message, state: FSMContext, user_info: User)
     await state.update_data(description=message.text)
     await state.set_state(TMCStates.input_file)
     bot_message = await message.answer(
-        get_text("tmc_enter_description", user_info.language)
+        get_text("tmc_enter_file", user_info.language)
     )
     await tmc_router.save_message(state, bot_message.message_id)
 
