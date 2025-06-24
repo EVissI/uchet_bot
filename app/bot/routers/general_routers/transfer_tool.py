@@ -176,7 +176,7 @@ async def process_confirm_transfer_tool(
                 await state.clear()
                 return
 
-            if action == "force" and user_info.role == User.Role.admin:
+            if action == "force" and user_info.role == User.Role.admin.value:
                 tool.user_id = recipient_id
                 tool.status = Tool.Status.in_work.value
                 await ToolDAO.update(

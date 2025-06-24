@@ -87,7 +87,7 @@ async def start_command(message: Message, state: FSMContext):
             ),
             reply_markup=MainKeyboard.build_main_kb(role=user.role, lang=user.language),
         )
-        state.clear()
+        await state.clear()
 
 
 @main_router.callback_query(
