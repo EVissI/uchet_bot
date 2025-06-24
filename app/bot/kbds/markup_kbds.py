@@ -194,7 +194,7 @@ class AdminObjectControlKeyboard:
 
 class AdminMaterialReminderKeyboard:
 
-    __material_reminder_texts = ['create_material_reminder_btn', 'excel_view_btn','change_deactivate_btn','back_btn']
+    __material_reminder_texts = ['excel_view_btn','change_deactivate_btn','back_btn']
 
     @staticmethod
     def get_material_reminder_texts(lang: str = 'ru') -> dict:

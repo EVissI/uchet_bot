@@ -213,20 +213,23 @@ class BaseDAO(Generic[T]):
             raise
 
     @classmethod
-    async def bulk_update(cls, session: AsyncSession, records: List[BaseModel]) -> int:
-        """Массовое обновление записей"""
+    async def bulk_update(cls, session: AsyncSession, records: list[Any]) -> int:
+        """Массовое обновление записей (для ORM-объектов)"""
         logger.info(f"Массовое обновление записей {cls.model.__name__}")
         try:
             updated_count = 0
             for record in records:
-                record_dict = record.model_dump(exclude_unset=True)
-                if 'id' not in record_dict:
+                record_id = getattr(record, "id", None)
+                if record_id is None:
                     continue
-
-                update_data = {k: v for k, v in record_dict.items() if k != 'id'}
+                update_data = {
+                    c.name: getattr(record, c.name)
+                    for c in cls.model.__table__.columns
+                    if c.name != "id"
+                }
                 stmt = (
                     sqlalchemy_update(cls.model)
-                    .filter_by(id=record_dict['id'])
+                    .filter_by(id=record_id)
                     .values(**update_data)
                 )
                 result = await session.execute(stmt)
