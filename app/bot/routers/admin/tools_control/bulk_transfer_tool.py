@@ -31,7 +31,7 @@ async def process_bulk_transfer_btn(
     logger.info(f"User {user_info.telegram_id} started bulk transfer process")
     await message.answer(
         text=get_text("bulk_transfer_instruction", user_info.language),
-        reply_markup=bulk_transfer_tool_btn(),
+        reply_markup=bulk_transfer_tool_btn(user_info.language),
     )
 
 
