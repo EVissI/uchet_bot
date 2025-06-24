@@ -151,6 +151,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                         f"Transferring tool {tool_id} to user {recipient.telegram_id}"
                     )
                     tool.user_id = recipient.telegram_id
+                    tool.status = Tool.Status.in_work.value
                     tools.append(tool)
                     success_transfers.append(
                         f"✅ {tool.name} → {recipient.user_enter_fio}"

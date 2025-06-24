@@ -8,7 +8,7 @@ from app.bot.common.texts import get_text, get_all_texts
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.markup_kbds import MainKeyboard, get_back_keyboard
 from app.db.models import User, Tool
-from app.db.dao import ToolDAO
+from app.db.dao import ToolDAO, UserDAO
 from app.db.database import async_session_maker
 from app.db.schemas import ToolFilterModel
 from app.config import settings
@@ -162,6 +162,7 @@ async def process_confirm_transfer_tool(
         tool: Tool = await ToolDAO.find_one_or_none(
             session, ToolFilterModel(id=tool_id)
         )
+        recipient: User = await UserDAO.find_by_telegram_id(session, recipient_id)
         if not tool:
             await callback.message.answer(
                 get_text("transfer_tool_not_found", user_info.language),
@@ -187,8 +188,8 @@ async def process_confirm_transfer_tool(
             await callback.bot.send_message(
                 chat_id=recipient_id,
                 text=get_text(
-                    "transfer_tool_receive_prompt",
-                    user_info.language,
+                    "transfer_tool_receive_force_prompt",
+                    recipient.language,
                     tool_name=tool.name,
                 ),
             )
@@ -214,7 +215,7 @@ async def process_confirm_transfer_tool(
                 chat_id=recipient_id,
                 text=get_text(
                     "transfer_tool_receive_prompt",
-                    user_info.language,
+                    recipient.language,
                     tool_name=tool.name,
                 ),
                 reply_markup=get_accept_tool_keyboard(tool_id, user_info.language)
