@@ -15,8 +15,6 @@ from app.db.schemas import MaterialReminderFilter,MaterialReminderModel
 from app.config import settings
 
 material_router = Router()
-material_router.message.filter(RoleFilter([User.Role.worker.value,
-                                          User.Role.foreman.value]))
 
 @material_router.message(
     F.text.in_(get_all_texts("material_remainder_btn")), UserInfo()
