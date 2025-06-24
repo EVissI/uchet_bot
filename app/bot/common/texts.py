@@ -535,6 +535,7 @@ TEXTS_TRANSLITE = {
         'pass':'В разработке',
         'info_block_1':'Правила использования',
         'info_block_2':'Контакты',
+        "tools_export_complete": "✅ Выгружено инструментов: {count}\nСтатус: {status}",
         "operation_in_progress": "⏳ Операция выполняется...",
         "data_not_found": "❌ Данные не найдены",
         "setup_complete": "✅ Настройка завершена",
@@ -596,7 +597,8 @@ TEXTS_TRANSLITE = {
         "choose_accounting_mode": "Выберите режим учёта:",
     },
     "uz": {
-            "reminder_delete_canceled": "Qoldiqlarni o'chirish bekor qilindi",
+    "tools_export_complete": "✅ Eksport qilingan asboblar: {count}\nHolat: {status}",
+    "reminder_delete_canceled": "Qoldiqlarni o'chirish bekor qilindi",
     "reminder_deleted": "Qoldiqlar faolsizlantirildi",
     "reminder_not_found": "Qoldiqlar topilmadi",
     "start": "Salom, {name}! Men botman",
@@ -1139,7 +1141,8 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "user_control": "👥 Foydalanuvchilarni boshqarish"
     },
     "tg": {
-         "reminder_delete_canceled": "Бекор кардани нест кардани бақияҳо",
+    "tools_export_complete": "✅ Асбобҳо содирот шуданд: {count}\nҲолат: {status}",
+    "reminder_delete_canceled": "Бекор кардани нест кардани бақияҳо",
     "reminder_deleted": "Бақияҳо ғайрифаъол карда шуданд",
     "reminder_not_found": "Бақияҳо ёфт нашуданд",
     "start": "Салом, {name}! Ман бот ҳастам",
