@@ -23,7 +23,6 @@ bulk_transfer_router = Router()
 
 @bulk_transfer_router.message(
     F.text.in_(get_all_texts("bulk_transfer_btn")),
-    StateFilter(AdminPanelStates.tools_control),
     UserInfo(),
 )
 async def process_bulk_transfer_btn(
