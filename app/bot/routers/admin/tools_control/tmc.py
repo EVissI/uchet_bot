@@ -155,7 +155,8 @@ async def process_tmc_quantity(message: Message, state: FSMContext, user_info: U
             get_text("tmc_enter_name", user_info.language)
         )
         await tmc_router.save_message(state, bot_message.message_id)
-    except ValueError:
+    except ValueError as e:
+        logger.error(str(e))
         bot_message = await message.answer(
             get_text("tmc_invalid_quantity", user_info.language)
         )
