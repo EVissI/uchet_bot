@@ -21,7 +21,9 @@ setup_tools_control_router.include_routers(
     users_tools_xlsx_router
 )
 
-@setup_tools_control_router.message(F.text.in_(get_all_texts('instrument_control_btn')),UserInfo())
+@setup_tools_control_router.message(F.text.in_(get_all_texts('instrument_control_btn')),
+                                    StateFilter(AdminPanelStates.tools_control),
+                                    UserInfo())
 async def create_tool_control_kbd(message:Message, state:FSMContext, user_info:User):
     await message.delete()
     await message.answer(message.text,

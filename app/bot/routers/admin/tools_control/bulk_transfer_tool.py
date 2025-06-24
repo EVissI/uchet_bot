@@ -23,6 +23,7 @@ bulk_transfer_router = Router()
 
 @bulk_transfer_router.message(
     F.text.in_(get_all_texts("bulk_transfer_btn")),
+    StateFilter(AdminPanelStates.tools_control),
     UserInfo(),
 )
 async def process_bulk_transfer_btn(
@@ -159,6 +160,14 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                     logger.debug(
                         f"Successfully transferred tool {tool_id} to {recipient.telegram_id}"
                     )
+                    await message.bot.send_message(
+                        chat_id=recipient.telegram_id,
+                        text=get_text(
+                            "transfer_tool_receive_force_prompt",
+                            recipient.language,
+                            tool_name=tool.name,
+                        ),
+                    )
 
                 except Exception as e:
                     logger.error(f"Error processing row {row[0].row}: {str(e)}")
@@ -181,7 +190,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                 failed="\n".join(failed_transfers) if failed_transfers else "нет",
             )
         )
-
+        await state.set_state(AdminPanelStates.tools_contro)
     except Exception as e:
         logger.error(
             f"Critical error processing file from user {user_info.telegram_id}: {str(e)}"

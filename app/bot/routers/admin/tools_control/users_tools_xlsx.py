@@ -16,7 +16,9 @@ from app.db.database import async_session_maker
 users_tools_xlsx_router = Router()
 
 
-@users_tools_xlsx_router.message(F.text.startswith("/user_tools_xlsx"),UserInfo())
+@users_tools_xlsx_router.message(F.text.startswith("/user_tools_xlsx"),
+                                 StateFilter(AdminPanelStates.tools_control),
+                                 UserInfo())
 async def user_tools_xlsx_command(message: Message,user_info:User):
     """
     Команда для выгрузки инструментов по конкретному пользователю.
