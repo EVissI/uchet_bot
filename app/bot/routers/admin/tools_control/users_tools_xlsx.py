@@ -94,7 +94,7 @@ async def process_worker_select(callback: CallbackQuery, callback_data: ObjListC
     async with async_session_maker() as session:
         tools = await ToolDAO.find_all(session, ToolFilterModel(user_id=callback_data.id))
         if not tools:
-            await callback.message.edit_text(get_text("user_has_no_tools", user_info.language))
+            await callback.answer(get_text("user_has_no_tools", user_info.language))
             return
 
         xlsx_file = create_user_tools_report(tools, user_info, user_info.language)
