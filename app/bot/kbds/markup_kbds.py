@@ -73,11 +73,11 @@ class MainKeyboard:
                                'out_object_check_btn','transfer_tool_btn','object_control_btn']
 
     __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn',
-                             'object_control_btn','reminder_out_object_btn','profic_accounting_btn',
+                             'object_control_btn','material_remainder_btn','profic_accounting_btn',
                              'finance_report_btn','transfer_tool_btn']
 
     __mini_admin_kb_texts_list = [
-        'material_remainder_control_btn','reminder_out_object_btn',
+        'material_remainder_control_btn','material_remainder_btn',
         "profic_accounting_btn",'out_object_check_btn',
         'object_control_btn','transfer_tool_btn'
     ]
