@@ -41,7 +41,7 @@ async def back_to_reminder_control(message: Message, state: FSMContext, user_inf
     await state.set_state(AdminPanelStates.material_remainder_control)
     await message.answer(
         text=message.text,
-        reply_markup=AdminMaterialReminderKeyboard.get_material_reminder_control_kb(user_info.language)
+        reply_markup=AdminMaterialReminderKeyboard.build_material_reminder_kb(user_info.language)
     )
 
 @setup_activate_deactivate_reminder_router.callback_query(ItemCardCallback.filter((F.action.in_(['next','prev'])) &
