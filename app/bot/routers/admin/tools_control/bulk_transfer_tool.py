@@ -36,13 +36,13 @@ async def process_bulk_transfer_btn(
 
 
 @bulk_transfer_router.callback_query(
-    BulkTransferCallback.filter(F.action == "template"),UserInfo()
+    BulkTransferCallback.filter(F.action == "template"), UserInfo()
 )
 async def process_template_download(callback: CallbackQuery, user_info: User):
     """Handle template download button"""
     logger.info(f"User {user_info.telegram_id} requested transfer template")
     try:
-        template = generate_transfer_template()
+        template = generate_transfer_template(user_info.language)
         await callback.message.answer_document(
             document=BufferedInputFile(
                 template.getvalue(), filename="tools_transfer_template.xlsx"
