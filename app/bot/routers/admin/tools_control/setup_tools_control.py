@@ -22,7 +22,7 @@ setup_tools_control_router.include_routers(
 )
 
 @setup_tools_control_router.message(F.text.in_(get_all_texts('instrument_control_btn')),
-                                    StateFilter(AdminPanelStates.tools_control),
+                                    StateFilter(None),
                                     UserInfo())
 async def create_tool_control_kbd(message:Message, state:FSMContext, user_info:User):
     await message.delete()
