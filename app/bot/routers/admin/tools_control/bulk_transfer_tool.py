@@ -107,6 +107,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
 
         success_transfers = []
         failed_transfers = []
+        tools = []
 
         logger.debug(f"Processing rows for user {user_info.telegram_id}")
         for row in list(ws.rows)[1:]:
@@ -150,12 +151,7 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                         f"Transferring tool {tool_id} to user {recipient.telegram_id}"
                     )
                     tool.user_id = recipient.telegram_id
-                    await ToolDAO.update(
-                        session,
-                        ToolFilterModel(id=tool_id),
-                        ToolFilterModel.model_validate(tool.to_dict()),
-                    )
-
+                    tools.append(tool)
                     success_transfers.append(
                         f"✅ {tool.name} → {recipient.user_enter_fio}"
                     )
@@ -166,7 +162,11 @@ async def process_transfer_file(message: Message, state: FSMContext, user_info: 
                 except Exception as e:
                     logger.error(f"Error processing row {row[0].row}: {str(e)}")
                     failed_transfers.append(f"❌ Строка {row[0].row}: {str(e)}")
-
+        async with async_session_maker() as session:
+            await ToolDAO.bulk_update(
+                            session,
+                            tools
+                    )
         logger.info(
             f"Transfer complete for user {user_info.telegram_id}. "
             f"Success: {len(success_transfers)}, Failed: {len(failed_transfers)}"
