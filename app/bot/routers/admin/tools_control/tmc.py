@@ -41,7 +41,7 @@ async def process_tmc_upload_btn(message: Message, user_info: User):
         reply_markup=build_tmc_upload_kbd(user_info.language),
     )
 
-@tmc_router.message(F.text == get_all_texts("stop_btn"), StateFilter(TMCStates),UserInfo())
+@tmc_router.message(F.text == get_all_texts("stop_upload_btn"), StateFilter(TMCStates),UserInfo())
 async def process_tmc_stop(message: Message, state: FSMContext, user_info: User):
     logger.info(f"User {user_info.telegram_id} stopped TMC upload process")
     await state.set_state(AdminPanelStates.tools_control)
