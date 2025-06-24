@@ -30,7 +30,7 @@ async def process_tools_export_btn(message: Message, user_info: User):
         reply_markup=get_tools_status_export_kbd(user_info.language)
     )
 
-@tools_export_router.callback_query(AdminToolStatusCallback.filter())
+@tools_export_router.callback_query(AdminToolStatusCallback.filter(), UserInfo())
 async def process_tools_export(callback: CallbackQuery, callback_data: AdminToolStatusCallback, user_info: User):
     """Handle tools export by status"""
     logger.info(f"User {user_info.telegram_id} exporting tools with status: {callback_data.status}")
