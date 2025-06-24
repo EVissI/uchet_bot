@@ -180,6 +180,7 @@ TEXTS_TRANSLITE = {
         "transfer_tool_request_sent": "Запрос на передачу инструмента отправлен.",
         "accept_tool_btn": "получить инструмент",
         "transfer_tool_receive_prompt": "Вам передают инструмент {tool_name}. Нажмите кнопку ниже, чтобы получить его.",
+        "transfer_tool_receive_force_prompt": "Вам передали инструмент {tool_name}",
         "transfer_tool_recipient_not_found": "Не удалось найти пользователя с таким именем.",
         "transfer_tool_invalid_recipient": "Получатель должен быть указан через @username или telegram_id.",
         "tool_received_confirmation": "Инструмент получен!",
@@ -606,6 +607,7 @@ TEXTS_TRANSLITE = {
     "language_ru": "Ruscha",
     "language_uz": "O'zbek",
     "language_tg": "Tojikcha",
+    "transfer_tool_receive_force_prompt": "Sizga {tool_name} asbobi berildi",
     "request_contact": "Iltimos, pastdagi tugma orqali telefon raqamingizni ulashing.",
     "username_instruction": """
 Botdan foydalanish uchun foydalanuvchi nomi yaratishingiz kerak. Ko'rsatmalarga rioya qiling
@@ -1567,6 +1569,7 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "tmc_template_btn": "📄 Боргирии шаблон",
     "download_template_btn": "📥 Боргирии шаблон",
     "start_transfer_btn": "🔄 Оғози интиқол",
+    "transfer_tool_receive_force_prompt": "Ба шумо асбоби {tool_name} дода шуд",
     "tool_status_all": "🔍 Ҳамаи асбобҳо",
     "yes_btn": "✅ Ҳа",
     "no_btn": "❌ Не",

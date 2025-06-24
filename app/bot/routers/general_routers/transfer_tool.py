@@ -184,6 +184,14 @@ async def process_confirm_transfer_tool(
                 get_text("transfer_tool_forced", user_info.language),
                 reply_markup=MainKeyboard.build_main_kb(user_info.role,user_info.language)
             )
+            await callback.bot.send_message(
+                chat_id=recipient_id,
+                text=get_text(
+                    "transfer_tool_receive_prompt",
+                    user_info.language,
+                    tool_name=tool.name,
+                ),
+            )
             await transfer_tool_router.clear_messages(
                 state, callback.message.chat.id, callback.bot
             )
@@ -202,7 +210,6 @@ async def process_confirm_transfer_tool(
             await callback.bot.send_message(
                 chat_id=settings.TELEGRAM_GROUP_ID_TRANSFER_TOOL, text=transfer_text
             )
-            kb = get_accept_tool_keyboard(tool_id, user_info.language)
             await callback.bot.send_message(
                 chat_id=recipient_id,
                 text=get_text(
@@ -210,7 +217,7 @@ async def process_confirm_transfer_tool(
                     user_info.language,
                     tool_name=tool.name,
                 ),
-                reply_markup=kb,
+                reply_markup=get_accept_tool_keyboard(tool_id, user_info.language)
             )
             await callback.message.answer(
                 get_text("transfer_tool_request_sent", user_info.language),
