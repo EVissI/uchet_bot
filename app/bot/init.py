@@ -51,8 +51,6 @@ async def stop_bot():
 
 
 async def main():
-    dp.message.middleware(FSMStateLoggerMiddleware())
-    dp.callback_query.middleware(FSMStateLoggerMiddleware())
     dp.include_router(main_router)
 
     dp.startup.register(start_bot)

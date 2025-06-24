@@ -721,7 +721,6 @@ class ConfirmTransferToolCallback(CallbackData, prefix="confirm_transfer_tool"):
     action: str 
 
 def get_confirm_transfer_tool_kbd(tool_id: int, recipient_id: int, user_role: str, lang: str = "ru"):
-    from aiogram.utils.keyboard import InlineKeyboardBuilder
     kb = InlineKeyboardBuilder()
     kb.button(
         text="✅ Подтвердить",
@@ -738,3 +737,12 @@ def get_confirm_transfer_tool_kbd(tool_id: int, recipient_id: int, user_role: st
         )
     kb.adjust(1)
     return kb.as_markup()
+
+def inforamtion_buttons(lang:str) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("info_block_1",lang)
+    )
+    kb.button(
+        text=get_text("info_block_2",lang)
+    )
