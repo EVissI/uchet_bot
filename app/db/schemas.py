@@ -43,7 +43,7 @@ class ToolModel(BaseModel):
     description: Optional[str] = None
     file_id: Optional[str] = None
     status: str
-    user_id: Optional[int]
+    user_id: Optional[int] = None
 
     class Config:
         from_attributes = True
