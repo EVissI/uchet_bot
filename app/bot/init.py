@@ -6,14 +6,7 @@ from app.config import setup_logger
 setup_logger("bot")
 
 from loguru import logger
-from app.db.models import User
 from app.config import bot, admins, dp
-from app.db.dao import UserDAO
-from app.db.database import async_session_maker
-from app.db.schemas import UserFilterModel
-from aiogram.types import BotCommand, BotCommandScopeDefault, BotCommandScopeChat
-
-
 # async def set_commands():
 #     commands = [
 #         BotCommand(command="user_command", description="комманда юзера"),
@@ -52,7 +45,6 @@ async def stop_bot():
 
 async def main():
     dp.include_router(main_router)
-
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
     try:

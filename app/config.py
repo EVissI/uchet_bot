@@ -4,7 +4,6 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
-from pydantic import SecretStr,PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 

@@ -312,7 +312,7 @@ class AdminActionLog(Base):
     admin_user_id = Column(Integer, ForeignKey('admin_users.id'))
     action = Column(String(50))  
     model = Column(String(50))   
-    record_id = Column(Integer)  
+    record_id = Column(BigInteger)  
     details = Column(JSON)       
 
     admin_user = relationship("AdminUser", back_populates="action_logs")
