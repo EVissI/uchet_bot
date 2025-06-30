@@ -136,7 +136,7 @@ async def finish_document_received(message: Message, state: FSMContext, user_inf
     await send_next_document(message, state, user_info)
 
 
-@create_object_router.message(~F.photo, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
+@create_object_router.message(~F.document, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
 async def unprocess_object_documents(message: Message, state: FSMContext, user_info: User):
     await create_object_router.save_message(state, message.message_id)
     bot_message = await message.answer(
