@@ -155,8 +155,8 @@ class ObjectDocumentDAO(BaseDAO):
         """
         try:
             query = select(cls.model).where(cls.model.object_id == object_id)
-            if user_role == User.Role.worker:
-                query = query.where(cls.model.document_type == ObjectDocument.DocumentType.technical_task)
+            if user_role == User.Role.worker.value:
+                query = query.where(cls.model.document_type == ObjectDocument.DocumentType.technical_task.value)
             result = await session.execute(query.order_by(cls.model.created_at))
             return list(result.scalars().all())
         except SQLAlchemyError as e:

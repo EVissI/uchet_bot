@@ -28,7 +28,7 @@ async def process_object_docs(callback: CallbackQuery, callback_data: WorkerObje
             doc_text = get_text(
                 'document_item',
                 user_info.language,
-                type=doc.document_type.value
+                type=doc.document_type
             )
             
             await callback.message.answer_document(
