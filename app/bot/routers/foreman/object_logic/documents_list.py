@@ -33,7 +33,7 @@ async def handle_workers_list(callback: CallbackQuery, callback_data: ForemanObj
         for document in documents:
             if document.file_id:
                 try:
-                    await callback.message.answer_photo(
+                    await callback.message.answer_document(
                         document.file_id,
                         caption=get_text("document_info_format", user_info.language,
                                         document_type=document.document_type,

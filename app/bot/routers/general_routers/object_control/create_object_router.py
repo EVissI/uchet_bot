@@ -102,12 +102,12 @@ async def process_object_description(message: Message, state: FSMContext, user_i
     )
     await create_object_router.save_message(state, bot_message.message_id)  
 
-@create_object_router.message(F.photo, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
+@create_object_router.message(F.document, StateFilter(CreateObjectStates.waiting_documents), UserInfo())
 async def process_object_documents(message: Message, state: FSMContext, user_info: User):
     await create_object_router.save_message(state, message.message_id)
     data = await state.get_data()
     saved_documents = data.get('saved_documents', [])
-    saved_documents.append(message.photo[-1].file_id)
+    saved_documents.append(message.document.file_id)
     await state.update_data(saved_documents=saved_documents)
     
     bot_message = await message.answer(
@@ -153,8 +153,8 @@ async def send_next_document(message: Message, state: FSMContext, user_info: Use
     current_index = data.get('current_doc_index', 0)
     
     if current_index < len(saved_documents):
-        bot_message = await message.answer_photo(
-            photo=saved_documents[current_index],
+        bot_message = await message.answer_document(
+            document=saved_documents[current_index],
             caption=get_text('select_document_type', user_info.language),
             reply_markup=get_obj_document_type_kbd(user_info.language, current_index)
         )
