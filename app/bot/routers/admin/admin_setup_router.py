@@ -13,7 +13,7 @@ from app.bot.routers.admin.finance_report import finance_report_router
 
 main_admin_router = Router()
 main_admin_router.message.filter(RoleFilter(User.Role.admin.value))
-main_admin_router.include_routers(reminder_setup_router,
+main_admin_router.include_routers(
                                   admin_notify_router,
                                   setup_tools_control_router,
                                   generate_file_id_router,
