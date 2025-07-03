@@ -35,6 +35,7 @@ from app.bot.routers.general_routers.cheks_out_object import (
 from app.bot.routers.general_routers.object_control.setup_object_control import (
     setup_object_control_router,
 )
+from app.bot.routers.admin.admin_buyer_setup import admin_buyer_setup_router
 from app.bot.routers.general_routers.transfer_tool import transfer_tool_router
 from app.db.dao import UserDAO, UserDocumentDAO
 from app.db.database import async_session_maker
@@ -55,6 +56,7 @@ main_router.include_routers(
     setup_object_control_router,
     checks_out_object_check_router,
     transfer_tool_router,
+    admin_buyer_setup_router
 )
 
 
