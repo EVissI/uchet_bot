@@ -8,6 +8,7 @@ from app.bot.common.states import AdminPanelStates, CheckOutObjectStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
+from app.bot.kbds.markup_kbds import get_back_keyboard, MainKeyboard
 from app.db.dao import CheckDAO
 from app.db.models import User, Check
 from app.db.schemas import CheckModel
@@ -37,8 +38,22 @@ async def process_out_object_check_btn(
     logger.info(f"User {user_info.telegram_id} started out-of-object check process")
     await state.set_state(CheckOutObjectStates.waiting_photo)
     await message.answer(
-        text=get_text("send_check_photo_and_description", user_info.language)
+        text=get_text("send_check_photo_and_description", user_info.language),
+        reply_markup=get_back_keyboard(user_info.language)
     )
+
+@checks_out_object_check_router.message(F.text.in_(get_all_texts("back_btn")), UserInfo(), StateFilter(CheckOutObjectStates))
+async def cmd_back(
+    message: Message, state: FSMContext, user_info: User
+):
+    """Handle back button in out-of-object check process"""
+    logger.info(f"User {user_info.telegram_id} pressed back button in out-of-object check")
+    await state.clear()
+    await message.answer(
+        text=get_text(message.text, user_info.language),
+        reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
+    )
+
 
 
 @checks_out_object_check_router.message(
@@ -100,7 +115,8 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
         logger.info(
             f"User {user_info.telegram_id} completed out-of-object check upload"
         )
-        await message.answer(get_text("check_saved", user_info.language))
+        await message.answer(get_text("check_saved", user_info.language),
+        reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
         await state.clear()
 
     except ValueError:
@@ -109,7 +125,8 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
         logger.error(
             f"Error processing check amount from user {user_info.telegram_id}: {e}"
         )
-        await message.answer(get_text("check_save_error", user_info.language))
+        await message.answer(get_text("check_save_error", user_info.language),
+        reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
         await state.clear()
 
 
