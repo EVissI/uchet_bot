@@ -11,6 +11,7 @@ from app.bot.kbds.markup_kbds import AdminObjectControlKeyboard,MainKeyboard
 from app.bot.routers.general_routers.object_control.create_object_router import create_object_router
 from app.bot.routers.general_routers.object_control.add_member_to_object import add_member_to_object_router
 from app.bot.routers.general_routers.object_control.delete_object import delete_object_router
+from app.bot.routers.general_routers.object_control.view_object import view_object_router
 from app.db.models import User
 
 
@@ -22,7 +23,8 @@ setup_object_control_router.message.filter(RoleFilter([User.Role.admin.value,
 setup_object_control_router.include_routers(
     create_object_router,
     add_member_to_object_router,
-    delete_object_router
+    delete_object_router,
+    view_object_router
 )
 
 @setup_object_control_router.message(F.text.in_(get_all_texts('object_control_btn')),UserInfo())
