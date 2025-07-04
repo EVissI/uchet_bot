@@ -35,11 +35,16 @@ async def process_file_id_as_text(message: Message, user_info: User):
     """Отправить фото по file_id, если пользователь прислал file_id текстом"""
     file_id = message.text.strip()
     try:
-        await message.reply_photo(
-            photo=file_id,
-            caption=get_text("file_id_generated", user_info.language, file_id=f"`{file_id}`"),
-            parse_mode="Markdown"
-        )
+        try:
+            await message.reply_photo(
+                photo=file_id,
+                parse_mode="Markdown"
+            )
+        except:
+            await message.reply_document(
+                document=file_id,
+                parse_mode="Markdown"
+            )
     except Exception as e:
         logger.error(f"Error sending photo by file_id for user {user_info.telegram_id}: {e}")
         await message.reply(
