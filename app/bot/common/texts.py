@@ -212,6 +212,8 @@ TEXTS_TRANSLITE = {
         'view_object':'Просмотр объекта',
         "foreman_export_xlsx_btn": "Выгрузка xlsx по объекту",
         "select_object_prompt": "Пожалуйста, выберите объект:",
+        'object_view_foreman_btn': "Бригадир",
+        'object_view_worker_btn': "Рабочий",
         "no_objects": "У вас нет доступных объектов",
         "back_btn": "Назад",
         "no_object_members": "Для выбранного объекта нет закрепленных рабочих.",

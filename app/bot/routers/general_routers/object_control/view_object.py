@@ -27,7 +27,7 @@ async def process_view_object(message:Message, state:FSMContext, user_info: User
             await message.answer(get_text("no_objects", user_info.language))
             return
     await message.answer(
-        text=get_text("delete_object_text", user_info.language),
+        text=get_text("select_object_prompt", user_info.language),
         reply_markup=build_paginated_list_kbd(objects, context=('view_object'))
     )
 
@@ -63,7 +63,7 @@ async def process_back_to_object_list(callback: CallbackQuery, user_info: User):
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
     await callback.message.answer(
-        text=get_text("delete_object_text", user_info.language),
+        text=get_text("select_object_prompt", user_info.language),
         reply_markup=build_paginated_list_kbd(objects, context=('view_object'))
     )
 
