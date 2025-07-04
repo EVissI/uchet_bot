@@ -473,7 +473,7 @@ TEXTS_TRANSLITE = {
         "reminder_out_object_btn": "Остатки вне объекта",
         "instrument_control_btn": "Управление инструментами",
         "material_remainder_control_btn": "Управление остатками материала",
-        "reminder_btn": "Остатки",
+        "reminder_btn": "Учёт чеков",
         "object_control_btn": "Управление объектами",
         "notify_btn": "Уведомления",
         "cancel_btn": "❌ Отмена",
