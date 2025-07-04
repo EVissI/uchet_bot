@@ -128,7 +128,7 @@ async def process_activate_deactivate_object(callback: CallbackQuery, callback_d
         )
         await callback.answer()
 
-@view_object_router.callback_query(ObjectViewCallback.filter(F.action == "object_view_workers_btn"), UserInfo())
+@view_object_router.callback_query(ObjectViewCallback.filter(F.action == "workers"), UserInfo())
 async def process_view_object_workers(callback: CallbackQuery, callback_data: ObjectViewCallback, user_info: User):
     await callback.message.delete()
     await callback.message.answer(text=get_text("select_worker_role", user_info.language),
