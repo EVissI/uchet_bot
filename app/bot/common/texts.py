@@ -534,12 +534,6 @@ TEXTS_TRANSLITE = {
         "enter_reminder_location": "📍 Введите место хранения",
         "reminder_created": "✅ Напоминание создано",
         "object_data_header": "🏗 Информация об объекте:",
-        "object_data_format": (
-            "📝 Название: {name}\n"
-            "ℹ️ Описание: {description}\n"
-            "📅 Создан: {created_at}\n"
-            "👤 Создатель: {creator}"
-        ),
         "handover_confirmation": "❓ Подтвердите сдачу объекта",
         "handover_cancelled": "❌ Сдача объекта отменена",
         "notification_to_user": "📬 Новое уведомление от {sender}",
@@ -624,7 +618,7 @@ TEXTS_TRANSLITE = {
     "transfer_tool_receive_force_prompt": "Sizga {tool_name} asbobi berildi",
     "request_contact": "Iltimos, pastdagi tugma orqali telefon raqamingizni ulashing.",
     "object_data_header": "🏡 Obyekt haqida ma'lumot:",
-        "object_data_format": (
+    "object_data_format": (
             "📝 Nomi: {name}\n"
             "ℹ️ Tavsif: {description}\n"
             "Holat: {is_active}\n"
@@ -1102,12 +1096,6 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "object_completed": "🏁 Yakunlangan",
     "object_control": "🏗 Obyektlarni boshqarish",
     "object_control_title": "🏗 Obyektlarni boshqarish",
-    "object_data_format": (
-        "📝 Nomi: {name}\n"
-        "ℹ️ Tavsif: {description}\n"
-        "📅 Yaratildi: {created_at}\n"
-        "👤 Yaratuvchi: {creator}"
-    ),
     "object_data_header": "🏗 Obyekt haqida ma'lumot:",
     "object_deleted": "✅ Obyekt o'chirildi",
     "object_members_header": "👥 Obyekt ishtirokchilari:",
@@ -1691,12 +1679,6 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "notification_failed": "❌ Ҳангоми фиристодани огоҳинома хато рух дод",
     "notification_to_user": "📬 Огоҳиномаи нав аз {sender}",
     "object_control_title": "🏗 Идоракунии объектҳо",
-    "object_data_format": (
-        "📝 Ном: {name}\n"
-        "ℹ️ Тавсиф: {description}\n"
-        "📅 Сохта шуд: {created_at}\n"
-        "👤 Созанда: {creator}"
-    ),
     "object_data_header": "🏗 Маълумот дар бораи объект:",
     "object_deleted": "✅ Объект нест карда шуд",
     "object_updated": "✅ Маълумоти объект нав карда шуд",
