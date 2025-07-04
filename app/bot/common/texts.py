@@ -480,6 +480,7 @@ TEXTS_TRANSLITE = {
         "add_worker_to_object_btn": "Добавить рабочего",
         "bulk_transfer_btn": "Массовая передача",
         "user_tools_list_btn": "Список инструментов",
+        "send_to_group_question": "Отправить в группу?",
         "change_reminder_btn": "✏️ Изменить остатки",
         "deactivate_reminder_btn": "❌ Деактивировать остатки",
         "create_material_reminder_btn": "➕ Создать остатки",
