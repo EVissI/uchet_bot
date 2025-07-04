@@ -164,7 +164,19 @@ async def process_back_to_object_view(callback: CallbackQuery,callback_data:Obje
                                                                     callback_data.role, 
                                                                     callback_data.object_id)
         if not workers:
+            selected_object:Object = await ObjectDAO.find_one_or_none(session, ObjectFilterModel(id=callback_data.object_id))
             await callback.message.answer(get_text("no_object_members", user_info.language))
+            text = get_text(
+                "object_data_format",
+                user_info.language,
+                name=selected_object.name,
+                description=selected_object.description or "-",
+                is_active="🟢" if selected_object.is_active else "🔴",
+            )
+            await callback.message.answer(
+                text=get_text("object_data_header", user_info.language) + "\n\n" + text,
+                reply_markup=get_object_view_kbd(selected_object.id, selected_object.is_active, user_info.language)  
+            )
             return
         excel_file = create_workers_full_info_excel(workers)
         await callback.message.answer_document(
