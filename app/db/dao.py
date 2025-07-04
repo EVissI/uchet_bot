@@ -2,7 +2,7 @@
 from sqlalchemy import and_, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from datetime import datetime
 
 from app.db.base import BaseDAO
@@ -29,6 +29,38 @@ from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterMo
 
 class UserDAO(BaseDAO):
     model = User
+
+    @classmethod
+    async def get_workers_with_related(
+        cls,
+        session: AsyncSession,
+        role: str = User.Role.worker.value,
+        object_id: int | None = None,
+    ) -> list[User]:
+        """
+        Получить всех пользователей с ролью (по умолчанию 'рабочий'), с подгруженными объектами, инструментами и документами.
+        Если передан object_id — только тех, кто состоит в этом объекте.
+        """
+        try:
+            logger.debug(cls.model.role == role)
+            stmt = (
+                select(cls.model)
+                .where(cls.model.role == role, cls.model.can_use_bot == True)
+                .options(
+                    selectinload(cls.model.objects),
+                    selectinload(cls.model.tools),
+                    selectinload(cls.model.documents),
+                )
+                .order_by(cls.model.user_enter_fio)
+            )
+            if object_id is not None:
+                stmt = stmt.join(User.objects).where(Object.id == object_id)
+            result = await session.execute(stmt)
+            return list(result.scalars().all())
+        except SQLAlchemyError as e:
+            logger.error(f"Error in get_workers_with_related: {e}")
+            return []
+        
 
     @classmethod
     async def find_all_except(

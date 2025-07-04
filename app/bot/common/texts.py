@@ -131,6 +131,11 @@ TEXTS_TRANSLITE = {
         "send_photo_only": "❌ Пожалуйста, отправьте фотографию",
         "send_check_photo_and_description": "📸 Отправьте фото и описание чека",
         "enter_check_amount": "💰 Введите сумму чека (только цифры)",
+        "object_view_back_btn": "Назад",
+        "object_view_activate_btn": "Активировать объект",
+        "object_view_deactivate_btn": "Деактивировать объект",
+        "object_view_workers_btn": "Список рабочих",
+        "object_view_documents_btn": "Документы",
         "invalid_amount": "❌ Неверный формат суммы. Введите число, например: 1234.56",
         "check_format": (
             "🧾 <b>Чек с объекта #{object_id}</b>\n\n"
@@ -204,11 +209,18 @@ TEXTS_TRANSLITE = {
         "foreman_offsite_accounting_btn": "Учёт вне объекта",
         'upload_transfer_file':'Загрузите заполненный шаблон',
         'tool_status_in_work':'🛠 В работе',
+        'view_object':'Просмотр объекта',
         "foreman_export_xlsx_btn": "Выгрузка xlsx по объекту",
         "select_object_prompt": "Пожалуйста, выберите объект:",
         "no_objects": "У вас нет доступных объектов",
         "back_btn": "Назад",
         "no_object_members": "Для выбранного объекта нет закрепленных рабочих.",
+        "object_data_header": "🏡Информация об объекте:",
+        "object_data_format": (
+            "📝 Название: {name}\n"
+            "ℹ️ Описание: {description}\n"
+            "Статус: {is_active}\n"
+        ),
         "worker_info_format": (
             "Телеграм ID: {telegram_id}\n"
             "Username: {username}\n"
@@ -611,6 +623,17 @@ TEXTS_TRANSLITE = {
     "language_tg": "Tojikcha",
     "transfer_tool_receive_force_prompt": "Sizga {tool_name} asbobi berildi",
     "request_contact": "Iltimos, pastdagi tugma orqali telefon raqamingizni ulashing.",
+    "object_data_header": "🏡 Obyekt haqida ma'lumot:",
+        "object_data_format": (
+            "📝 Nomi: {name}\n"
+            "ℹ️ Tavsif: {description}\n"
+            "Holat: {is_active}\n"
+    ),
+    "object_view_back_btn": "Orqaga",
+    "object_view_activate_btn": "Obyektni faollashtirish",
+    "object_view_deactivate_btn": "Obyektni o‘chirish",
+    "object_view_workers_btn": "Ishchilar ro‘yxati",
+    "object_view_documents_btn": "Hujjatlar",
     "username_instruction": """
 Botdan foydalanish uchun foydalanuvchi nomi yaratishingiz kerak. Ko'rsatmalarga rioya qiling
 
@@ -1528,6 +1551,11 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
         "💰 <b>Маблағ:</b> {amount} сомонӣ"
     ),
     "send_file": "📤 Файлро фиристед",
+    "object_view_back_btn": "Бозгашт",
+    "object_view_activate_btn": "Фаъол кардани объект",
+    "object_view_deactivate_btn": "Ғайрифаъол кардани объект",
+    "object_view_workers_btn": "Рӯйхати коргарон",
+    "object_view_documents_btn": "Ҳуҷҷатҳо",
     "file_processing": "⏳ Коркарди файл...",
     "file_error": "❌ Ҳангоми коркарди файл хато рух дод",
     "enter_new_photo": "📸 Расми навро фиристед",
@@ -1688,6 +1716,12 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "tmc_upload_stopped": "✅ Боркунии асбобҳо қатъ карда шуд",
     "tools_export_btn": "Содироти асбобҳо",
     "upload_document_first": "❌ Аввал ҳуҷҷатро бор кунед",
+    "object_data_header": "🏡 Маълумот дар бораи объект:",
+    "object_data_format": (
+        "📝 Ном: {name}\n"
+        "ℹ️ Тавсиф: {description}\n"
+        "Ҳолат: {is_active}\n"
+    ),
     "upload_without_docs_btn": "📄 Бе ҳуҷҷатҳо сохтан"
     },
 }

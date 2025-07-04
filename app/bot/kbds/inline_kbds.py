@@ -748,3 +748,55 @@ def inforamtion_buttons(lang:str) -> InlineKeyboardMarkup:
         text=get_text("info_block_2",lang),
         callback_data="None"
     )
+
+class ObjectViewCallback(CallbackData, prefix="object_view"):
+    action: str
+    object_id: int
+
+def get_object_view_kbd(object_id: int, is_active: bool, lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    if is_active:
+        kb.button(
+            text=get_text("object_view_deactivate_btn", lang),
+            callback_data=ObjectViewCallback(action="activate_deactivate", object_id=object_id).pack(),
+        )
+    else:
+        kb.button(
+            text=get_text("object_view_activate_btn", lang),
+            callback_data=ObjectViewCallback(action="activate_deactivate", object_id=object_id).pack(),
+        )
+    kb.button(
+        text=get_text("object_view_workers_btn", lang),
+        callback_data=ObjectViewCallback(action="workers", object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("object_view_documents_btn", lang),
+        callback_data=ObjectViewCallback(action="documents", object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=ObjectViewCallback(action="back", object_id=object_id).pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+class ObjectWorkersViewCallback(CallbackData, prefix="object_workers_view"):
+    role: str
+    object_id: int
+
+def get_object_workers_view_kbd(object_id: int, lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("object_view_foreman_btn", lang),
+        callback_data=ObjectWorkersViewCallback(role=User.Role.foreman.value, object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("object_view_worker_btn", lang),
+        callback_data=ObjectWorkersViewCallback(role=User.Role.worker.value, object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("back_btn", lang),
+        callback_data=ObjectWorkersViewCallback(role="back", object_id=object_id).pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()

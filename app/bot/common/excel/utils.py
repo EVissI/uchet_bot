@@ -820,3 +820,46 @@ def create_profic_report(
     excel_buffer.seek(0)
 
     return excel_buffer
+
+def create_workers_full_info_excel(users: list[User]) -> io.BytesIO:
+    """
+    Формирует Excel-файл со всеми рабочими:
+    - ФИО, Telegram ID, username, телефон, роль
+    - Список объектов (названия через запятую)
+    - Список инструментов (id:имя через запятую)
+    - Список документов (file_id через запятую)
+    """
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Рабочие"
+
+    headers = [
+        "ФИО", "Telegram ID", "Username", "Телефон", "Роль",
+        "Объекты", "Инструменты (id:имя)", "Документы (file_id)"
+    ]
+    ws.append(headers)
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+
+    for user in users:
+        fio = user.user_enter_fio
+        telegram_id = user.telegram_id
+        username = user.username
+        phone = user.phone_number
+        role = user.role.value if hasattr(user.role, "value") else user.role
+
+        objects = ", ".join(obj.name for obj in user.objects) if user.objects else ""
+        tools = ", ".join(f"{tool.id}:{tool.name}" for tool in user.tools) if user.tools else ""
+        documents = ", ".join(doc.file_id for doc in user.documents) if user.documents else ""
+
+        ws.append([fio, telegram_id, username, phone, role, objects, tools, documents])
+
+    # Автоширина
+    for col in ws.columns:
+        max_length = max(len(str(cell.value)) if cell.value else 0 for cell in col)
+        ws.column_dimensions[col[0].column_letter].width = max(15, min(max_length + 2, 50))
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    buf.seek(0)
+    return buf
