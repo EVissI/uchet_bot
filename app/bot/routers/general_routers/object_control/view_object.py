@@ -152,7 +152,7 @@ async def process_back_to_object_view(callback: CallbackQuery,callback_data:Obje
         )
         await callback.message.answer(
             text=get_text("object_data_header", user_info.language) + "\n\n" + text,
-            reply_markup=get_object_view_kbd(selected_object.object_id, selected_object.is_active, user_info.language)  
+            reply_markup=get_object_view_kbd(selected_object.id, selected_object.is_active, user_info.language)  
         )
 
 @view_object_router.callback_query(ObjectWorkersViewCallback.filter(), UserInfo())

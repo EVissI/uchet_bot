@@ -216,6 +216,7 @@ TEXTS_TRANSLITE = {
         'object_view_worker_btn': "Рабочий",
         "no_objects": "У вас нет доступных объектов",
         "back_btn": "Назад",
+        "select_worker_role":"Выберите роль рабочего",
         "no_object_members": "Для выбранного объекта нет закрепленных рабочих.",
         "object_data_header": "Информация об объекте:",
         "object_data_format": (
