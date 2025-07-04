@@ -56,6 +56,7 @@ async def process_view_object_callback(callback: CallbackQuery, callback_data: O
 
 @view_object_router.callback_query(ObjectViewCallback.filter(F.action == "back"), UserInfo())
 async def process_back_to_object_list(callback: CallbackQuery, user_info: User):
+    await callback.message.delete()
     async with async_session_maker() as session:
         objects:list[Object] = await ObjectDAO.find_all(session, ObjectFilterModel())
         if not objects:
@@ -70,7 +71,6 @@ async def process_back_to_object_list(callback: CallbackQuery, user_info: User):
 @view_object_router.callback_query(ObjectViewCallback.filter(F.action == "documents"), UserInfo())
 async def process_view_object_documents(callback: CallbackQuery, callback_data: ObjectViewCallback, user_info: User):
     """Handle viewing object documents"""
-    await callback.message.delete()
     async with async_session_maker() as session:
         documents:list[ObjectDocument] = await ObjectDocumentDAO.find_object_documents(session, callback_data.object_id, user_info.role)
         selected_object:Object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=callback_data.object_id))
@@ -110,18 +110,23 @@ async def process_activate_deactivate_object(callback: CallbackQuery, callback_d
         await ObjectDAO.update(session, 
                                ObjectFilterModel(id=callback_data.object_id),
                                ObjectFilterModel.model_validate(selected_object.to_dict()))
+    async with async_session_maker() as session:
+        selected_object:Object = await ObjectDAO.find_one_or_none(session, ObjectFilterModel(id=callback_data.object_id))
+        if not selected_object:
+            await callback.answer(get_text("object_not_found", user_info.language), show_alert=True)
+            return
         text = get_text(
             "object_data_format",
             user_info.language,
             name=selected_object.name,
             description=selected_object.description or "-",
-            is_active="🟢" if new_status else "🔴",
+            is_active="🟢" if selected_object.is_active else "🔴",
         )
-        await callback.message.answer(
+        await callback.message.edit_text(
             text=get_text("object_data_header", user_info.language) + "\n\n" + text,
-            reply_markup=get_object_view_kbd(selected_object.id, new_status, user_info.language)  
+            reply_markup=get_object_view_kbd(selected_object.id, selected_object.is_active, user_info.language)  
         )
-    await callback.answer()
+        await callback.answer()
 
 @view_object_router.callback_query(ObjectViewCallback.filter(F.action == "object_view_workers_btn"), UserInfo())
 async def process_view_object_workers(callback: CallbackQuery, callback_data: ObjectViewCallback, user_info: User):
