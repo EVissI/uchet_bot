@@ -848,9 +848,9 @@ def create_workers_full_info_excel(users: list[User]) -> io.BytesIO:
         phone = user.phone_number
         role = user.role.value if hasattr(user.role, "value") else user.role
 
-        objects = ",\n".join(obj.name for obj in user.objects) if user.objects else ""
-        tools = ",\n".join(f"{tool.id}:{tool.name}" for tool in user.tools) if user.tools else ""
-        documents = ",\n".join(doc.file_id for doc in user.documents) if user.documents else ""
+        objects = ", ".join(obj.name for obj in user.objects) if user.objects else ""
+        tools = " ; ".join(f"{tool.id}:{tool.name}" for tool in user.tools) if user.tools else ""
+        documents = " , ".join(doc.file_id for doc in user.documents) if user.documents else ""
 
         ws.append([fio, telegram_id, username, phone, role, objects, tools, documents])
 
