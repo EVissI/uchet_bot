@@ -73,7 +73,7 @@ async def process_material_orders_object_select(callback: CallbackQuery, callbac
         )
 
 @material_orders_view_router.callback_query(
-    ItemCardCallback.filter((F.keyboard_type == "material_order_view"), F.action.in_(['next','prev'])),
+    ItemCardCallback.filter((F.keyboard_type == "material_order_view") and (F.action.in_(['next','prev']))),
     UserInfo()
 )
 async def process_material_order_card_pagination(callback: CallbackQuery, callback_data: ItemCardCallback, user_info: User):
