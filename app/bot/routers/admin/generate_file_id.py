@@ -23,7 +23,7 @@ async def handle_pdf(message: Message, bot: Bot):
 
         await message.answer_photo(
             photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
-            caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽"
+            caption=f"🧾 Дата транкзакции: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽"
         )
     except Exception as e:
         logger.error(f"Error processing PDF for user {message.from_user.id} - {e}")
