@@ -40,7 +40,7 @@ async def process_material_order_object_type_select(callback: CallbackQuery, sta
                 reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
             )
             return
-        await callback.message.edit_text("select_object", user_info.language,
+        await callback.message.edit_text(get_text("select_object",user_info.language), user_info.language,
                                          reply_markup=build_paginated_list_kbd(objects,
                                                                                context='material_order_object',))
 
@@ -51,8 +51,9 @@ async def process_material_order_object_select(callback: CallbackQuery, callback
         selected_object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=callback_data.id))
         if not selected_object:
             await callback.message.answer(get_text("object_not_found", user_info.language))
-            return
-        await callback.message.edit_text(
+            return 
+        await callback.message.delete() 
+        await callback.message.answer(
             text=get_text("enter_material_order", user_info.language),
             reply_markup=get_back_keyboard(user_info.language)
         )
@@ -64,7 +65,8 @@ async def process_material_order_object_select(callback: CallbackQuery, callback
 
 @material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="general") and (F.context=='create')), UserInfo())
 async def process_material_order_general_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
-    await callback.message.edit_text(
+    await callback.message.delete()
+    await callback.message.answer(
         text=get_text("enter_material_order", user_info.language),
         reply_markup=get_back_keyboard(user_info.language)
     )

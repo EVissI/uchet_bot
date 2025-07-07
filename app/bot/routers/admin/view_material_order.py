@@ -85,9 +85,10 @@ async def process_material_order_card_pagination(callback: CallbackQuery, callba
         page = callback_data.current_page - 1
     async with async_session_maker() as session:
         if callback_data.order_type == "general":
-            orders = await MaterialOrderDAO.find_all(session, MaterialOrderFilter(is_active=True,))
+            orders = await MaterialOrderDAO.find_all(session, MaterialOrderFilter(is_active=True))
         if callback_data.order_type == "object":
-            orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(is_active=True,))
+            orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(is_active=True,
+                                                                                              object_id=callback_data.sub_info))
         total_orders = len(orders)
         if page < 1:
             page = 1

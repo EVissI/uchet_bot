@@ -616,7 +616,6 @@ TEXTS_TRANSLITE = {
         "report_ready": "✅ Отчет готов!",
         "export_error": "❌ Ошибка при формировании отчета",
         "select_object": "Выберите объект:",
-
         "financial_report": "Финансовый отчет",
         "financial_report_title": "Финансовый отчет по операциям",
         "date_column": "Дата",
