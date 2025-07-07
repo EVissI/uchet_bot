@@ -21,7 +21,8 @@ from app.db.models import (
     ForemanNotification,
     MaterialOrder,
     ObjectProficAccounting,
-    ProficAccounting
+    ProficAccounting,
+    ObjectMaterialOrder
 )
 
 from app.db.schemas import MaterialReminderFilter, TelegramIDModel, UserFilterModel
@@ -432,6 +433,23 @@ class ForemanNotificationDAO(BaseDAO):
 class MaterialOrderDAO(BaseDAO):
     model = MaterialOrder
 
+    @classmethod
+    async def deactivate(cls, session: AsyncSession, order_id: int) -> None:
+        """
+        Деактивировать заказ материалов (общий).
+        """
+        try:
+            await session.execute(
+                select(cls.model).where(cls.model.id == order_id).execution_options(synchronize_session="fetch")
+            )
+            await session.execute(
+                cls.model.__table__.update().where(cls.model.id == order_id).values(is_active=False)
+            )
+            await session.commit()
+        except SQLAlchemyError as e:
+            logger.error(f"Error in MaterialOrderDAO.deactivate: {e}")
+            await session.rollback()
+
 
 class ObjectProficAccountingDAO(BaseDAO):
     model = ObjectProficAccounting
@@ -505,3 +523,23 @@ class ProficAccountingDAO(BaseDAO):
         )
         result = await session.execute(query)
         return result.scalars().all()
+
+class ObjectMaterialOrderDAO(BaseDAO):
+    model = ObjectMaterialOrder
+
+    @classmethod
+    async def deactivate(cls, session: AsyncSession, order_id: int) -> None:
+        """
+        Деактивировать заказ материалов, привязанный к объекту.
+        """
+        try:
+            await session.execute(
+                select(cls.model).where(cls.model.id == order_id).execution_options(synchronize_session="fetch")
+            )
+            await session.execute(
+                cls.model.__table__.update().where(cls.model.id == order_id).values(is_active=False)
+            )
+            await session.commit()
+        except SQLAlchemyError as e:
+            logger.error(f"Error in ObjectMaterialOrderDAO.deactivate: {e}")
+            await session.rollback()

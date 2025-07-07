@@ -477,13 +477,15 @@ class ItemCardCallback(CallbackData, prefix="item_card"):
     current_page: int = 1
     total_pages: int 
     keyboard_type: str
+    order_type:str
 
 def build_item_card_kbd(
     item_id: int,
     total_pages: int,
     keyboard_type: str = None,
     current_page: int = 1,
-    lang: str = "ru"
+    lang: str = "ru",
+    order_type="object"
 ) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     
@@ -497,7 +499,8 @@ def build_item_card_kbd(
                 action="prev",
                 current_page=current_page - 1,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
     
@@ -508,7 +511,8 @@ def build_item_card_kbd(
             action="counter",
             current_page=current_page,
             total_pages=total_pages,
-            keyboard_type=keyboard_type
+            keyboard_type=keyboard_type,
+            order_type=order_type
         ).pack()
     ))
     
@@ -520,7 +524,8 @@ def build_item_card_kbd(
                 action="next",
                 current_page=current_page + 1,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
     if keyboard_type == 'change_material_riminder':
@@ -531,7 +536,8 @@ def build_item_card_kbd(
                 action="change_description",
                 current_page=current_page,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
         buttons.append((
@@ -541,7 +547,8 @@ def build_item_card_kbd(
                 action="change_photo",
                 current_page=current_page,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
         buttons.append((
@@ -551,10 +558,22 @@ def build_item_card_kbd(
                 action="change_location",
                 current_page=current_page,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
-
+    if keyboard_type == 'material_order_view':
+        buttons.append((
+            get_text("deactivate_material_order_btn", lang),
+            ItemCardCallback(
+                item_id=item_id,
+                action="deactivate",
+                current_page=current_page,
+                total_pages=total_pages,
+                keyboard_type=keyboard_type,
+                order_type=order_type
+            ).pack()
+        ))
     if keyboard_type == 'deactivate_riminder':
         buttons.append((
             get_text("deactivate_reminder_btn", lang),
@@ -563,7 +582,8 @@ def build_item_card_kbd(
                 action="deactivate",
                 current_page=current_page,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,
+                order_type=order_type
             ).pack()
         ))
     if keyboard_type == 'tool_view':
@@ -574,7 +594,8 @@ def build_item_card_kbd(
                 action="back",
                 current_page=current_page,
                 total_pages=total_pages,
-                keyboard_type=keyboard_type
+                keyboard_type=keyboard_type,               
+                order_type=order_type
             ).pack()
         ))
 
@@ -797,6 +818,23 @@ def get_object_workers_view_kbd(object_id: int, lang: str = "ru") -> InlineKeybo
     kb.button(
         text=get_text("back_btn", lang),
         callback_data=ObjectWorkersViewCallback(role="back", object_id=object_id).pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+class MaterialOrderTypeCallback(CallbackData, prefix="material_order_type"):
+    type: str
+    context: str
+
+def get_material_order_type_select(context, lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("material_order_type_object_btn", lang),
+        callback_data=MaterialOrderTypeCallback(type="object",context=context).pack()
+    )
+    kb.button(
+        text=get_text("material_order_type_general_btn", lang),
+        callback_data=MaterialOrderTypeCallback(type="general",context=context).pack()
     )
     kb.adjust(1)
     return kb.as_markup()

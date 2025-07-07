@@ -84,9 +84,6 @@ class MainKeyboard:
 
     @staticmethod
     def get_worker_kb_texts(lang: str = 'ru') -> dict:
-        """
-        Returns dictionary with worker keyboard texts based on language
-        """
         return {
             text: get_text(text, lang) 
             for text in MainKeyboard.__worker_kb_texts_list
@@ -94,9 +91,6 @@ class MainKeyboard:
     
     @staticmethod
     def get_foreman_kb_texts(lang: str = 'ru') -> dict:
-        """
-        Returns dictionary with worker keyboard texts based on language
-        """
         return {
             text: get_text(text, lang) 
             for text in MainKeyboard.__foreman_kb_texts_list
@@ -104,19 +98,13 @@ class MainKeyboard:
     
     @staticmethod
     def get_admin_kb_texts(lang: str = 'ru') -> dict:
-        """
-        Returns dictionary with worker keyboard texts based on language
-        """
         return {
             text: get_text(text, lang) 
             for text in MainKeyboard.__admin_kb_texts_list
         }
     
     @staticmethod
-    def get_mini_admin_kb_texts(lang: str = 'ru') -> dict:
-        """
-        Returns dictionary with worker keyboard texts based on language
-        """
+    def get_mini_admin_kb_texts(lang: str = 'ru') -> dict:     
         return {
             text: get_text(text, lang) 
             for text in MainKeyboard.__mini_admin_kb_texts_list

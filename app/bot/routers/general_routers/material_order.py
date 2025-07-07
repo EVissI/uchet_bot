@@ -1,5 +1,5 @@
 ﻿from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
@@ -8,11 +8,12 @@ from app.bot.common.states import MaterialOrderStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.role_filter import RoleFilter
 from app.bot.filters.user_info import UserInfo
+from app.bot.kbds.inline_kbds import MaterialOrderTypeCallback, ObjListCallback, build_paginated_list_kbd, get_material_order_type_select
 from app.bot.kbds.markup_kbds import get_back_keyboard,MainKeyboard
-from app.db.dao import MaterialOrderDAO
+from app.db.dao import MaterialOrderDAO, ObjectDAO, ObjectMaterialOrderDAO
 from app.db.models import User
 from app.db.database import async_session_maker
-from app.db.schemas import MaterialOrderModel, MaterialOrderFilter
+from app.db.schemas import MaterialOrderModel, MaterialOrderFilter, ObjectFilterModel, ObjectMaterialOrderModel
 from app.config import settings
 
 material_order_router = Router()
@@ -23,9 +24,52 @@ material_order_router.message.filter(RoleFilter([User.Role.worker.value,
     F.text.in_(get_all_texts("material_order_btn")), UserInfo()
 )
 async def process_material_order(message: Message, state: FSMContext, user_info: User):
-    """Handler for starting material order process"""
+    await message.answer(
+        text=get_text("select_material_order_type", user_info.language),
+        reply_markup=get_material_order_type_select(context='create',lang=user_info.language)
+    )
+
+
+@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="object") and (F.context=='create')), UserInfo())
+async def process_material_order_object_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
+    async with async_session_maker() as session:
+        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel())
+        if not objects:
+            await callback.message.answer(
+                text=get_text('no_objects_found', user_info.language),
+                reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language)
+            )
+            return
+        await callback.message.edit_text("select_object", user_info.language,
+                                         reply_markup=build_paginated_list_kbd(objects,
+                                                                               context='material_order_object',))
+
+
+@material_order_router.callback_query(ObjListCallback.filter((F.action == "select") & (F.context == "material_order_object")), UserInfo())
+async def process_material_order_object_select(callback: CallbackQuery, callback_data: ObjListCallback, state: FSMContext, user_info: User):
+    async with async_session_maker() as session:
+        selected_object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=callback_data.id))
+        if not selected_object:
+            await callback.message.answer(get_text("object_not_found", user_info.language))
+            return
+        await callback.message.edit_text(
+            text=get_text("enter_material_order", user_info.language),
+            reply_markup=get_back_keyboard(user_info.language)
+        )
+        await state.update_data(object_id=callback_data.id, 
+                                order_type="object",
+                                object_name=selected_object.name)
+        await state.set_state(MaterialOrderStates.waiting_description)
+
+
+@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="general") and (F.context=='create')), UserInfo())
+async def process_material_order_general_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
+    await callback.message.edit_text(
+        text=get_text("enter_material_order", user_info.language),
+        reply_markup=get_back_keyboard(user_info.language)
+    )
     await state.set_state(MaterialOrderStates.waiting_description)
-    await message.answer(text=get_text("enter_material_order", user_info.language),reply_markup=get_back_keyboard(user_info.language))
+    await state.update_data(order_type="general")
 
 
 @material_order_router.message(F.text.in_(get_all_texts("back_btn")),
@@ -74,31 +118,58 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
         return
 
     data = await state.get_data()
-    order_text = get_text(
-        "material_order_format",
-        user_info.language,
-        worker_name=user_info.user_enter_fio,
-        username=f"@{user_info.username}" if user_info.username else "нет username",
-        description=data["description"],
-        delivery_date=message.text,
-    )
 
-    sent_message = await message.bot.send_message(
-        chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
-        text=order_text,
-    )
-
-    async with async_session_maker() as session:
-        await MaterialOrderDAO.add(
-            session,
-            MaterialOrderModel(
-                description=data["description"],
-                delivery_date=message.text,
-                message_id=sent_message.message_id,
-            ),
+    if data.get("order_type") == "general":
+        order_text = get_text(
+            "material_order_format",
+            user_info.language,
+            worker_name=user_info.user_enter_fio,
+            username=f"@{user_info.username}" if user_info.username else "нет username",
+            description=data["description"],
+            delivery_date=message.text,
         )
-
-    await message.answer(text=get_text("order_saved", user_info.language))
+        sent_message = await message.bot.send_message(
+            chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
+            text=order_text,
+        )
+        async with async_session_maker() as session:
+            await MaterialOrderDAO.add(
+                session,
+                MaterialOrderModel(
+                    description=data["description"],
+                    delivery_date=message.text,
+                    message_id=sent_message.message_id,
+                ),
+            )
+        await message.answer(text=get_text("order_saved", user_info.language))
+    if data.get("order_type") == "object":
+        order_text = get_text(
+            "material_order_format_object",
+            user_info.language,
+            worker_name=user_info.user_enter_fio,
+            username=f"@{user_info.username}" if user_info.username else "нет username",
+            description=data["description"],
+            delivery_date=message.text,
+            object_id=data["object_id"],
+            object_name=data.get("object_name", "Не указано"),
+        )
+        sent_message = await message.bot.send_message(
+            chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
+            text=order_text,
+            reply_markup=get_back_keyboard(user_info.language)
+        )
+        async with async_session_maker() as session:
+            await ObjectMaterialOrderDAO.add(
+                session,
+                ObjectMaterialOrderModel(
+                    description=data["description"],
+                    delivery_date=message.text,
+                    object_id=data["object_id"],
+                    message_id=sent_message.message_id,
+                ),
+            )
+        await message.answer(text=get_text("order_saved", user_info.language))
+    
     await state.clear()
 
 

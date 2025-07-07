@@ -1,4 +1,10 @@
-﻿from app.bot.common.utils import escape_html
+﻿def escape_html(text: str) -> str:
+    """Escape special characters for HTML"""
+    if not isinstance(text, str):
+        text = str(text)
+    return text.replace('&', '&amp;') \
+              .replace('<', '&lt;') \
+              .replace('>', '&gt;')
 
 
 def get_text(text_code: str, lang: str = "ru", **kwargs) -> str:
@@ -145,6 +151,9 @@ TEXTS_TRANSLITE = {
             "💰 <b>Сумма:</b> {amount} руб."
         ),
         "check_saved": "✅ Чек успешно сохранен",
+        "deactivate_material_order_btn": "Деактивировать заказ",
+        "material_order_deactivated": "Заказ деактивирован",
+        "no_material_orders_found": "Нет заказов материалов",
         "enter_material_order": "📝 Опишите какие материалы вам нужны",
         "enter_delivery_date": "📅 Укажите желаемую дату доставки (формат: ДД.ММ.ГГГГ)",
         "date_must_be_future": "❌ Дата доставки должна быть в будущем",
@@ -161,6 +170,13 @@ TEXTS_TRANSLITE = {
             "📝 <b>Требуемые материалы:</b>\n<i>{description}</i>\n"
             "📅 <b>Желаемая дата:</b> <i>{delivery_date}</i>"
         ),
+        "material_order_format_object": (
+            "🛍 <b>Заказ материалов для объекта #{object_id}</b>\n\n",
+            "👤 <b>Заказчик:</b> {worker_name}\n"
+            "📧 Username: {username}\n\n"
+            "📝 <b>Требуемые материалы:</b>\n<i>{description}</i>\n"
+            "📅 <b>Желаемая дата:</b> <i>{delivery_date}</i>"
+            "Объект: {object_name} (ID: {object_id})"),
         "order_saved": "✅ Заказ материалов успешно отправлен",
         "send_material_photo": "📸 Отправьте фото материала",
         "enter_material_description": "📝 Введите описание материала",
@@ -464,6 +480,7 @@ TEXTS_TRANSLITE = {
         "out_object_check_saved": "✅ Чек сохранен и отправлен в группу",
         "profic_accounting_btn": "Учет прибыли",
         "select_object_for_profic": "📋 Выберите объект для учета:",
+        "select_material_order_type": "Тип заказываемого материала:",
         "select_payment_type": "💳 Выберите тип операции:",
         "enter_payment_amount": "💰 Введите сумму:",
         "enter_payment_purpose": "📝 Введите назначение платежа:",
@@ -593,6 +610,7 @@ TEXTS_TRANSLITE = {
         "report_ready": "✅ Отчет готов!",
         "export_error": "❌ Ошибка при формировании отчета",
         "select_object": "Выберите объект:",
+
         "financial_report": "Финансовый отчет",
         "financial_report_title": "Финансовый отчет по операциям",
         "date_column": "Дата",
@@ -608,8 +626,41 @@ TEXTS_TRANSLITE = {
         "general_accounting_btn": "Общий учёт",
         "object_accounting_btn": "Учёт по объекту",
         "choose_accounting_mode": "Выберите режим учёта:",
+        "material_order_type_object_btn": "Заказ по объекту",
+        "material_order_type_general_btn": "Заказ вне объектов",
+
     },
     "uz": {
+    "choose_accounting_mode": "Hisob rejimini tanlang:",
+    "confirm_transfer_tool": "Asbobni topshirishni tasdiqlang:",
+    "enter_recipient": "Qabul qiluvchini @username yoki telegram_id orqali kiriting:",
+    "enter_tool_id": "Asbob ID sini kiriting",
+    "excel_recipient_username": "Foydalanuvchi ID yoki username",
+    "excel_tool_id": "Asbob ID",
+    "excel_tool_owner": "Asbob biriktirilgan",
+    "general_accounting_btn": "Umumiy hisob",
+    "info_block_1": "Foydalanish qoidalari",
+    "info_block_2": "Aloqalar",
+    "material_order_type_general_btn": "Obyektlarsiz buyurtma",
+    "material_order_type_object_btn": "Obyekt bo'yicha buyurtma",
+    "no_documents": "Bu obyekt uchun hujjatlar qo'shilmagan",
+    "object_accounting_btn": "Obyekt bo'yicha hisob",
+    "object_has_been_deleted": "Obyekt o'chirildi",
+    "object_view_foreman_btn": "Proyekt rahbari",
+    "object_view_worker_btn": "Ishchi",
+    "out_object_check_btn": "Obyektlarsiz cheklar hisobi",
+    "pass": "Ishlab chiqilmoqda",
+    "select_tools_status": "Asboblar holatini tanlang",
+    "select_worker_role": "Ishchi rolini tanlang",
+    "send_to_group_question": "Guruhga yuborilsinmi?",
+    "tmc_enter_file": "Asbob rasmi faylini yuklang",
+    "tool_status_in_work": "🛠 Ishda",
+    "tools_export_error": "Asboblarni eksport qilishda xatolik",
+    "transfer_tool_btn": "Asbobni topshirish",
+    "transfer_tool_forced": "Asbob majburan topshirildi.",
+    "upload_transfer_file": "To'ldirilgan shablonni yuklang",
+    "user_has_no_tools": "Foydalanuvchiga asboblar biriktirilmagan",
+    "view_object": "Obyektni ko'rish",
     "tools_export_complete": "✅ Eksport qilingan asboblar: {count}\nHolat: {status}",
     "reminder_delete_canceled": "Qoldiqlarni o'chirish bekor qilindi",
     "reminder_deleted": "Qoldiqlar faolsizlantirildi",
@@ -1160,6 +1211,36 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "user_control": "👥 Foydalanuvchilarni boshqarish"
     },
     "tg": {
+    "choose_accounting_mode": "Ҳолати ҳисобгириро интихоб кунед:",
+    "confirm_transfer_tool": "Интиқоли асбобро тасдиқ кунед:",
+    "enter_recipient": "Гирандаро бо @username ё telegram_id ворид кунед:",
+    "enter_tool_id": "ID асбобро ворид кунед",
+    "excel_recipient_username": "ID ё номи корбар",
+    "excel_tool_id": "ID асбоб",
+    "excel_tool_owner": "Асбоб вобаста ба",
+    "general_accounting_btn": "Ҳисобгирии умумӣ",
+    "info_block_1": "Қоидаҳои истифода",
+    "info_block_2": "Тамосҳо",
+    "material_order_type_general_btn": "Фармоиш берун аз объект",
+    "material_order_type_object_btn": "Фармоиш аз рӯи объект",
+    "no_documents": "Барои ин объект ягон ҳуҷҷат илова нашудааст",
+    "object_accounting_btn": "Ҳисобгирии объект",
+    "object_has_been_deleted": "Объект нест карда шуд",
+    "object_view_foreman_btn": "Прораб",
+    "object_view_worker_btn": "Коргар",
+    "out_object_check_btn": "Чекҳо берун аз объект",
+    "pass": "Дар таҳия",
+    "select_tools_status": "Ҳолати асбобҳоро интихоб кунед",
+    "select_worker_role": "Нақши коргарро интихоб кунед",
+    "send_to_group_question": "Ба гурӯҳ фиристода шавад?",
+    "tmc_enter_file": "Расми асбобро бор кунед",
+    "tool_status_in_work": "🛠 Дар кор",
+    "tools_export_error": "Хатогӣ ҳангоми содироти асбобҳо",
+    "transfer_tool_btn": "Интиқоли асбоб",
+    "transfer_tool_forced": "Асбоб маҷбуран интиқол дода шуд.",
+    "upload_transfer_file": "Шаблони пуршударо бор кунед",
+    "user_has_no_tools": "Ба корбар асбоб вобаста нашудааст",
+    "view_object": "Дидани объект",
     "tools_export_complete": "✅ Асбобҳо содирот шуданд: {count}\nҲолат: {status}",
     "reminder_delete_canceled": "Бекор кардани нест кардани бақияҳо",
     "reminder_deleted": "Бақияҳо ғайрифаъол карда шуданд",

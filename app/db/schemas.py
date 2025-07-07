@@ -198,6 +198,8 @@ class MaterialReminderFilter(BaseModel):
     is_active:bool = None
 
 
+
+
 class MaterialOrderModel(BaseModel):
     description: str
     delivery_date: str
@@ -209,8 +211,25 @@ class MaterialOrderModel(BaseModel):
 
 class MaterialOrderFilter(BaseModel):
     id: Optional[int] = None
+    description: Optional[str] = None
+    delivery_date: Optional[str] = None
     message_id: Optional[int] = None
 
+class ObjectMaterialOrderModel(BaseModel):
+    description: str
+    delivery_date: str
+    message_id: Optional[int] = None
+    object_id: int
+
+    class Config:
+        from_attributes = True
+
+class ObjectMaterialOrderFilter(BaseModel):
+    id: Optional[int] = None
+    description: Optional[str] = None
+    delivery_date: Optional[str] = None
+    message_id: Optional[int] = None
+    object_id: Optional[int] = None
 
 class CheckModel(BaseModel):
     file_id: str

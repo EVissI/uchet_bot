@@ -132,7 +132,10 @@ class Object(Base):
     object_profic_accounting: Mapped[list["ObjectProficAccounting"]] = relationship(
         "ObjectProficAccounting", back_populates="object", cascade="all, delete"
     )
-
+    material_orders: Mapped[list["ObjectMaterialOrder"]] = relationship(
+        "ObjectMaterialOrder", back_populates="object", cascade="all, delete"
+    )
+    
 
 class ObjectPhoto(Base):
     __tablename__ = "object_photos"
@@ -253,7 +256,22 @@ class MaterialOrder(Base):
     description: Mapped[str] = mapped_column(String, nullable=False)
     delivery_date: Mapped[str] = mapped_column(String(20), nullable=False)
     message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
+
+class ObjectMaterialOrder(Base):
+    __tablename__ = "material_orders"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    description: Mapped[str] = mapped_column(String, nullable=False)
+    delivery_date: Mapped[str] = mapped_column(String(20), nullable=False)
+    message_id: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
+    object_id: Mapped[int] = mapped_column(
+        ForeignKey("objects.id", ondelete="CASCADE"), nullable=False
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+
+    object: Mapped["Object"] = relationship("Object", back_populates="material_orders")
 
 class ObjectProficAccounting(Base):
     __tablename__ = "object_profic_accounting"

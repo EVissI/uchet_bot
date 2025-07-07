@@ -33,7 +33,7 @@ async def process_add_worker_to_object_btn(message: Message, user_info: User):
             return
     await message.answer(
         text=get_text("add_worker_to_object_text", user_info.language),
-        reply_markup=build_paginated_list_kbd(objects,context=('add_member_to_object'))
+        reply_markup=build_paginated_list_kbd(objects, context=('add_member_to_object'))
     )
 
 
