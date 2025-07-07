@@ -27,13 +27,13 @@ def upgrade() -> None:
     sa.Column('delivery_date', sa.String(length=20), nullable=False),
     sa.Column('message_id', sa.BigInteger(), nullable=True),
     sa.Column('object_id', sa.Integer(), nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('is_active', sa.Boolean(), nullable=False,server_default=sa.text('true')),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['object_id'], ['objects.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.add_column('material_orders', sa.Column('is_active', sa.Boolean(), nullable=False))
+    op.add_column('material_orders', sa.Column('is_active', sa.Boolean(), nullable=False, server_default=sa.text('true')))
     # ### end Alembic commands ###
 
 
