@@ -71,8 +71,8 @@ def extract_receipt_data(image_bytes: bytes) -> dict:
     if date_match:
         data['date'] = date_match.group(1)
 
-    # Ищем сумму с пробелами и без копеек
-    amount_match = re.search(r'Итого\s+([\d\s]+(?:[.,]\d{2})?)\s*₽', text, re.IGNORECASE)
+    # Ищем сумму по "Сумма" или "Итого", с пробелами, "₽" или "Р"
+    amount_match = re.search(r'(?:Сумма|Итого)\s+([\d\s]+(?:[.,]\d{2})?)\s*[₽Р]', text, re.IGNORECASE)
     if amount_match:
         amount = amount_match.group(1).replace(' ', '').replace(',', '.')
         data['amount'] = amount
