@@ -482,6 +482,11 @@ TEXTS_TRANSLITE = {
         "profic_accounting_btn": "Учет прибыли",
         "select_object_for_profic": "📋 Выберите объект для учета:",
         "select_material_order_type": "Тип заказываемого материала:",
+        "material_order_card": (
+            "📝 <b>Заказ №{id}</b>\n"
+            "<b>Описание:</b> {description}\n"
+            "<b>Дата доставки:</b> {delivery_date}"
+        ),
         "select_payment_type": "💳 Выберите тип операции:",
         "enter_payment_amount": "💰 Введите сумму:",
         "enter_payment_purpose": "📝 Введите назначение платежа:",
