@@ -21,8 +21,8 @@ async def handle_pdf(message: Message, bot: Bot):
         data = extract_receipt_data(jpg_bytes)
 
         await message.answer_photo(photo=BytesIO(jpg_bytes), caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽")
-    except:
-        logger.error(f"Error processing PDF for user {message.from_user.id}")
+    except Exception as e:
+        logger.error(f"Error processing PDF for user {message.from_user.id} - {e}")
         await message.reply(
             "Ошибка конвертации пдф"
         )
