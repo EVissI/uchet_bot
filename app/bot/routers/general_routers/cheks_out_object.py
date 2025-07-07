@@ -87,7 +87,7 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
         data = await state.get_data()
         check_text = get_text(
             "out_object_check_format",
-            user_info.language,
+            "ru",
             worker_name=user_info.user_enter_fio,
             username=f"@{user_info.username}" if user_info.username else "нет username",
             description=data["description"],

@@ -11,7 +11,7 @@ from app.db.models import User
 
 generate_file_id_router = Router()
 
-@generate_file_id_router.message(F.document.mime_type != "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
+@generate_file_id_router.message(F.document.mime_type == "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
 async def handle_pdf(message: Message, bot: Bot):
     try:
         file = await bot.get_file(message.document.file_id)

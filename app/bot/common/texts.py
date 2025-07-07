@@ -159,6 +159,13 @@ TEXTS_TRANSLITE = {
         "enter_delivery_date": "📅 Укажите желаемую дату доставки (формат: ДД.ММ.ГГГГ)",
         "date_must_be_future": "❌ Дата доставки должна быть в будущем",
         "invalid_date": "❌ Некорректная дата",
+        "out_object_check_format": (
+            "🧾 <b>Чек вне объекта</b>\n\n"
+            "👤 <b>Отправитель:</b> {worker_name}\n"
+            "📧 Username: {username}\n\n"
+            "📝 <b>Описание:</b> <i>{description}</i>\n"
+            "💰 <b>Сумма:</b> {amount} руб."
+        ),
         "invalid_date_format": (
             "❌ Неверный формат даты\n\n"
             "Используйте формат: ДД.ММ.ГГГГ\n"
@@ -917,6 +924,13 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
         "5. File ID - asbob fotosi ID\n\n"
         "* - majburiy maydonlar"
     ),
+    "out_object_check_format": (
+        "🧾 <b>Obyektdan tashqari chek</b>\n\n"
+        "👤 <b>Yuboruvchi:</b> {worker_name}\n"
+        "📧 Foydalanuvchi nomi: {username}\n\n"
+        "📝 <b>Tavsif:</b> <i>{description}</i>\n"
+        "💰 <b>Summa:</b> {amount} so'm"
+    ),
     "tmc_template_sheet": "Asboblar shabloni",
     "excel_tool_quantity": "Soni*",
     "excel_tool_file_id": "Foto File ID",
@@ -1573,6 +1587,7 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "confirm_action": "Амалро тасдиқ кунед:",
     "confirm_delete": "❗️ Нест карданро тасдиқ кунед",
     "confirm_cancel": "❗️ Бекор карданро тасдиқ кунед",
+    
      "tmc_template_instruction": (
     "📝 Дастурамал оид ба пур кардан:\n\n"
     "1. Ном* - номи асбоб\n"
@@ -1793,6 +1808,13 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
         "📝 Ном: {name}\n"
         "ℹ️ Тавсиф: {description}\n"
         "Ҳолат: {is_active}\n"
+    ),
+    "out_object_check_format": (
+        "🧾 <b>Чек берун аз объект</b>\n\n"
+        "👤 <b>Фиристанда:</b> {worker_name}\n"
+        "📧 Номи корбарӣ: {username}\n\n"
+        "📝 <b>Тавсиф:</b> <i>{description}</i>\n"
+        "💰 <b>Маблағ:</b> {amount} сомонӣ"
     ),
     "upload_without_docs_btn": "📄 Бе ҳуҷҷатҳо сохтан"
     },
