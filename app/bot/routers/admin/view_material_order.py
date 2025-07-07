@@ -107,6 +107,7 @@ async def process_material_order_card_pagination(callback: CallbackQuery, callba
                 current_page=page,
                 lang=user_info.language,
                 keyboard_type="material_order_view",
+                order_type='object'
             )
         )
 
@@ -141,7 +142,7 @@ async def process_material_orders_general_type_select(callback: CallbackQuery, u
                 current_page=page,
                 lang=user_info.language,
                 keyboard_type="material_order_view",
-                object_type='object'
+                order_type='general'
             )
         )
 
