@@ -74,10 +74,10 @@ class MainKeyboard:
 
     __admin_kb_texts_list = ['notify_btn','instrument_control_btn','material_remainder_control_btn',
                              'object_control_btn','material_remainder_btn','out_object_check_btn','reminder_btn','profic_accounting_btn',
-                             'finance_report_btn','material_order_view','transfer_tool_btn']
+                             'finance_report_btn','material_order_view','transfer_tool_btn','material_order_btn']
 
     __mini_admin_kb_texts_list = [
-        'material_remainder_control_btn','material_remainder_btn',
+        'material_remainder_control_btn','material_order_btn','material_remainder_btn',
         "profic_accounting_btn",'out_object_check_btn',
         'object_control_btn','material_order_view','transfer_tool_btn'
     ]
