@@ -11,6 +11,7 @@ from app.bot.routers.admin.cheks_object import admin_reminder_object_router
 from app.bot.routers.admin.finance_report import finance_report_router
 
 
+
 main_admin_router = Router()
 main_admin_router.message.filter(RoleFilter(User.Role.admin.value))
 main_admin_router.include_routers(
