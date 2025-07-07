@@ -419,212 +419,6 @@ def generate_tmc_template(lang: str = "ru") -> io.BytesIO:
     return excel_buffer
 
 
-def create_object_financial_report(
-    object_id: int,
-    start_date: datetime,
-    end_date: datetime,
-    lang: str,
-    profic_records: list[ProficAccounting],
-    object_checks: list[ObjectCheck],
-    object: Object,
-) -> io.BytesIO:
-    """Create financial report for specific object"""
-    wb = Workbook()
-    ws = wb.active
-    ws.title = get_text("object_finance_sheet", lang)
-
-    ws.merge_cells("A1:F1")
-    header_cell = ws.cell(row=1, column=1, value=f"🏗 {object.name}")
-    header_cell.font = Font(bold=True, size=14)
-
-    ws.cell(
-        row=2,
-        column=1,
-        value=f"📅 {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}",
-    )
-
-    return _process_financial_data(
-        ws=ws,
-        profic_records=profic_records,
-        checks=object_checks,
-        lang=lang,
-        start_row=4,
-    )
-
-
-def create_outobject_financial_report(
-    start_date: datetime,
-    end_date: datetime,
-    lang: str,
-    checks: list[Check],
-) -> io.BytesIO:
-    """Create financial report for expenses outside objects"""
-    wb = Workbook()
-    ws = wb.active
-    ws.title = get_text("outobject_finance_sheet", lang)
-
-    # Add report header
-    ws.merge_cells("A1:F1")
-    header_cell = ws.cell(
-        row=1, column=1, value=get_text("outobject_expenses_header", lang)
-    )
-    header_cell.font = Font(bold=True, size=14)
-
-    ws.cell(
-        row=2,
-        column=1,
-        value=f"📅 {start_date.strftime('%d.%m.%Y')} - {end_date.strftime('%d.%m.%Y')}",
-    )
-
-    # Add headers and process data
-    return _process_financial_data(
-        ws=ws,
-        checks=checks,
-        profic_records=[],  # No profic records for out-object report
-        lang=lang,
-        start_row=4,
-    )
-
-
-def _process_financial_data(
-    ws: Worksheet,
-    profic_records: list[ProficAccounting],
-    checks: list[Check | ObjectCheck],
-    lang: str,
-    start_row: int = 1,
-) -> io.BytesIO:
-    """Helper function to process financial data and create report"""
-    # Styles
-    header_font = Font(bold=True)
-    header_fill = PatternFill(
-        start_color="CCCCCC", end_color="CCCCCC", fill_type="solid"
-    )
-    income_fill = PatternFill(
-        start_color="E2EFDA", end_color="E2EFDA", fill_type="solid"
-    )
-    expense_fill = PatternFill(
-        start_color="FFF2CC", end_color="FFF2CC", fill_type="solid"
-    )
-
-    # Headers
-    headers = [
-        get_text("finance_date", lang),
-        get_text("finance_type", lang),
-        get_text("finance_category", lang),
-        get_text("finance_description", lang),
-        get_text("finance_amount", lang),
-        get_text("finance_user", lang),
-        "file_id"
-    ]
-
-    for col, header in enumerate(headers, 1):
-        cell = ws.cell(row=start_row, column=col)
-        cell.value = header
-        cell.font = header_font
-        cell.fill = header_fill
-
-    current_row = start_row + 1
-    total_income = 0
-    total_expense = 0
-
-    # Process profit/loss records
-    for record in profic_records:
-        row = [
-            record.created_at.strftime("%d.%m.%Y"),
-            record.payment_type.value,
-            get_text("direct_payment", lang),
-            record.purpose,
-            record.amount,
-            record.user.user_enter_fio,
-            getattr(check, "file_id", ""), 
-        ]
-        for col, value in enumerate(row, 1):
-            cell = ws.cell(row=current_row, column=col, value=value)
-            cell.fill = (
-                income_fill
-                if record.payment_type == ProficAccounting.PaymentType.income
-                else expense_fill
-            )
-
-        if record.payment_type == ProficAccounting.PaymentType.income:
-            total_income += record.amount
-        else:
-            total_expense += record.amount
-        current_row += 1
-
-    # Process checks
-    for check in checks:
-        row = [
-            check.created_at.strftime("%d.%m.%Y"),
-            get_text("expense", lang),
-            get_text("check_payment", lang),
-            check.description,
-            check.amount,
-            check.user.user_enter_fio,
-        ]
-        for col, value in enumerate(row, 1):
-            cell = ws.cell(row=current_row, column=col, value=value)
-            cell.fill = expense_fill
-        total_expense += check.amount
-        current_row += 1
-
-    # Add summary
-    summary_row = current_row + 2
-    _add_summary_section(
-        ws=ws,
-        row=summary_row,
-        total_income=total_income,
-        total_expense=total_expense,
-        lang=lang,
-    )
-
-    # Set column widths
-    _set_column_widths(ws)
-
-    # Save to buffer
-    excel_buffer = io.BytesIO()
-    ws.parent.save(excel_buffer)
-    excel_buffer.seek(0)
-
-    return excel_buffer
-
-
-def _add_summary_section(
-    ws: Worksheet, row: int, total_income: float, total_expense: float, lang: str
-) -> None:
-    """Add summary section to worksheet"""
-    ws.cell(row=row, column=1, value=get_text("total_income", lang))
-    ws.cell(row=row, column=5, value=total_income).font = Font(bold=True)
-
-    ws.cell(row=row + 1, column=1, value=get_text("total_expense", lang))
-    ws.cell(row=row + 1, column=5, value=total_expense).font = Font(bold=True)
-
-    profit = total_income - total_expense
-    profit_cell = ws.cell(row=row + 2, column=1, value=get_text("total_profit", lang))
-    amount_cell = ws.cell(row=row + 2, column=5, value=profit)
-    profit_cell.font = Font(bold=True)
-    amount_cell.font = Font(bold=True)
-    if profit < 0:
-        amount_cell.fill = PatternFill(
-            start_color="FFC7CE", end_color="FFC7CE", fill_type="solid"
-        )
-
-
-def _set_column_widths(ws: Worksheet) -> None:
-    """Set column widths for worksheet"""
-    widths = {
-        "A": 15,  # Date
-        "B": 15,  # Type
-        "C": 20,  # Category
-        "D": 50,  # Description
-        "E": 15,  # Amount
-        "F": 30,  # User
-        "G": 50,  # file_id
-    }
-    for col, width in widths.items():
-        ws.column_dimensions[col].width = width
-
-
 def create_profic_report(
     profic_records: list[ProficAccounting],
     object_checks: list[ObjectCheck] | None = None,
@@ -690,6 +484,7 @@ def create_profic_report(
         "Сумма",
         "За свой счет",
         "Пользователь",
+        "file_id", 
     ]
 
     for col, header in enumerate(headers, 1):
@@ -758,6 +553,7 @@ def create_profic_report(
                 check.amount,
                 "Да" if check.own_expense else "Нет",
                 check.user.user_enter_fio,
+                getattr(check, "file_id", ""), 
             ]
 
             for col, value in enumerate(row_data, 1):
@@ -779,6 +575,7 @@ def create_profic_report(
                 check.amount,
                 "Да" if check.own_expense else "Нет",
                 check.user.user_enter_fio,
+                getattr(check, "file_id", ""),
             ]
 
             for col, value in enumerate(row_data, 1):
@@ -813,7 +610,7 @@ def create_profic_report(
         )
 
     # Column widths
-    column_widths = [15, 15, 30, 50, 15, 15, 30]
+    column_widths = [15, 15, 30, 50, 15, 15, 30, 50]
     for i, width in enumerate(column_widths, 1):
         ws.column_dimensions[chr(64 + i)].width = width
 
