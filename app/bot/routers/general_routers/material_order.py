@@ -124,7 +124,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
     if data.get("order_type") == "general":
         order_text = get_text(
             "material_order_format",
-            user_info.language,
+            lang = "ru",
             worker_name=user_info.user_enter_fio,
             username=f"@{user_info.username}" if user_info.username else "нет username",
             description=data["description"],
@@ -147,7 +147,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
     if data.get("order_type") == "object":
         order_text = get_text(
             "material_order_format_object",
-            user_info.language,
+            lang = "ru",
             worker_name=user_info.user_enter_fio,
             username=f"@{user_info.username}" if user_info.username else "нет username",
             description=data["description"],
@@ -170,7 +170,8 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
                     message_id=sent_message.message_id,
                 ),
             )
-        await message.answer(text=get_text("order_saved", user_info.language))
+        await message.answer(text=get_text("order_saved", user_info.language), 
+                            reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
     
     await state.clear()
 
