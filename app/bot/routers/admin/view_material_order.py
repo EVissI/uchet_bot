@@ -13,7 +13,7 @@ from app.db.schemas import MaterialOrderFilter, ObjectFilterModel, ObjectMateria
 material_orders_view_router = Router()
 
 @material_orders_view_router.message(
-    F.text.in_(get_all_texts("view_material_orders_btn")), UserInfo()
+    F.text.in_(get_all_texts("material_order_view")), UserInfo()
 )
 async def process_material_orders_view(message: Message, user_info: User):
     await message.answer(
