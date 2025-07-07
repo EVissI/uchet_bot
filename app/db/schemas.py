@@ -220,6 +220,7 @@ class ObjectMaterialOrderModel(BaseModel):
     delivery_date: str
     message_id: Optional[int] = None
     object_id: int
+    is_active: bool = True
 
     class Config:
         from_attributes = True
@@ -230,6 +231,7 @@ class ObjectMaterialOrderFilter(BaseModel):
     delivery_date: Optional[str] = None
     message_id: Optional[int] = None
     object_id: Optional[int] = None
+    is_active: Optional[bool] = None
 
 class CheckModel(BaseModel):
     file_id: str

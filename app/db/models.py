@@ -260,7 +260,7 @@ class MaterialOrder(Base):
 
 
 class ObjectMaterialOrder(Base):
-    __tablename__ = "material_orders"
+    __tablename__ = "object_material_orders"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     description: Mapped[str] = mapped_column(String, nullable=False)
