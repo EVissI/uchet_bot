@@ -13,14 +13,19 @@ generate_file_id_router = Router()
 
 @generate_file_id_router.message(F.document.mime_type != "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
 async def handle_pdf(message: Message, bot: Bot):
-    file = await bot.get_file(message.document.file_id)
-    file_bytes = await bot.download_file(file.file_path)
+    try:
+        file = await bot.get_file(message.document.file_id)
+        file_bytes = await bot.download_file(file.file_path)
 
-    jpg_bytes, _ = convert_pdf_to_jpg_bytes(file_bytes.read())
-    data = extract_receipt_data(jpg_bytes)
+        jpg_bytes, _ = convert_pdf_to_jpg_bytes(file_bytes.read())
+        data = extract_receipt_data(jpg_bytes)
 
-    await message.answer_photo(photo=BytesIO(jpg_bytes), caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽")
-
+        await message.answer_photo(photo=BytesIO(jpg_bytes), caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽")
+    except:
+        logger.error(f"Error processing PDF for user {message.from_user.id}")
+        await message.reply(
+            "Ошибка конвертации пдф"
+        )
 
 @generate_file_id_router.message(F.photo,StateFilter(None, AdminPanelStates),UserInfo())
 async def process_photo_for_file_id(message: Message, user_info: User):
