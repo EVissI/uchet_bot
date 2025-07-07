@@ -5,6 +5,7 @@ import re
 import tempfile
 from typing import Tuple, Optional
 from PIL import Image
+from loguru import logger
 import pytesseract
 from pdf2image import convert_from_bytes
 from io import BytesIO
@@ -31,8 +32,14 @@ def convert_pdf_to_jpg_bytes(pdf_file: bytes) -> Tuple[bytes, str]:
     Конвертирует первую страницу PDF в JPEG.
     Возвращает JPEG в байтах и путь к временному JPG-файлу.
     """
-    images = convert_from_bytes(pdf_file, dpi=300, fmt='jpeg')
+    try:
+        images = convert_from_bytes(pdf_file, dpi=300, fmt='jpeg')
+    except Exception as e:
+        logger.error(f"Ошибка при конвертации PDF: {e}")
+        raise
+
     if not images:
+        logger.error("PDF не содержит изображений или не удалось сконвертировать.")
         raise ValueError("Не удалось сконвертировать PDF в изображение")
 
     img: Image.Image = images[0]
