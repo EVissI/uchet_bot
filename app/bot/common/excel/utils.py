@@ -446,6 +446,12 @@ def create_profic_report(
             bottom=Side(style="thin"),
         ),
     }
+    profic_records = sorted(profic_records, key=lambda x: x.created_at, reverse=True)
+    if object_checks:
+        object_checks = sorted(object_checks, key=lambda x: x.created_at, reverse=True)
+    if non_object_checks:
+        non_object_checks = sorted(non_object_checks, key=lambda x: x.created_at, reverse=True)
+
 
     income_style = {
         "fill": PatternFill(
