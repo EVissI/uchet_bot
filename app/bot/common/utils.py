@@ -63,7 +63,6 @@ def extract_receipt_data(image_bytes: bytes) -> dict:
     """
     image = Image.open(BytesIO(image_bytes))
     text = pytesseract.image_to_string(image, lang='rus+eng')
-    logger.info(text)
 
     data = {}
 
