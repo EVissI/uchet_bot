@@ -1,6 +1,6 @@
 ﻿from io import BytesIO
 from aiogram import Router, F, Bot
-from aiogram.types import InputFile
+from aiogram.types import BufferedInputFile
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 from loguru import logger
@@ -22,7 +22,7 @@ async def handle_pdf(message: Message, bot: Bot):
         data = extract_receipt_data(jpg_bytes)
 
         await message.answer_photo(
-            photo=InputFile(BytesIO(jpg_bytes), filename="converted.jpg"),
+            photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
             caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽"
         )
     except Exception as e:
