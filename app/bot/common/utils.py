@@ -1,9 +1,13 @@
 ﻿import random
 from typing import Tuple
 
-from app.db.dao import MaterialReminderDAO
-from app.db.models import MaterialReminder
-from app.db.schemas import MaterialReminderFilter
+import re
+import tempfile
+from typing import Tuple, Optional
+from PIL import Image
+import pytesseract
+from pdf2image import convert_from_bytes
+from io import BytesIO
 
 
 def generate_math_example() -> Tuple[str, int]:
@@ -22,5 +26,49 @@ def generate_math_example() -> Tuple[str, int]:
     return example, answer
 
 
+def convert_pdf_to_jpg_bytes(pdf_file: bytes) -> Tuple[bytes, str]:
+    """
+    Конвертирует первую страницу PDF в JPEG.
+    Возвращает JPEG в байтах и путь к временному JPG-файлу.
+    """
+    images = convert_from_bytes(pdf_file, dpi=300, fmt='jpeg')
+    if not images:
+        raise ValueError("Не удалось сконвертировать PDF в изображение")
 
+    img: Image.Image = images[0]
+
+    # Сохраняем во временный файл
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg")
+    img.save(temp_file, format='JPEG')
+    temp_file.close()
+
+    # Также сохраняем в байты для Telegram
+    img_byte_arr = BytesIO()
+    img.save(img_byte_arr, format='JPEG')
+    img_byte_arr.seek(0)
+
+    return img_byte_arr.read(), temp_file.name
+
+
+def extract_receipt_data(image_bytes: bytes) -> dict:
+    """
+    Извлекает дату и сумму из изображения чека.
+    """
+    image = Image.open(BytesIO(image_bytes))
+    text = pytesseract.image_to_string(image, lang='rus+eng')
+
+    data = {}
+
+    # Поиск даты и времени (можно расширить при необходимости)
+    date_match = re.search(r'(\d{2}\.\d{2}\.\d{4})', text)
+    if date_match:
+        data['date'] = date_match.group(1)
+
+    # Поиск суммы (Итого 9 835,60 ₽)
+    amount_match = re.search(r'Итого\s+([\d\s]+,\d{2})\s*₽', text)
+    if amount_match:
+        amount = amount_match.group(1).replace(' ', '')
+        data['amount'] = amount
+
+    return data
 

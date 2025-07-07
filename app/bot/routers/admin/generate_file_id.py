@@ -1,13 +1,26 @@
-﻿from aiogram import Router,F
+﻿from io import BytesIO
+from aiogram import Router, F, Bot
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 from loguru import logger
 from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_text
+from app.bot.common.utils import convert_pdf_to_jpg_bytes, extract_receipt_data
 from app.bot.filters.user_info import UserInfo
 from app.db.models import User
 
 generate_file_id_router = Router()
+
+@generate_file_id_router.message(F.document.mime_type != "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
+async def handle_pdf(message: Message, bot: Bot):
+    file = await bot.get_file(message.document.file_id)
+    file_bytes = await bot.download_file(file.file_path)
+
+    jpg_bytes, _ = convert_pdf_to_jpg_bytes(file_bytes.read())
+    data = extract_receipt_data(jpg_bytes)
+
+    await message.answer_photo(photo=BytesIO(jpg_bytes), caption=f"🧾 Дата: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽")
+
 
 @generate_file_id_router.message(F.photo,StateFilter(None, AdminPanelStates),UserInfo())
 async def process_photo_for_file_id(message: Message, user_info: User):
