@@ -66,13 +66,11 @@ def extract_receipt_data(image_bytes: bytes) -> dict:
 
     data = {}
 
-    # Поиск даты и времени (можно расширить при необходимости)
-    date_match = re.search(r'(\d{2}\.\d{2}\.\d{4})', text)
+    date_match = re.search(r'(\d{2}\.\d{2}\.\d{4}(?:\s+\d{2}:\d{2}:\d{2})?)', text)
     if date_match:
         data['date'] = date_match.group(1)
 
-    # Поиск суммы (Итого 9 835,60 ₽)
-    amount_match = re.search(r'Итого\s+([\d\s]+,\d{2})\s*₽', text)
+    amount_match = re.search(r'Итого\s+([\d\s]+(?:[.,]\d{2})?)\s*₽', text)
     if amount_match:
         amount = amount_match.group(1).replace(' ', '')
         data['amount'] = amount
