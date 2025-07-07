@@ -17,8 +17,6 @@ from app.db.schemas import MaterialOrderModel, MaterialOrderFilter, ObjectFilter
 from app.config import settings
 
 material_order_router = Router()
-material_order_router.message.filter(RoleFilter([User.Role.worker.value,
-                                          User.Role.foreman.value]))
 
 @material_order_router.message(
     F.text.in_(get_all_texts("material_order_btn")), UserInfo()
