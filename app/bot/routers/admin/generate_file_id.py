@@ -1,4 +1,5 @@
-﻿from io import BytesIO
+﻿import asyncio
+from io import BytesIO
 from aiogram import Router, F, Bot
 from aiogram.types import BufferedInputFile
 from aiogram.filters import StateFilter
@@ -7,6 +8,7 @@ from loguru import logger
 from app.bot.common.states import AdminPanelStates
 from app.bot.common.texts import get_text
 from app.bot.common.utils import convert_pdf_to_jpg_bytes, extract_receipt_data
+from app.bot.common.waiting_message import WaitingMessageManager
 from app.bot.filters.user_info import UserInfo
 from app.db.models import User
 
@@ -15,16 +17,18 @@ generate_file_id_router = Router()
 @generate_file_id_router.message(F.document.mime_type == "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
 async def handle_pdf(message: Message, bot: Bot):
     try:
+        waiting_manager = WaitingMessageManager(message.chat.id, bot)
+        await waiting_manager.start()
         file = await bot.get_file(message.document.file_id)
         file_bytes = await bot.download_file(file.file_path)
-
-        jpg_bytes, _ = convert_pdf_to_jpg_bytes(file_bytes.read())
-        data = extract_receipt_data(jpg_bytes)
-
+        loop = asyncio.get_running_loop()
+        jpg_bytes, _ = await loop.run_in_executor(None, convert_pdf_to_jpg_bytes, file_bytes.read())
+        data = await loop.run_in_executor(None, extract_receipt_data, jpg_bytes)
         await message.answer_photo(
             photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
             caption=f"🧾 Дата транкзакции: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽"
         )
+        await waiting_manager.stop()
     except Exception as e:
         logger.error(f"Error processing PDF for user {message.from_user.id} - {e}")
         await message.reply(
