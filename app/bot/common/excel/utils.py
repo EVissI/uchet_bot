@@ -514,6 +514,7 @@ def _process_financial_data(
         get_text("finance_description", lang),
         get_text("finance_amount", lang),
         get_text("finance_user", lang),
+        "file_id"
     ]
 
     for col, header in enumerate(headers, 1):
@@ -535,6 +536,7 @@ def _process_financial_data(
             record.purpose,
             record.amount,
             record.user.user_enter_fio,
+            getattr(check, "file_id", ""), 
         ]
         for col, value in enumerate(row, 1):
             cell = ws.cell(row=current_row, column=col, value=value)
@@ -617,6 +619,7 @@ def _set_column_widths(ws: Worksheet) -> None:
         "D": 50,  # Description
         "E": 15,  # Amount
         "F": 30,  # User
+        "G": 50,  # file_id
     }
     for col, width in widths.items():
         ws.column_dimensions[col].width = width
