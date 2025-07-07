@@ -5,8 +5,8 @@ from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import ItemCardCallback, ObjListCallback, build_item_card_kbd, build_paginated_list_kbd, get_material_order_type_select, MaterialOrderTypeCallback
 from app.bot.kbds.markup_kbds import MainKeyboard
 from app.db.dao import MaterialOrderDAO, ObjectDAO, ObjectMaterialOrderDAO
-from app.db.models import User
-
+from app.db.models import ObjectMaterialOrder, User
+from app.config import settings
 
 from app.db.database import async_session_maker
 from app.db.schemas import MaterialOrderFilter, ObjectFilterModel, ObjectMaterialOrderFilter
@@ -69,6 +69,8 @@ async def process_material_orders_object_select(callback: CallbackQuery, callbac
                 current_page=page,
                 lang=user_info.language,
                 keyboard_type="material_order_view",
+                order_type='object',
+                sub_info=callback_data.id
             )
         )
 
@@ -82,10 +84,10 @@ async def process_material_order_card_pagination(callback: CallbackQuery, callba
     if callback_data.action == "prev":
         page = callback_data.current_page - 1
     async with async_session_maker() as session:
-        state = callback.bot.get_state(callback.from_user.id)
-        data = await state.get_data()
-        object_id = data.get("object_id")
-        orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(object_id=object_id))
+        if callback_data.order_type == "general":
+            orders = await MaterialOrderDAO.find_all(session, MaterialOrderFilter(is_active=True,))
+        if callback_data.order_type == "object":
+            orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(is_active=True,))
         total_orders = len(orders)
         if page < 1:
             page = 1
@@ -107,7 +109,8 @@ async def process_material_order_card_pagination(callback: CallbackQuery, callba
                 current_page=page,
                 lang=user_info.language,
                 keyboard_type="material_order_view",
-                order_type='object'
+                order_type=callback_data.order_type,
+                sub_info=callback_data.sub_info
             )
         )
 
@@ -142,7 +145,7 @@ async def process_material_orders_general_type_select(callback: CallbackQuery, u
                 current_page=page,
                 lang=user_info.language,
                 keyboard_type="material_order_view",
-                order_type='general'
+                order_type='general',
             )
         )
 
@@ -154,8 +157,14 @@ async def process_material_order_deactivate(callback: CallbackQuery, callback_da
     order_type = callback_data.order_type
     async with async_session_maker() as session:
         if order_type == "object":
+            order:ObjectMaterialOrder = await ObjectMaterialOrderDAO.find_one_or_none(session, ObjectMaterialOrderFilter(id=callback_data.item_id))
+            if order.message_id:
+                await callback.bot.delete_message(settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER, order.message_id)
             await ObjectMaterialOrderDAO.deactivate(session, callback_data.item_id)
         if order_type == "general":
+            order = await MaterialOrderDAO.find_one_or_none(session, MaterialOrderFilter(id=callback_data.item_id))
+            if order.message_id:
+                await callback.bot.delete_message(settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER, order.message_id)
             await MaterialOrderDAO.deactivate(session, callback_data.item_id)
     await callback.message.answer(get_text("material_order_deactivated", user_info.language))
     await callback.message.delete()

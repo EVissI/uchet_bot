@@ -478,6 +478,7 @@ class ItemCardCallback(CallbackData, prefix="item_card"):
     total_pages: int 
     keyboard_type: str
     order_type:str
+    sub_info: Optional[Any] = None
 
 def build_item_card_kbd(
     item_id: int,
@@ -485,7 +486,9 @@ def build_item_card_kbd(
     keyboard_type: str = None,
     current_page: int = 1,
     lang: str = "ru",
-    order_type="object"
+    order_type="object",
+    sub_info: Optional[Any] = None
+
 ) -> InlineKeyboardMarkup:
     kb = InlineKeyboardBuilder()
     
@@ -500,7 +503,8 @@ def build_item_card_kbd(
                 current_page=current_page - 1,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
     
@@ -512,7 +516,8 @@ def build_item_card_kbd(
             current_page=current_page,
             total_pages=total_pages,
             keyboard_type=keyboard_type,
-            order_type=order_type
+            order_type=order_type,
+            sub_info=sub_info
         ).pack()
     ))
     
@@ -525,7 +530,8 @@ def build_item_card_kbd(
                 current_page=current_page + 1,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
     if keyboard_type == 'change_material_riminder':
@@ -537,7 +543,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
         buttons.append((
@@ -548,7 +555,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
         buttons.append((
@@ -559,7 +567,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
     if keyboard_type == 'material_order_view':
@@ -571,7 +580,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
     if keyboard_type == 'deactivate_riminder':
@@ -583,7 +593,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
     if keyboard_type == 'tool_view':
@@ -595,7 +606,8 @@ def build_item_card_kbd(
                 current_page=current_page,
                 total_pages=total_pages,
                 keyboard_type=keyboard_type,               
-                order_type=order_type
+                order_type=order_type,
+                sub_info=sub_info
             ).pack()
         ))
 
