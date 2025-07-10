@@ -31,7 +31,7 @@ async def process_material_order(message: Message, state: FSMContext, user_info:
 @material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="object") and (F.context=='create')), UserInfo())
 async def process_material_order_object_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel(is_active=True))
         if not objects:
             await callback.message.answer(
                 text=get_text('no_objects_found', user_info.language),

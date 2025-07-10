@@ -850,3 +850,36 @@ def get_material_order_type_select(context, lang: str = "ru") -> InlineKeyboardM
     )
     kb.adjust(1)
     return kb.as_markup()
+
+class CheckTypeCallback(CallbackData, prefix="check_type"):
+    type: str
+
+def get_check_type_select(lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("check_type_object_btn", lang),
+        callback_data=CheckTypeCallback(type="object").pack()
+    )
+    kb.button(
+        text=get_text("check_type_general_btn", lang),
+        callback_data=CheckTypeCallback(type="general").pack()
+    )
+    kb.adjust(1)
+    return kb.as_markup()
+
+class CheckOwnExpenseCallback(CallbackData, prefix="check_own_expense"):
+    flag: bool
+    object_id: int
+
+def get_check_own_expense_kbd(object_id: int, lang: str = "ru") -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    kb.button(
+        text=get_text("check_own_expense_true_btn", lang),
+        callback_data=CheckOwnExpenseCallback(action=True, object_id=object_id).pack(),
+    )
+    kb.button(
+        text=get_text("check_own_expense_false_btn", lang),
+        callback_data=CheckOwnExpenseCallback(action=False, object_id=object_id).pack(),
+    )
+    kb.adjust(1)
+    return kb.as_markup()

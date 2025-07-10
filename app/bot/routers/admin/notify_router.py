@@ -99,7 +99,7 @@ async def process_notify_object(
     """Handle object selection for notification"""
     await callback.message.delete()
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel(is_active=True))
         if not objects:
             await callback.message.answer(
                 text=get_text('no_objects_found', user_info.language),

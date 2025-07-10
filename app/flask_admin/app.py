@@ -10,6 +10,7 @@ ObjectModelView, ToolModelView,MaterialReminderModelView,UserModelView,ChecksMen
 DocumentsMenuView, ObjectDocumentModelView, UserDocumentModelView)
 from app.flask_admin.model_view.logs import AdminActionLogView
 from app.flask_admin.model_view.notification import ForemanNotificationView, NotificationsMenuView, WorkerNotificationView
+from app.flask_admin.model_view.profit_accounting import ObjectProficAccountingModelView, ProficAccountingModelView
 
 logger = setup_logger("admin_panel")
 from loguru import logger
@@ -18,7 +19,7 @@ from flask import Flask
 from flask_admin import Admin,AdminIndexView
 from flask_admin.form import SecureForm
 from app.db.database import sync_session
-from app.db.models import AdminActionLog, AdminUser, Check, ForemanNotification, MaterialReminder, Object, ObjectCheck, ObjectDocument, Tool, User, UserDocument, WorkerNotification
+from app.db.models import AdminActionLog, AdminUser, Check, ForemanNotification, MaterialReminder, Object, ObjectCheck, ObjectDocument, ObjectProficAccounting, ProficAccounting, Tool, User, UserDocument, WorkerNotification
 
 app = Flask(
     __name__,
@@ -111,5 +112,7 @@ admin.add_view(ForemanNotificationView(
     endpoint='foremannotification',
     category='Уведомления'
 ))
+admin.add_view(ProficAccountingModelView(ProficAccounting, sync_session, name='Учет прибыли (общие)'))
+admin.add_view(ObjectProficAccountingModelView(ObjectProficAccounting, sync_session, name='Учет прибыли (по объектам)', endpoint='object_profic_accounting'))
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=2434)

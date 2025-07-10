@@ -27,7 +27,7 @@ add_member_to_object_router = AddMemberToObjectRouter()
 async def process_add_worker_to_object_btn(message: Message, user_info: User):
     await message.delete()
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await message.answer(get_text("no_objects", user_info.language))
             return
@@ -62,7 +62,7 @@ async def back_btn(message:Message, state:FSMContext, user_info:User):
     await add_member_to_object_router.clear_messages(state, message.chat.id, message.bot)
     await state.set_state(AdminPanelStates.objects_control)
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await message.answer(get_text("no_objects", user_info.language))
             return

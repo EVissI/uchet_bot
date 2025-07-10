@@ -84,3 +84,7 @@ class ProficAccountingStates(StatesGroup):
     enter_amount = State()
     enter_purpose = State()
     confirm = State()
+
+class CreateCheckStatesWithUploadedPDF(StatesGroup):
+    own_expense = State()
+    

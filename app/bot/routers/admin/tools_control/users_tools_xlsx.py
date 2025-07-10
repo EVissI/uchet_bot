@@ -59,7 +59,7 @@ async def user_tools_xlsx_command(message: Message,user_info:User):
                                  UserInfo())
 async def process_user_tools_list_markup_btn(message:Message,state:FSMContext, user_info:User):
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await message.answer(get_text("no_objects_found", user_info.language))
             return

@@ -43,7 +43,7 @@ async def process_reminder_object(
 ):
     """Handle object selection for notification"""
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel(is_active=True))
         if not objects:
             await message.answer(
                 text=get_text('no_objects_found', user_info.language),
@@ -52,7 +52,7 @@ async def process_reminder_object(
             return
             
         await message.answer(
-            text=get_text('select_object_for_notification', user_info.language),
+            text=get_text('select_object', user_info.language),
             reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj")
         )
 

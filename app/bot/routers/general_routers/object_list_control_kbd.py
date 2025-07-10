@@ -19,7 +19,7 @@ async def handle_prev_page(callback: CallbackQuery, callback_data: ObjListCallba
     """
     new_page = callback_data.page - 1 if callback_data.page > 0 else 0
     async with async_session_maker() as session:
-        objects = await ObjectDAO.find_all(session, ObjectFilterModel())
+        objects = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
