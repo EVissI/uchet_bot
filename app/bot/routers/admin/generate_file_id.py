@@ -110,7 +110,6 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
     await callback.message.delete()
     data = await state.get_data()
     file_id = data.get("file_id")
-    date = data.get("date")
     amount = data.get("amount")
     description = data.get("description")
     own_expense = callback_data.flag 
