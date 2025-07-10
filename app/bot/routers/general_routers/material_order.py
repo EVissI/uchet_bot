@@ -16,7 +16,7 @@ from app.bot.kbds.markup_kbds import get_back_keyboard,MainKeyboard
 from app.db.dao import MaterialOrderDAO, ObjectDAO, ObjectMaterialOrderDAO
 from app.db.models import User
 from app.db.database import async_session_maker
-from app.db.schemas import MaterialOrderModel, MaterialOrderFilter, ObjectFilterModel, ObjectMaterialOrderModel
+from app.db.schemas import MaterialOrderModel, MaterialOrderFilter, ObjectFilterModel, ObjectMaterialOrderModel, ObjectMaterialOrderFilter
 from app.config import settings
 
 material_order_router = Router()
@@ -146,6 +146,17 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
                     ),
                 )
             await message.answer(text=get_text("order_saved", user_info.language))
+            async with async_session_maker() as session:
+                order = await MaterialOrderDAO.find_one_or_none(
+                    session=session,
+                    filters=MaterialOrderFilter(message_id=sent_message.message_id)
+                )
+                append_object_material_order_to_sheet(
+                    order,
+                    sent_message=sent_message,
+                    spreadsheet_id='11txWijAXs5_s8BkP1bxusyh5LW0EA93sVhYv93YWI_w',
+                    worksheet_name='Form_Responses'
+                )
         if data.get("order_type") == "object":
             order_text = get_text(
                 "material_order_format_object",
@@ -177,7 +188,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
             async with async_session_maker() as session:
                 order = await ObjectMaterialOrderDAO.find_one_or_none(
                     session=session,
-                    filters=MaterialOrderFilter(message_id=sent_message.message_id)
+                    filters=ObjectMaterialOrderFilter(message_id=sent_message.message_id)
                 )
                 append_object_material_order_to_sheet(
                     order,
