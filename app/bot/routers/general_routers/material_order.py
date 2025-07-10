@@ -4,6 +4,9 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
 
+from loguru import logger
+
+from app.bot.common.excel.google_excel import append_object_material_order_to_sheet
 from app.bot.common.states import MaterialOrderStates
 from app.bot.common.texts import get_all_texts, get_text
 from app.bot.filters.role_filter import RoleFilter
@@ -105,73 +108,88 @@ async def process_order_description(
 async def process_valid_date(message: Message, state: FSMContext, user_info: User):
     """Handler for processing valid date format"""
     try:
-        day, month, year = map(int, message.text.split("."))
-        input_date = datetime(year, month, day)
-        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        if input_date < today:
-            await message.answer(
-                text=get_text("date_must_be_future", user_info.language)
-            )
+        try:
+            day, month, year = map(int, message.text.split("."))
+            input_date = datetime(year, month, day)
+            today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            if input_date < today:
+                await message.answer(
+                    text=get_text("date_must_be_future", user_info.language)
+                )
+                return
+        except ValueError:
+            await message.answer(text=get_text("invalid_date", user_info.language))
             return
-    except ValueError:
-        await message.answer(text=get_text("invalid_date", user_info.language))
-        return
 
-    data = await state.get_data()
+        data = await state.get_data()
 
-    if data.get("order_type") == "general":
-        order_text = get_text(
-            "material_order_format",
-            lang = "ru",
-            worker_name=user_info.user_enter_fio,
-            username=f"@{user_info.username}" if user_info.username else "нет username",
-            description=data["description"],
-            delivery_date=message.text,
-        )
-        sent_message = await message.bot.send_message(
-            chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
-            text=order_text,
-        )
-        async with async_session_maker() as session:
-            await MaterialOrderDAO.add(
-                session,
-                MaterialOrderModel(
-                    description=data["description"],
-                    delivery_date=message.text,
-                    message_id=sent_message.message_id,
-                ),
+        if data.get("order_type") == "general":
+            order_text = get_text(
+                "material_order_format",
+                lang = "ru",
+                worker_name=user_info.user_enter_fio,
+                username=f"@{user_info.username}" if user_info.username else "нет username",
+                description=data["description"],
+                delivery_date=message.text,
             )
-        await message.answer(text=get_text("order_saved", user_info.language))
-    if data.get("order_type") == "object":
-        order_text = get_text(
-            "material_order_format_object",
-            lang = "ru",
-            worker_name=user_info.user_enter_fio,
-            username=f"@{user_info.username}" if user_info.username else "нет username",
-            description=data["description"],
-            delivery_date=message.text,
-            object_id=data["object_id"],
-            object_name=data.get("object_name", "Не указано"),
-        )
-        sent_message = await message.bot.send_message(
-            chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
-            text=order_text,
-            reply_markup=get_back_keyboard(user_info.language)
-        )
-        async with async_session_maker() as session:
-            await ObjectMaterialOrderDAO.add(
-                session,
-                ObjectMaterialOrderModel(
-                    description=data["description"],
-                    delivery_date=message.text,
-                    object_id=data["object_id"],
-                    message_id=sent_message.message_id,
-                ),
+            sent_message = await message.bot.send_message(
+                chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
+                text=order_text,
             )
-        await message.answer(text=get_text("order_saved", user_info.language), 
-                            reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
-    
-    await state.clear()
+            async with async_session_maker() as session:
+                await MaterialOrderDAO.add(
+                    session,
+                    MaterialOrderModel(
+                        description=data["description"],
+                        delivery_date=message.text,
+                        message_id=sent_message.message_id,
+                    ),
+                )
+            await message.answer(text=get_text("order_saved", user_info.language))
+        if data.get("order_type") == "object":
+            order_text = get_text(
+                "material_order_format_object",
+                lang = "ru",
+                worker_name=user_info.user_enter_fio,
+                username=f"@{user_info.username}" if user_info.username else "нет username",
+                description=data["description"],
+                delivery_date=message.text,
+                object_id=data["object_id"],
+                object_name=data.get("object_name", "Не указано"),
+            )
+            sent_message = await message.bot.send_message(
+                chat_id=settings.TELEGRAM_GROUP_ID_MATERIAL_ORDER,
+                text=order_text,
+                reply_markup=get_back_keyboard(user_info.language)
+            )
+            async with async_session_maker() as session:
+                await ObjectMaterialOrderDAO.add(
+                    session,
+                    ObjectMaterialOrderModel(
+                        description=data["description"],
+                        delivery_date=message.text,
+                        object_id=data["object_id"],
+                        message_id=sent_message.message_id,
+                    ),
+                )
+            await message.answer(text=get_text("order_saved", user_info.language), 
+                                reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
+            async with async_session_maker() as session:
+                order = await ObjectMaterialOrderDAO.find_one_or_none(
+                    session=session,
+                    filters=MaterialOrderFilter(message_id=sent_message.message_id)
+                )
+                append_object_material_order_to_sheet(
+                    order,
+                    sent_message=sent_message,
+                    spreadsheet_id='11txWijAXs5_s8BkP1bxusyh5LW0EA93sVhYv93YWI_w',
+                    worksheet_name='Form_Responses'
+                )
+    except Exception as e:
+        await message.answer(text=get_text("error_processing_order", user_info.language))
+        logger.error(f"Error processing material order for user {user_info.telegram_id}: {e}")
+    finally:  
+        await state.clear()
 
 
 @material_order_router.message(

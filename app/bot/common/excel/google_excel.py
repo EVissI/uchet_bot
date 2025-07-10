@@ -1,4 +1,5 @@
 ﻿import gspread
+from aiogram.types import Message
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 
@@ -16,7 +17,7 @@ def get_gsheet_client():
     )
     return gspread.authorize(creds)
 
-def append_object_material_order_to_sheet(order: ObjectMaterialOrderModel, sent_message, spreadsheet_id: str, worksheet_name: str):
+def append_object_material_order_to_sheet(order: ObjectMaterialOrderModel, sent_message:Message, spreadsheet_id: str, worksheet_name: str):
     client = get_gsheet_client()
     sheet = client.open_by_key(spreadsheet_id).worksheet(worksheet_name)
 
