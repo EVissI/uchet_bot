@@ -94,7 +94,6 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
             amount=amount,
         )
 
-        # Send to second group
         await message.bot.send_photo(
             chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
             photo=data["photo_id"],

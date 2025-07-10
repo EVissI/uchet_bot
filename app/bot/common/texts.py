@@ -147,7 +147,7 @@ TEXTS_TRANSLITE = {
         "object_view_documents_btn": "Документы",
         "invalid_amount": "❌ Неверный формат суммы. Введите число, например: 1234.56",
         "check_format": (
-            "🧾 <b>Чек с объекта #{object_id}</b>\n\n"
+            "🧾 <b>Чек с объекта #{object_name}</b>\n\n"
             "👤 <b>Отправитель:</b> {worker_name}\n"
             "📧 Username: {username}\n\n"
             "📝 <b>Описание:</b> <i>{description}</i>\n"
@@ -182,12 +182,11 @@ TEXTS_TRANSLITE = {
             "📅 <b>Желаемая дата:</b> <i>{delivery_date}</i>"
         ),
         "material_order_format_object": (
-            "🛍 <b>Заказ материалов для объекта #{object_id}</b>\n\n"
+            "🛍 <b>Заказ материалов для объекта: {object_name} (ID: {object_id})}</b>\n\n"
             "👤 <b>Заказчик:</b> {worker_name}\n"
             "📧 Username: {username}\n\n"
             "📝 <b>Требуемые материалы:</b>\n<i>{description}</i>\n"
-            "📅 <b>Желаемая дата:</b> <i>{delivery_date}\n</i>"
-            "Объект: {object_name} (ID: {object_id})"),
+            "📅 <b>Желаемая дата:</b> <i>{delivery_date}\n</i>"),
         "order_saved": "✅ Заказ материалов успешно отправлен",
         "send_material_photo": "📸 Отправьте фото материала",
         "enter_material_description": "📝 Введите описание материала",
@@ -794,7 +793,7 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "enter_check_amount": "💰 Chek summasini kiriting (faqat raqamlar)",
     "invalid_amount": "❌ Summa formati noto'g'ri. Misol: 1234.56",
     "check_format": (
-        "🧾 <b>#{object_id} obyektdan chek</b>\n\n"
+        "🧾 <b>#{object_name} obyektdan chek</b>\n\n"
         "👤 <b>Yuboruvchi:</b> {worker_name}\n"
         "📧 Foydalanuvchi nomi: {username}\n\n"
         "📝 <b>Izoh:</b> <i>{description}</i>\n"
@@ -1369,7 +1368,7 @@ Foydalanuvchi nomini yaratgandan so'ng pastdagi "Tekshirish" tugmasini bosing.""
     "enter_check_amount": "💰 Маблағи чекро дохил кунед (танҳо рақамҳо)",
     "invalid_amount": "❌ Формати маблағ нодуруст аст. Масалан: 1234.56",
     "check_format": (
-        "🧾 <b>Чек аз объекти #{object_id}</b>\n\n"
+        "🧾 <b>Чек аз объекти #{object_name}</b>\n\n"
         "👤 <b>Фиристанда:</b> {worker_name}\n"
         "📧 Номи корбарӣ: {username}\n\n"
         "📝 <b>Тавсиф:</b> <i>{description}</i>\n"

@@ -7,11 +7,11 @@ from app.bot.common.states import ObjectCheckStates
 from app.bot.common.texts import get_text
 from app.bot.filters.user_info import UserInfo
 from app.bot.kbds.inline_kbds import WorkerObjectActionCallback
-from app.db.dao import ObjectCheckDAO
+from app.db.dao import ObjectCheckDAO, ObjectDAO
 from app.db.models import User
 from app.db.database import async_session_maker
 from app.config import settings
-from app.db.schemas import ObjectCheckModel
+from app.db.schemas import ObjectCheckModel, ObjectFilterModel
 
 
 checks_router = Router()
@@ -57,11 +57,12 @@ async def process_check_amount(message: Message, state: FSMContext, user_info: U
         return
 
     data = await state.get_data()
-    
+    async with async_session_maker() as session:
+        object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=data.get('object_id')))
     check_text = get_text(
         'check_format',
         user_info.language,
-        object_id=data['object_id'],
+        object_name=object.name,
         worker_name=user_info.user_enter_fio,
         username=f"@{user_info.username}" if user_info.username else "нет username",
         description=data['description'],

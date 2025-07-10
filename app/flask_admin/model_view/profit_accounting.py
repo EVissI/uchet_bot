@@ -5,7 +5,7 @@ from app.db.models import Object, User, ProficAccounting, ObjectProficAccounting
 from app.flask_admin.model_view.base import AuthModelView
 
 class ProficAccountingModelView(AuthModelView):
-    can_create = True
+    can_create = False
     can_edit = True
     can_delete = True
 
@@ -79,7 +79,7 @@ class ProficAccountingModelView(AuthModelView):
 
 
 class ObjectProficAccountingModelView(AuthModelView):
-    can_create = True
+    can_create = False
     can_edit = True
     can_delete = True
 

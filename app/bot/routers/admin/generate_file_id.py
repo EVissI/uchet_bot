@@ -17,6 +17,10 @@ from app.db.models import User
 from app.db.database import async_session_maker
 from app.db.schemas import CheckModel, ObjectFilterModel, ObjectCheckModel,CheckFilterModel, ObjectCheckFilterModel
 from app.db.dao import CheckDAO, ObjectCheckDAO, ObjectDAO
+
+from app.config import settings
+
+
 generate_file_id_router = Router()
 
 @generate_file_id_router.message(F.document.mime_type == "application/pdf", StateFilter(None, AdminPanelStates), UserInfo())
@@ -132,6 +136,20 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
                     own_expense=own_expense,
                 )   
             )  
+        check_text = get_text(
+            "out_object_check_format",
+            "ru",
+            worker_name=user_info.user_enter_fio,
+            username=f"@{user_info.username}" if user_info.username else "нет username",
+            description=description if description else "-",
+            amount=amount,
+        )
+        await callback.bot.send_photo(
+            chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
+            photo=data["photo_id"],
+            caption=check_text,
+        )
+
     if type_ == "object":
         object_id = data.get("object_id")
         if not object_id:
@@ -151,6 +169,23 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
                     object_id=object_id,
                 )   
             )
+        async with async_session_maker() as session:
+            object = await ObjectDAO.find_one_or_none(session,filters=ObjectFilterModel(id = object_id))
+        check_text = get_text(
+            'check_format',
+            user_info.language,
+            object_name=object.name,
+            worker_name=user_info.user_enter_fio,
+            username=f"@{user_info.username}" if user_info.username else "нет username",
+            description=description if description else "-",
+            amount=amount
+        )
+        
+        await callback.bot.send_photo(
+            chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
+            photo=data['photo_id'],
+            caption=check_text,
+        )
 
     await callback.message.answer(
         text=get_text("check_created", user_info.language),

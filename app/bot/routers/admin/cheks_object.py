@@ -109,11 +109,12 @@ async def process_choise(callback:CallbackQuery,callback_data:SendToGroupChoise,
     amount = data.get('amount')
 
     data = await state.get_data()
-    
+    async with async_session_maker() as session:
+        object = await ObjectDAO.find_one_or_none(session, filters=ObjectFilterModel(id=data.get('object_id')))
     check_text = get_text(
         'check_format',
         user_info.language,
-        object_id=data['object_id'],
+        object_name=object.name,
         worker_name=user_info.user_enter_fio,
         username=f"@{user_info.username}" if user_info.username else "нет username",
         description=data['description'],
