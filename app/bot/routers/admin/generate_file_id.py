@@ -115,8 +115,8 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
     description = data.get("description")
     own_expense = callback_data.flag 
     type_ = data.get("type")
-    if not file_id or not date or not amount:
-        await callback.message.reply(
+    if not file_id:
+        await callback.message.answer(
             text=get_text("file_id_generation_error", user_info.language)
         )
         return
