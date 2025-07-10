@@ -155,7 +155,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
                     order,
                     sent_message=sent_message,
                     spreadsheet_id='11txWijAXs5_s8BkP1bxusyh5LW0EA93sVhYv93YWI_w',
-                    worksheet_name='Form_Responses'
+                    worksheet_name='Ответы на форму (1)'
                 )
         if data.get("order_type") == "object":
             order_text = get_text(
@@ -194,7 +194,7 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
                     order,
                     sent_message=sent_message,
                     spreadsheet_id='11txWijAXs5_s8BkP1bxusyh5LW0EA93sVhYv93YWI_w',
-                    worksheet_name='Form_Responses'
+                    worksheet_name='Ответы на форму (1)'
                 )
     except Exception as e:
         await message.answer(text=get_text("error_processing_order", user_info.language))
