@@ -842,11 +842,11 @@ def get_material_order_type_select(context, lang: str = "ru") -> InlineKeyboardM
     kb = InlineKeyboardBuilder()
     kb.button(
         text=get_text("material_order_type_object_btn", lang),
-        callback_data=MaterialOrderTypeCallback(type="object",context=context).pack()
+        callback_data=MaterialOrderTypeCallback(type="object", context=context).pack()
     )
     kb.button(
         text=get_text("material_order_type_general_btn", lang),
-        callback_data=MaterialOrderTypeCallback(type="general",context=context).pack()
+        callback_data=MaterialOrderTypeCallback(type="general", context=context).pack()
     )
     kb.adjust(1)
     return kb.as_markup()

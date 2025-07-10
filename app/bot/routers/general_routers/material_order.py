@@ -27,11 +27,12 @@ material_order_router = Router()
 async def process_material_order(message: Message, state: FSMContext, user_info: User):
     await message.answer(
         text=get_text("select_material_order_type", user_info.language),
-        reply_markup=get_material_order_type_select(context='create',lang=user_info.language)
+        reply_markup=get_material_order_type_select(context='create', 
+                                                    lang=user_info.language)
     )
 
 
-@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="object") and (F.context=='create')), UserInfo())
+@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="object") & (F.context=='create')), UserInfo())
 async def process_material_order_object_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
     async with async_session_maker() as session:
         objects = await ObjectDAO.find_all(session, filters=ObjectFilterModel(is_active=True))
@@ -64,7 +65,7 @@ async def process_material_order_object_select(callback: CallbackQuery, callback
         await state.set_state(MaterialOrderStates.waiting_description)
 
 
-@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="general") and (F.context=='create')), UserInfo())
+@material_order_router.callback_query(MaterialOrderTypeCallback.filter((F.type=="general") & (F.context=='create')), UserInfo())
 async def process_material_order_general_type_select(callback: CallbackQuery, state: FSMContext, user_info: User):
     await callback.message.delete()
     await callback.message.answer(
