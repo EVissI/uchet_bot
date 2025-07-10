@@ -113,7 +113,7 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
     date = data.get("date")
     amount = data.get("amount")
     description = data.get("description")
-    own_expense = callback_data.own_expense 
+    own_expense = callback_data.flag 
     type_ = data.get("type")
     if not file_id or not date or not amount:
         await callback.message.reply(
