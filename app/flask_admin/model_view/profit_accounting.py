@@ -18,7 +18,7 @@ class ProficAccountingModelView(AuthModelView):
         'user': 'Пользователь'
     }
     column_searchable_list = ['id', 'purpose', 'amount']
-    column_filters = ['payment_type', 'user_id']
+    column_filters = ['payment_type', 'created_by']
 
     form_columns = ['amount', 'purpose', 'payment_type', 'user_select']
     form_overrides = {
@@ -93,7 +93,7 @@ class ObjectProficAccountingModelView(AuthModelView):
         'user': 'Пользователь'
     }
     column_searchable_list = ['id', 'purpose', 'amount']
-    column_filters = ['payment_type', 'object_id', 'user_id']
+    column_filters = ['payment_type', 'object_id', 'created_by']
 
     form_columns = ['object_select', 'amount', 'purpose', 'payment_type', 'user_select']
     form_overrides = {
