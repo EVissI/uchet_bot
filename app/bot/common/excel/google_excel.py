@@ -36,12 +36,12 @@ def append_object_material_order_to_sheet(order: ObjectMaterialOrderModel, sent_
         row = [
             datetime.now().strftime("%d.%m.%Y %H:%M:%S"),  # Отметка времени
             datetime.now().strftime("%d.%m.%Y"),           # Дата заявки
-            order.delivery_date or "-",                    # Дата поставки
-            getattr(order, "object_name", "-"),            # Объект
+            order.delivery_date or "",                    # Дата поставки
+            order.object.name if order.object else "",          # Объект
             message_link,                                  # Ссылка на заявку
-            "-",                                           # Итоговая стоимость
-            order.description or "-",                      # Материал
-            "-",                                           # Дата оплаты
+            "",                                           # Итоговая стоимость
+            order.description or "",                      # Материал
+            "",                                           # Дата оплаты
             "В работе",                                    # Статус (по умолчанию)
         ]
         sheet.append_row(row, value_input_option="USER_ENTERED")

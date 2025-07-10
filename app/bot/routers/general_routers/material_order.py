@@ -186,9 +186,9 @@ async def process_valid_date(message: Message, state: FSMContext, user_info: Use
             await message.answer(text=get_text("order_saved", user_info.language), 
                                 reply_markup=MainKeyboard.build_main_kb(user_info.role, user_info.language))
             async with async_session_maker() as session:
-                order = await ObjectMaterialOrderDAO.find_one_or_none(
-                    session=session,
-                    filters=ObjectMaterialOrderFilter(message_id=sent_message.message_id)
+                order = await ObjectMaterialOrderDAO.find_one_with_object(
+                    session,
+                    message_id=sent_message.message_id,
                 )
                 append_object_material_order_to_sheet(
                     order,

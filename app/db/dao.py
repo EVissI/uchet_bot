@@ -543,3 +543,23 @@ class ObjectMaterialOrderDAO(BaseDAO):
         except SQLAlchemyError as e:
             logger.error(f"Error in ObjectMaterialOrderDAO.deactivate: {e}")
             await session.rollback()
+
+    @classmethod
+    async def find_one_with_object(
+        cls, session: AsyncSession, **filters
+    ) -> ObjectMaterialOrder | None:
+        """
+        Найти одну запись ObjectMaterialOrder с подгруженным объектом.
+        filters — любые поля модели (например, id=..., message_id=...)
+        """
+        try:
+            stmt = (
+                select(cls.model)
+                .options(joinedload(cls.model.object))
+                .filter_by(**filters)
+            )
+            result = await session.execute(stmt)
+            return result.scalars().first()
+        except SQLAlchemyError as e:
+            logger.error(f"Error in find_one_with_object: {e}")
+            return None
