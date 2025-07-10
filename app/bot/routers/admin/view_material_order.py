@@ -46,7 +46,7 @@ async def process_material_orders_object_type_select(callback: CallbackQuery, us
 async def process_material_orders_object_select(callback: CallbackQuery, callback_data: ObjListCallback, user_info: User):
     page = 1
     async with async_session_maker() as session:
-        orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(object_id=callback_data.id))
+        orders = await ObjectMaterialOrderDAO.find_all(session, ObjectMaterialOrderFilter(object_id=callback_data.id, is_active=True))
         if not orders:
             await callback.message.answer(get_text("no_material_orders_found", user_info.language))
             return
