@@ -1,4 +1,5 @@
-﻿import gspread
+﻿import traceback
+import gspread
 from aiogram.types import Message
 from google.oauth2.service_account import Credentials
 from datetime import datetime
@@ -45,5 +46,9 @@ def append_object_material_order_to_sheet(order: ObjectMaterialOrderModel, sent_
         ]
         sheet.append_row(row, value_input_option="USER_ENTERED")
     except Exception as e:
-        logger.error(f"Ошибка при добавлении заказа в Google Sheets: {e}")
+        logger.error(
+            f"Ошибка при добавлении заказа в Google Sheets: {e}\n"
+            f"spreadsheet_id={spreadsheet_id}, worksheet_name={worksheet_name}, row={row if 'row' in locals() else 'not built'}\n"
+            f"{traceback.format_exc()}"
+        )
         raise e
