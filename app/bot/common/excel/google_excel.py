@@ -23,9 +23,7 @@ def get_gsheet_client():
 def append_object_material_order_to_sheet(order: ObjectMaterialOrderModel, sent_message:Message, spreadsheet_id: str, worksheet_name: str):
     try:
         client = get_gsheet_client()
-        sheet = client.open_by_key(spreadsheet_id)
-        logger.info(f"Worksheets: {[ws.title for ws in sheet.worksheets()]}")
-        # sheet = client.open_by_key(spreadsheet_id).worksheet(worksheet_name)
+        sheet = client.open_by_key(spreadsheet_id).worksheet(worksheet_name)
 
         chat_id = str(sent_message.chat.id)
         if chat_id.startswith("-100"):
