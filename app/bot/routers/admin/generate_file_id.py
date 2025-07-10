@@ -131,16 +131,7 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
                     description=description,
                     own_expense=own_expense,
                 )   
-            ) 
-        async with async_session_maker() as session:
-            check = await CheckDAO.find_one_or_none(session=session, filters=
-                    CheckFilterModel(
-                    file_id=file_id,
-                    amount=amount,
-                    user_id=user_info.telegram_id,
-                    description=description,
-                    own_expense=own_expense,
-                    ))   
+            )  
     if type_ == "object":
         object_id = data.get("object_id")
         if not object_id:
@@ -160,16 +151,6 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
                     object_id=object_id,
                 )   
             )
-        async with async_session_maker() as session:
-            check = await ObjectCheckDAO.find_one_or_none(session=session, filters=
-                    ObjectCheckFilterModel(
-                    file_id=file_id,
-                    amount=amount,
-                    user_id=user_info.telegram_id,
-                    description=description,
-                    own_expense=own_expense,
-                    object_id=object_id,
-                    ))
 
     await callback.message.answer(
         text=get_text("check_created", user_info.language),
