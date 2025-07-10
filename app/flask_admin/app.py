@@ -97,7 +97,6 @@ admin.add_view(DocumentsMenuView(name='Документы', endpoint='doc_menu')
 admin.add_view(UserDocumentModelView(UserDocument, sync_session, name='Документы сотрудников', endpoint='userdocument'))
 admin.add_view(ObjectDocumentModelView(ObjectDocument, sync_session, name='Документы объектов', endpoint='objectdocument'))
 admin.add_view(AdminActionLogView(AdminActionLog, sync_session, name='История действий',endpoint='admin_logs'))
-admin.add_view(NotificationsMenuView(name='Уведомления', endpoint='notifications_menu'))
 admin.add_view(WorkerNotificationView(
     WorkerNotification, 
     sync_session, 
