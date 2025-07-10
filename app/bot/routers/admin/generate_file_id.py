@@ -55,6 +55,7 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
 async def handle_object_check_type(callback: CallbackQuery, callback_data: CheckTypeCallback, state: FSMContext, user_info: User):
     """Handle object check type selection"""
     await callback.answer()
+    await callback.message.edit_reply_markup(reply_markup=None)
     async with async_session_maker() as session:
         objects = await ObjectDAO.find_all(session=session, filters=ObjectFilterModel(is_active=True))
         if not objects:
@@ -92,7 +93,7 @@ async def handle_object_selection(callback: CallbackQuery, callback_data: ObjLis
 @generate_file_id_router.callback_query(CheckTypeCallback.filter(F.type == "general"), UserInfo())
 async def handle_generate_check_type(callback: CallbackQuery, callback_data: CheckTypeCallback, state: FSMContext, user_info: User):
     """Handle general check type selection"""
-    await callback.message.delete()
+    await callback.message.edit_reply_markup(reply_markup=None)
     last_message = await callback.message.answer(
         text=get_text("check_own_expense_required", user_info.language),
         reply_markup=get_check_own_expense_kbd(0, user_info.language)
@@ -171,8 +172,7 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
                     ))
 
     await callback.message.answer(
-        text=get_text("check_created", user_info.language, check_id=check.id),
-        reply_markup=MainKeyboard.build_main_kb(user_info.language, user_info.telegram_id)
+        text=get_text("check_created", user_info.language),
     )
 
 
