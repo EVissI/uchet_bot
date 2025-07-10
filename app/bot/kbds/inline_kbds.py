@@ -875,11 +875,11 @@ def get_check_own_expense_kbd(object_id: int, lang: str = "ru") -> InlineKeyboar
     kb = InlineKeyboardBuilder()
     kb.button(
         text=get_text("check_own_expense_true_btn", lang),
-        callback_data=CheckOwnExpenseCallback(action=True, object_id=object_id).pack(),
+        callback_data=CheckOwnExpenseCallback(flag=True, object_id=object_id).pack(),
     )
     kb.button(
         text=get_text("check_own_expense_false_btn", lang),
-        callback_data=CheckOwnExpenseCallback(action=False, object_id=object_id).pack(),
+        callback_data=CheckOwnExpenseCallback(flag=False, object_id=object_id).pack(),
     )
     kb.adjust(1)
     return kb.as_markup()
