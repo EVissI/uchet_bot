@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY seraphic-amp-444606-u5-9640c5f896bc.json /app/seraphic-amp-444606-u5-9640c5f896bc.json
+COPY client_secret_389980653585_s142tp055bakn3s06fbb67td9gk6omkj_apps.json /app/client_secret_389980653585_s142tp055bakn3s06fbb67td9gk6omkj_apps.json
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
 
