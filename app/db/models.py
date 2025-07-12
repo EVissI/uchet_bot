@@ -157,6 +157,11 @@ class ObjectPhoto(Base):
 class ObjectDocument(Base):
     __tablename__ = "object_documents"
 
+    class DocumentFileType(enum.Enum):
+        photo = "фото"
+        pdf = "pdf"
+
+
     class DocumentType(enum.Enum):
         estimate = "смета"
         technical_task = "техническое задание"
@@ -166,6 +171,9 @@ class ObjectDocument(Base):
     object_id: Mapped[int] = mapped_column(ForeignKey("objects.id", ondelete="CASCADE"))
     file_id: Mapped[str] = mapped_column(String(255), nullable=False)
     document_type: Mapped[DocumentType] = mapped_column(String(20), nullable=False)
+    document_file_type: Mapped[DocumentFileType] = mapped_column(
+        String(20), nullable=False, default=DocumentFileType.pdf
+    )
 
     object: Mapped["Object"] = relationship("Object", back_populates="documents")
 

@@ -16,7 +16,7 @@ from app.db.dao import ObjectDAO, ObjectDocumentDAO
 from app.db.schemas import ObjectDocumentModel, ObjectModel
 from app.config import bot
 
-from app.db.models import User
+from app.db.models import ObjectDocument, User
 
 class CreateObjectRouter(Router, StateHistoryMixin, DialogMessageManager):
     def __init__(self):
@@ -102,12 +102,15 @@ async def process_object_description(message: Message, state: FSMContext, user_i
     )
     await create_object_router.save_message(state, bot_message.message_id)  
 
-@create_object_router.message(F.document.mime_type == "application/pdf", StateFilter(CreateObjectStates.waiting_documents), UserInfo())
+@create_object_router.message((F.document.mime_type == "application/pdf")|(F.photo), StateFilter(CreateObjectStates.waiting_documents), UserInfo())
 async def process_object_documents(message: Message, state: FSMContext, user_info: User):
     await create_object_router.save_message(state, message.message_id)
     data = await state.get_data()
     saved_documents = data.get('saved_documents', [])
-    saved_documents.append(message.document.file_id)
+    if message.document:
+        saved_documents.append({'file_id':message.document.file_id, 'type': ObjectDocument.DocumentFileType.pdf.value})
+    if message.photo:
+        saved_documents.append({'file_id':message.photo[-1].file_id, 'type': ObjectDocument.DocumentFileType.photo.value})
     await state.update_data(saved_documents=saved_documents)
     
     bot_message = await message.answer(
@@ -136,7 +139,7 @@ async def finish_document_received(message: Message, state: FSMContext, user_inf
     await send_next_document(message, state, user_info)
 
 
-@create_object_router.message(F.document.mime_type != "application/pdf", StateFilter(CreateObjectStates.waiting_documents), UserInfo())
+@create_object_router.message((F.document.mime_type != "application/pdf")|(F.photo), StateFilter(CreateObjectStates.waiting_documents), UserInfo())
 async def unprocess_object_documents(message: Message, state: FSMContext, user_info: User):
     await create_object_router.save_message(state, message.message_id)
     bot_message = await message.answer(
@@ -171,16 +174,17 @@ async def create_object_with_documents(message: Message, state: FSMContext, user
             name=data['name'],
             description=data['description'],
             is_active=True,
-        )
-        
+        )   
         await ObjectDAO.add(session, object_model)
-        new_object = await ObjectDAO.find_one_or_none(session, filters=object_model)
+        new_object:ObjectDocument = await ObjectDAO.find_one_or_none(session, filters=object_model)
         documents = []
         for doc in data['document_types']:
             documents.append(ObjectDocumentModel(
                 file_id=doc['file_id'],
                 document_type=doc['type'],
+                document_file_type=doc['file_type'],
                 object_id=new_object.id
+
             ))
         await ObjectDocumentDAO.add_many(session, documents)
         
@@ -205,7 +209,8 @@ async def process_document_type(
     document_types = data.get('document_types', [])
     
     document_types.append({
-        'file_id': saved_documents[callback_data.document_index],
+        'file_id': saved_documents[callback_data.document_index]['file_id'],
+        'file_type': saved_documents[callback_data.document_index]['type'],
         'type': callback_data.type
     })
     
@@ -226,9 +231,7 @@ async def process_upload_without_documents(callback: CallbackQuery, callback_dat
             name=data['name'],
             description=data['description'],
             is_active=True,
-            creator_id=user_info.telegram_id,
         )
-        
         await ObjectDAO.add(session, object_model)       
         await create_object_router.clear_messages(state, callback.message.chat.id, bot)
         await state.set_state(AdminPanelStates.objects_control)

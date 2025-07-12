@@ -78,6 +78,7 @@ class ObjectDocumentModel(BaseModel):
     object_id: int
     file_id: str
     document_type: str
+    document_file_type: str
 
     class Config:
         from_attributes = True
@@ -89,6 +90,7 @@ class ObjectDocumentFilterModel(BaseModel):
     object_id: Optional[int] = None
     file_id: Optional[str] = None
     document_type: Optional[str] = None
+    document_file_type: Optional[str] = None
 
 
 class ObjectMemberModel(BaseModel):

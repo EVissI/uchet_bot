@@ -30,8 +30,13 @@ async def process_object_docs(callback: CallbackQuery, callback_data: WorkerObje
                 user_info.language,
                 type=doc.document_type
             )
-            
-            await callback.message.answer_document(
-                doc.file_id,
-                caption=doc_text,
-            )
+            if doc.document_type == doc.DocumentFileType.photo.value:
+                await callback.message.answer_photo(
+                    doc.file_id,
+                    caption=doc_text,
+                )
+            if doc.document_type == doc.DocumentFileType.pdf.value:
+                await callback.message.answer_document(
+                    doc.file_id,
+                    caption=doc_text,
+                )

@@ -33,12 +33,20 @@ async def handle_workers_list(callback: CallbackQuery, callback_data: ForemanObj
         for document in documents:
             if document.file_id:
                 try:
-                    await callback.message.answer_document(
-                        document.file_id,
-                        caption=get_text("document_info_format", user_info.language,
-                                        document_type=document.document_type,
-                                        object_name=object_name)
-                    )
+                    if document.document_type == ObjectDocument.DocumentFileType.photo.value:
+                        await callback.message.answer_photo(
+                            document.file_id,
+                            caption=get_text("document_info_format", user_info.language,
+                                            document_type=document.document_type,
+                                            object_name=object_name)
+                        )
+                    if document.document_type == ObjectDocument.DocumentFileType.pdf.value:
+                        await callback.message.answer_document(
+                            document.file_id,
+                            caption=get_text("document_info_format", user_info.language,
+                                            document_type=document.document_type,
+                                            object_name=object_name)
+                        )
                 except Exception as e:
                     logger.error(f"Ошибка при отправке сообщения документа: {e}")
         await callback.answer()
