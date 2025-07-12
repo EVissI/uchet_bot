@@ -164,7 +164,7 @@ async def send_next_document(message: Message, state: FSMContext, user_info: Use
             )
         if saved_documents[current_index]['type'] == ObjectDocument.DocumentFileType.pdf.value:
             bot_message = await message.answer_document(
-                document=saved_documents[current_index],
+                document=saved_documents[current_index]['file_id'],
                 caption=get_text('select_document_type', user_info.language),
                 reply_markup=get_obj_document_type_kbd(user_info.language, current_index)
             )
