@@ -156,11 +156,18 @@ async def send_next_document(message: Message, state: FSMContext, user_info: Use
     current_index = data.get('current_doc_index', 0)
     
     if current_index < len(saved_documents):
-        bot_message = await message.answer_document(
-            document=saved_documents[current_index],
-            caption=get_text('select_document_type', user_info.language),
-            reply_markup=get_obj_document_type_kbd(user_info.language, current_index)
-        )
+        if saved_documents[current_index]['type'] == ObjectDocument.DocumentFileType.photo.value:
+            bot_message = await message.answer_photo(
+                photo=saved_documents[current_index]['file_id'],
+                caption=get_text('select_document_type', user_info.language),
+                reply_markup=get_obj_document_type_kbd(user_info.language, current_index)
+            )
+        if saved_documents[current_index]['type'] == ObjectDocument.DocumentFileType.pdf.value:
+            bot_message = await message.answer_document(
+                document=saved_documents[current_index],
+                caption=get_text('select_document_type', user_info.language),
+                reply_markup=get_obj_document_type_kbd(user_info.language, current_index)
+            )
         await create_object_router.save_message(state, bot_message.message_id)
     else:
         await create_object_with_documents(message, state, user_info)
