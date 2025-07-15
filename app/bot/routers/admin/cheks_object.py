@@ -53,7 +53,7 @@ async def process_reminder_object(
             
         await message.answer(
             text=get_text('select_object', user_info.language),
-            reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj")
+            reply_markup=build_paginated_list_kbd(objects, context="admin_reminder_obj",object_type = 'all_objects')
         )
 
 @admin_reminder_object_router.callback_query(ObjListCallback.filter((F.action == 'select') &
