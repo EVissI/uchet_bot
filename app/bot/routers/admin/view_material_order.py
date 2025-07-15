@@ -37,7 +37,7 @@ async def process_material_orders_object_type_select(callback: CallbackQuery, us
         text=get_text("select_object", user_info.language)
         , reply_markup=build_paginated_list_kbd(objects, 
                                                 context='material_orders_view_object',
-                                                object_type='object')
+                                                object_type = 'all_objects')
     )
 @material_orders_view_router.callback_query(
     ObjListCallback.filter((F.action == "select") & (F.context == "material_orders_view_object")),
