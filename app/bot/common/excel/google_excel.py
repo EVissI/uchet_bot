@@ -12,7 +12,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
-SERVICE_ACCOUNT_FILE = "client_secret_389980653585_s142tp055bakn3s06fbb67td9gk6omkj_apps.json" 
+SERVICE_ACCOUNT_FILE = "seraphic-amp-444606-u5-9640c5f896bc.json" 
 
 def get_gsheet_client():
     creds = Credentials.from_service_account_file(
