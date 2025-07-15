@@ -182,7 +182,7 @@ TEXTS_TRANSLITE = {
             "📅 <b>Желаемая дата:</b> <i>{delivery_date}</i>"
         ),
         "material_order_format_object": (
-            "🛍 <b>Заказ материалов для объекта: {object_name} (ID: {object_id})}</b>\n\n"
+            "🛍 <b>Заказ материалов для объекта: {object_name} (ID: {object_id})</b>\n\n"
             "👤 <b>Заказчик:</b> {worker_name}\n"
             "📧 Username: {username}\n\n"
             "📝 <b>Требуемые материалы:</b>\n<i>{description}</i>\n"
