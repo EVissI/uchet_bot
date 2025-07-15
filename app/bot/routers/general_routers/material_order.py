@@ -44,11 +44,11 @@ async def process_material_order_object_type_select(callback: CallbackQuery, sta
             return
         await callback.message.delete()
         if user_info.role in [User.Role.admin.value, User.Role.buyer.value]:
-            await callback.message.answer(get_text("select_object",user_info.language), user_info.language,
+            await callback.message.answer(get_text("select_object",user_info.language),
                                             reply_markup=build_paginated_list_kbd(objects,
                                                                                 context='material_order_object', object_type = 'all_objects'))
         else:
-            await callback.message.answer(get_text("select_object",user_info.language), user_info.language,
+            await callback.message.answer(get_text("select_object",user_info.language),
                                             reply_markup=build_paginated_list_kbd(objects,
                                                                                 context='material_order_object', object_type = 'object'))
 
