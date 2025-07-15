@@ -25,7 +25,7 @@ async def process_delete_obj_btn(message:Message,state:FSMContext,user_info:User
     await message.delete()
     await message.answer(
         text=get_text("delete_object_text", user_info.language),
-        reply_markup=build_paginated_list_kbd(objects, context=('delete_object'))
+        reply_markup=build_paginated_list_kbd(objects, context='delete_object', object_type = 'all_objects')
     )
 
 @delete_object_router.callback_query(ObjListCallback.filter((F.action == "select") & (F.context == "delete_object")), UserInfo())

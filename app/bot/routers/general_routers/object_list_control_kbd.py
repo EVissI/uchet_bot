@@ -23,7 +23,8 @@ async def handle_prev_page(callback: CallbackQuery, callback_data: ObjListCallba
         if not objects:
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
-    new_keyboard = build_paginated_list_kbd(objects, page=new_page, context=callback_data.context)
+    new_keyboard = build_paginated_list_kbd(objects, page=new_page, context=callback_data.context, 
+                                            object_type=callback_data.object_type)
     try:
         await callback.message.edit_reply_markup(reply_markup=new_keyboard)
     except Exception as e:
