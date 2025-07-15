@@ -37,7 +37,7 @@ async def start_object_accounting(callback: CallbackQuery, state: FSMContext, us
             return
         await callback.message.answer(
             text=get_text("select_object_for_profic", user_info.language),
-            reply_markup=build_paginated_list_kbd(items=objects, context='admin_profic_accounting'),
+            reply_markup=build_paginated_list_kbd(items=objects, context='admin_profic_accounting', object_type ='all_objects'),
         )
 
 
