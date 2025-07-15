@@ -28,7 +28,7 @@ async def process_view_object(message:Message, state:FSMContext, user_info: User
             return
     await message.answer(
         text=get_text("select_object_prompt", user_info.language),
-        reply_markup=build_paginated_list_kbd(objects, context=('view_object'))
+        reply_markup=build_paginated_list_kbd(objects, context=('view_object'),object_type = 'all_objects')
     )
 
 
