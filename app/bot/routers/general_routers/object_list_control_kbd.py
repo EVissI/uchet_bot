@@ -39,7 +39,7 @@ async def handle_next_page(callback: CallbackQuery, callback_data: ObjListCallba
     """
     new_page = callback_data.page + 1
     async with async_session_maker() as session:
-        objects = await ObjectMemberDAO.find_user_objects(session, user_info.telegram_id)
+        objects = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await callback.message.answer(get_text("no_objects", user_info.language))
             return
