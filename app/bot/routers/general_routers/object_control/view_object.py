@@ -22,7 +22,7 @@ view_object_router = Router()
                             UserInfo())
 async def process_view_object(message:Message, state:FSMContext, user_info: User):
     async with async_session_maker() as session:
-        objects:list[Object] = await ObjectDAO.find_all(session, ObjectFilterModel())
+        objects:list[Object] = await ObjectDAO.find_all(session, ObjectFilterModel(is_active=True))
         if not objects:
             await message.answer(get_text("no_objects", user_info.language))
             return
