@@ -86,14 +86,14 @@ async def process_view_object_documents(callback: CallbackQuery, callback_data: 
         for document in documents:
             if document.file_id:
                 try:
-                    if document.document_type == ObjectDocument.DocumentFileType.photo.value:
+                    if document.document_file_type == ObjectDocument.DocumentFileType.photo.value:
                         await callback.message.answer_photo(
                             document.file_id,
                             caption=get_text("document_info_format", user_info.language,
                                             document_type=document.document_type,
                                             object_name=object_name)
                         )
-                    if document.document_type == ObjectDocument.DocumentFileType.pdf.value:
+                    if document.document_file_type == ObjectDocument.DocumentFileType.pdf.value:
                         await callback.message.answer_document(
                             document.file_id,
                             caption=get_text("document_info_format", user_info.language,
