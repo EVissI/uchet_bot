@@ -58,14 +58,14 @@ class ObjectDocumentModelView(AuthModelView):
     }
 
     form_args = {
-    "document_type": {
-        "label": "Тип документа",
-        "choices": [
-            ("estimate", "смета"),
-            ("technical_task", "техническое задание"),
-            ("customer_contacts", "контакты заказчика"),
-        ],
-        "coerce": str,
+        "document_type": {
+            "label": "Тип документа",
+            "choices": [
+                ("смета", "смета"),
+                ("техническое задание", "техническое задание"),
+                ("контакты заказчика", "контакты заказчика"),
+            ],
+            "coerce": str,
         },
     }
 
