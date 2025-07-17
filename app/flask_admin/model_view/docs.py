@@ -29,7 +29,7 @@ class ObjectDocumentModelView(AuthModelView):
     column_searchable_list = ["id", "file_id"]
     column_filters = ["object_id", "document_type"]
 
-    form_columns = ["file_id", "object_select", "document_type"]
+    form_columns = ["file_id", "object_select", "document_type", "document_file_type"]
     form_overrides = {
         "file_id": StringField,
         "document_type": SelectField,
@@ -45,7 +45,16 @@ class ObjectDocumentModelView(AuthModelView):
             get_label="name",
             allow_blank=False,
             validators=[DataRequired()],
-        )
+        ),
+        "document_file_type": SelectField(
+            "Тип файла",
+            choices=[
+                ("photo", "фото"),
+                ("pdf", "pdf"),
+            ],
+            coerce=str,
+            validators=[DataRequired()],
+        ),
     }
 
     form_args = {
@@ -74,26 +83,33 @@ class ObjectDocumentModelView(AuthModelView):
         return form
 
     def on_model_change(self, form, model, is_created):
-        print("object_select.data:", form.object_select.data)
-        print("object_select.raw_data:", form.object_select.raw_data)
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
-        else:
-            raise ValueError("Не выбран объект для документа!")
+        if hasattr(form, "document_type") and form.document_type.data:
+            model.document_type = ObjectDocument.DocumentType(form.document_type.data)
+        if hasattr(form, "document_file_type") and form.document_file_type.data:
+            model.document_file_type = ObjectDocument.DocumentFileType(form.document_file_type.data)
         super().on_model_change(form, model, is_created)
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
     
     def _document_type_formatter(self, context, model, name):
-
         choices = dict(self.form_args["document_type"]["choices"])
         doc_type = model.document_type
         key = doc_type.value if hasattr(doc_type, "value") else doc_type
         return choices.get(key, key) if isinstance(choices, dict) else key
+    
+    def _document_file_type_formatter(self, context, model, name):
+        choices = dict([("photo", "фото"), ("pdf", "pdf")])
+        doc_file_type = model.document_file_type
+        key = doc_file_type.value if hasattr(doc_file_type, "value") else doc_file_type
+        return choices.get(key, key)
+    
     column_formatters = {
         "object": _object_formatter,
         "document_type": _document_type_formatter,
+        "document_file_type": _document_file_type_formatter,
     }
 
     def is_visible(self):
