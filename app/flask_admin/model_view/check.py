@@ -126,13 +126,13 @@ class ObjectCheckModelView(AuthModelView):
     form_extra_fields = {
         "object_select": QuerySelectField(
             "Объект",
-            query_factory=lambda: [],
+            query_factory=lambda: Object.query.all(), 
             get_label="name",
             allow_blank=False,
         ),
         "user_select": QuerySelectField(
             "Пользователь",
-            query_factory=lambda: [],
+            query_factory=lambda: Object.query.all(), 
             get_label="user_enter_fio",
             allow_blank=False,
         ),
@@ -163,6 +163,8 @@ class ObjectCheckModelView(AuthModelView):
 
     def on_model_change(self, form, model, is_created):
         super().on_model_change(form, model, is_created)
+        print("object_select.data:", form.object_select.data)
+        print("user_select.data:", form.user_select.data)
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
         else:
