@@ -49,7 +49,7 @@ class ObjectDocumentModelView(AuthModelView):
         "document_file_type": SelectField(
             "Тип файла",
             choices=[
-                ("photo", "фото"),
+                ("фото", "фото"),
                 ("pdf", "pdf"),
             ],
             coerce=str,
