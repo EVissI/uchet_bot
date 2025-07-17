@@ -86,9 +86,10 @@ class ObjectDocumentModelView(AuthModelView):
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
         if hasattr(form, "document_type") and form.document_type.data:
-            model.document_type = ObjectDocument.DocumentType(form.document_type.data)
+            # Присваиваем строку, а не Enum!
+            model.document_type = form.document_type.data
         if hasattr(form, "document_file_type") and form.document_file_type.data:
-            model.document_file_type = ObjectDocument.DocumentFileType(form.document_file_type.data)
+            model.document_file_type = form.document_file_type.data
         super().on_model_change(form, model, is_created)
 
     def _object_formatter(self, context, model, name):
