@@ -118,11 +118,6 @@ class ObjectCheckModelView(AuthModelView):
         "description": TextAreaField,
     }
 
-    def get_object_query(self):
-        return self.session.query(Object).all()
-
-    def get_user_query(self):
-        return self.session.query(User).all()
 
     form_extra_fields = {
         "object_select": QuerySelectField(
@@ -138,6 +133,11 @@ class ObjectCheckModelView(AuthModelView):
             allow_blank=False,
         ),
     }
+    def get_object_query(self):
+        return self.session.query(Object).all()
+
+    def get_user_query(self):
+        return self.session.query(User).all()
 
     def create_form(self, obj=None):
         form = super().create_form(obj)
@@ -161,8 +161,9 @@ class ObjectCheckModelView(AuthModelView):
             form.user_select.data = check.user
         else:
             form.user_select.data = None
-
     def on_model_change(self, form, model, is_created):
+        logger.info("object_select.data:", form.object_select.data)
+        logger.info("user_select.data:", form.user_select.data)
         super().on_model_change(form, model, is_created)
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
