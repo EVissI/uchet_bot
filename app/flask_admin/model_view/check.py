@@ -65,12 +65,12 @@ class CheckModelView(AuthModelView):
             form.user_select.data = None
 
     def on_model_change(self, form, model, is_created):
-        super().on_model_change(form, model, is_created)
         if hasattr(form, "user_select") and form.user_select.data:
             model.user_id = form.user_select.data.telegram_id
         else:
             model.user_id = None
-
+        super().on_model_change(form, model, is_created)
+        
     def _user_formatter(self, context, model, name):
         return model.user.user_enter_fio if model.user else "—"
 
