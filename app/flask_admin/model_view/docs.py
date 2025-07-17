@@ -35,16 +35,18 @@ class ObjectDocumentModelView(AuthModelView):
         "document_type": SelectField,
     }
 
-    def get_object_query(self):
-        return self.session.query(Object).all()
-
     form_extra_fields = {
         "object_select": QuerySelectField(
             "Объект",
             query_factory=lambda: [],
             get_label="name",
             allow_blank=False,
-            validators=[DataRequired()],
+        ),
+        "user_select": QuerySelectField(
+            "Пользователь",
+            query_factory=lambda: [],
+            get_label="user_enter_fio",
+            allow_blank=False,
         ),
         "document_file_type": SelectField(
             "Тип файла",
@@ -69,22 +71,43 @@ class ObjectDocumentModelView(AuthModelView):
         },
     }
 
+    def get_object_query(self):
+        return self.session.query(Object).all()
+
+    def get_user_query(self):
+        return self.session.query(User).all()
+
     def create_form(self, obj=None):
         form = super().create_form(obj)
         form.object_select.query_factory = self.get_object_query
+        form.user_select.query_factory = self.get_user_query
         return form
 
     def edit_form(self, obj=None):
         form = super().edit_form(obj)
         form.object_select.query_factory = self.get_object_query
-        # При редактировании подставляем выбранный объект
+        form.user_select.query_factory = self.get_user_query
+        # При редактировании подставляем выбранный объект и пользователя
         if obj and obj.object:
             form.object_select.data = obj.object
+        else:
+            form.object_select.data = None
+        if obj and obj.user:
+            form.user_select.data = obj.user
+        else:
+            form.user_select.data = None
         return form
 
     def on_model_change(self, form, model, is_created):
+        super().on_model_change(form, model, is_created)
         if hasattr(form, "object_select") and form.object_select.data:
             model.object_id = form.object_select.data.id
+        else:
+            model.object_id = None
+        if hasattr(form, "user_select") and form.user_select.data:
+            model.user_id = form.user_select.data.telegram_id
+        else:
+            model.user_id = None
         if hasattr(form, "document_type") and form.document_type.data:
             # Присваиваем строку, а не Enum!
             model.document_type = form.document_type.data
@@ -94,19 +117,19 @@ class ObjectDocumentModelView(AuthModelView):
 
     def _object_formatter(self, context, model, name):
         return model.object.name if model.object else "—"
-    
+
     def _document_type_formatter(self, context, model, name):
         choices = dict(self.form_args["document_type"]["choices"])
         doc_type = model.document_type
         key = doc_type.value if hasattr(doc_type, "value") else doc_type
         return choices.get(key, key) if isinstance(choices, dict) else key
-    
+
     def _document_file_type_formatter(self, context, model, name):
         choices = dict([("photo", "фото"), ("pdf", "pdf")])
         doc_file_type = model.document_file_type
         key = doc_file_type.value if hasattr(doc_file_type, "value") else doc_file_type
         return choices.get(key, key)
-    
+
     column_formatters = {
         "object": _object_formatter,
         "document_type": _document_type_formatter,
@@ -132,9 +155,6 @@ class UserDocumentModelView(AuthModelView):
         "file_id": StringField,
     }
 
-    def get_user_query(self):
-        return self.session.query(User).all()
-
     form_extra_fields = {
         "user_select": QuerySelectField(
             "Пользователь",
@@ -143,6 +163,9 @@ class UserDocumentModelView(AuthModelView):
             allow_blank=False,
         )
     }
+
+    def get_user_query(self):
+        return self.session.query(User).all()
 
     def create_form(self, obj=None):
         form = super().create_form(obj)
