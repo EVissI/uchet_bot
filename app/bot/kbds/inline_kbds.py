@@ -886,6 +886,6 @@ def get_check_own_expense_kbd(object_id: int, lang: str = "ru") -> InlineKeyboar
 
 def get_manual_input_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Ввести дату и сумму", callback_data="manual_input_start")]
+        [InlineKeyboardButton(text="Ввести сумму", callback_data="manual_input_start")]
     ])
     return keyboard
