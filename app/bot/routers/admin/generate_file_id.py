@@ -34,12 +34,12 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
         loop = asyncio.get_running_loop()
         jpg_bytes, _ = await loop.run_in_executor(None, convert_pdf_to_jpg_bytes, file_bytes.read())
         data = await loop.run_in_executor(None, extract_receipt_data, jpg_bytes)
-
+        description = "Чек сгенерирован автоматически из PDF"
+        if message.caption:
+            description = message.caption.strip()
         if not data.get("amount"):
             await waiting_manager.stop()
-            description = "Чек сгенерирован автоматически из PDF"
-            if message.caption:
-                description = message.caption.strip()
+            
             photo = await message.reply_photo(
                 photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
                 caption="Не смог определить формат чека. Давай заполним в ручную!",
@@ -48,6 +48,7 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
             await state.update_data(
                 file_id=photo.photo[-1].file_id,
                 amount=data.get("amount"),
+                description=description,
             )
             return
 
@@ -56,15 +57,11 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
             caption=f"🧾 Дата транкзакции: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽\n🏦 Банк: {data.get('bank', 'Не определён')}",
             reply_markup=get_check_type_select()
         )
-        description = "Чек сгенерирован автоматически из PDF"
-        if message.caption:
-            description = message.caption.strip()
         await state.update_data(
             file_id=photo.photo[-1].file_id,
             date=data.get("date"),
             amount=data.get("amount"),
             description=description,
-            bank=data.get("bank")
         )
         await waiting_manager.stop()
     except Exception as e:
@@ -193,7 +190,7 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
         )
         await callback.bot.send_photo(
             chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
-            photo=data["photo_id"],
+            photo=data["file_id"],
             caption=check_text,
         )
 
@@ -230,7 +227,7 @@ async def handle_object_check_type(callback: CallbackQuery, callback_data: Check
         
         await callback.bot.send_photo(
             chat_id=settings.TELEGRAM_GROUP_ID_CHEKS,
-            photo=data['photo_id'],
+            photo=data['file_id'],
             caption=check_text,
         )
 
