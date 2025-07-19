@@ -80,8 +80,8 @@ async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_in
 @generate_file_id_router.message(StateFilter(PDFmanualInput.amount), UserInfo())
 async def process_manual_input(message: Message, state: FSMContext, user_info: User):
     try:
-        text = message.text.split()
-        if not re.match(r'^\d+(?:\.\d{2})?$', text):
+        text = message.text.strip()
+        if not re.match(r'^\d+$', text):
             await message.reply(get_text("manual_input_error_amount", user_info.language))
             return
 
@@ -94,7 +94,7 @@ async def process_manual_input(message: Message, state: FSMContext, user_info: U
     except Exception as e:
         logger.error(f"Error in manual input for user {message.from_user.id} - {e}")
         await message.reply(get_text("manual_input_error", user_info.language))
-
+        
 
 @generate_file_id_router.callback_query(CheckTypeCallback.filter(F.type == "object"), UserInfo())
 async def handle_object_check_type(callback: CallbackQuery, callback_data: CheckTypeCallback, state: FSMContext, user_info: User):
