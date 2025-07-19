@@ -71,6 +71,10 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
 
 @generate_file_id_router.callback_query(F.data == "manual_input_start", UserInfo())
 async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_info: User):
+    data = await state.get_data()
+    if not data.get("file_id"):
+        await callback.answer("Ошибка: нет данных для ручного ввода")
+        return
     await callback.message.edit_caption(
         caption=None,
         reply_markup=None
@@ -79,6 +83,11 @@ async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_in
         text=get_text("manual_input_prompt", user_info.language),
     )
     await state.set_state(PDFmanualInput.amount)
+    await state.update_data(
+        file_id=data.get("file_id"),
+        amount=None,
+        description=data.get("description")
+    )
 
 
 @generate_file_id_router.message(StateFilter(PDFmanualInput.amount), UserInfo())
