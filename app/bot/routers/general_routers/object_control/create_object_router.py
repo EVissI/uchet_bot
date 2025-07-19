@@ -14,7 +14,6 @@ from app.bot.common.fsm_managment import StateHistoryMixin, DialogMessageManager
 from app.db.database import async_session_maker
 from app.db.dao import ObjectDAO, ObjectDocumentDAO
 from app.db.schemas import ObjectDocumentModel, ObjectModel
-from app.bot.init import bot
 
 from app.db.models import ObjectDocument, User
 
@@ -41,7 +40,7 @@ async def process_create_object(message:Message,state:FSMContext, user_info:User
 async def process_cancel_button(message: Message, state: FSMContext, user_info: User):
     await create_object_router.save_message(state, message.message_id)
     await state.set_state(AdminPanelStates.objects_control.state)
-    await create_object_router.clear_messages(state, message.chat.id, bot)
+    await create_object_router.clear_messages(state, message.chat.id, message.bot)
     await message.answer(
         text=get_text('operation_cancelled', user_info.language),
         reply_markup=AdminObjectControlKeyboard.build_object_control_kb(user_info.language)
@@ -57,7 +56,7 @@ async def process_back_button(message: Message, state: FSMContext, user_info: Us
     match previous_state:
         case AdminPanelStates.objects_control.state:
             await state.set_state(AdminPanelStates.objects_control.state)
-            await create_object_router.clear_messages(state, message.chat.id, bot)
+            await create_object_router.clear_messages(state, message.chat.id, message.bot)
             await message.answer(
                 text=get_text('operation_cancelled', user_info.language),
                 reply_markup=AdminObjectControlKeyboard.build_object_control_kb(user_info.language)
@@ -195,7 +194,7 @@ async def create_object_with_documents(message: Message, state: FSMContext, user
             ))
         await ObjectDocumentDAO.add_many(session, documents)
         
-        await create_object_router.clear_messages(state, message.chat.id, bot)
+        await create_object_router.clear_messages(state, message.chat.id, message.bot)
         await state.set_state(AdminPanelStates.objects_control)
         await message.answer(
             text=get_text('create_object_success', user_info.language),
@@ -240,7 +239,7 @@ async def process_upload_without_documents(callback: CallbackQuery, callback_dat
             is_active=True,
         )
         await ObjectDAO.add(session, object_model)       
-        await create_object_router.clear_messages(state, callback.message.chat.id, bot)
+        await create_object_router.clear_messages(state, callback.message.chat.id, callback.bot)
         await state.set_state(AdminPanelStates.objects_control)
         await callback.message.answer(
             text=get_text('create_object_success', user_info.language),
