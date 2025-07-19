@@ -74,7 +74,8 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
 
 @generate_file_id_router.callback_query(F.data == "manual_input_start", UserInfo())
 async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_info: User):
-    await callback.message.reply_markup(
+    await callback.message.edit_caption(
+        caption=None,
         reply_markup=None
     )
     await callback.message.answer(
