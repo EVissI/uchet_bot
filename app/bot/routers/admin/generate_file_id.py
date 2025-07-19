@@ -40,7 +40,7 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
             description = "Чек сгенерирован автоматически из PDF"
             if message.caption:
                 description = message.caption.strip()
-            await message.reply_photo(
+            photo = await message.reply_photo(
                 photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
                 caption="Не смог определить формат чека. Давай заполним в ручную!",
                 reply_markup=get_manual_input_keyboard()
