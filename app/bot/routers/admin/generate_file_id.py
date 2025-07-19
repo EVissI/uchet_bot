@@ -7,7 +7,7 @@ from aiogram.types import BufferedInputFile
 from aiogram.filters import StateFilter
 from aiogram.types import CallbackQuery, Message
 from loguru import logger
-from app.bot.common.states import AdminPanelStates, CreateCheckStatesWithUploadedPDF
+from app.bot.common.states import AdminPanelStates, CreateCheckStatesWithUploadedPDF, PDFmanualInput
 from app.bot.common.texts import get_text
 from app.bot.common.utils import convert_pdf_to_jpg_bytes, extract_receipt_data
 from app.bot.common.waiting_message import WaitingMessageManager
@@ -44,7 +44,7 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
                 "Не смог определить формат чека. Давай заполним в ручную!",
                 reply_markup=get_manual_input_keyboard()
             )
-            await state.set_state(AdminPanelStates.manual_input)
+            await state.set_state(PDFmanualInput.input)
             return
 
         photo = await message.answer_photo(
@@ -68,16 +68,16 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
         await message.reply("Ошибка конвертации пдф")
 
 
-@generate_file_id_router.callback_query(F.data == "manual_input_start", StateFilter(AdminPanelStates.manual_input), UserInfo())
+@generate_file_id_router.callback_query(F.data == "manual_input_start", StateFilter(PDFmanualInput.input), UserInfo())
 async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_info: User):
     await callback.message.edit_text(
         text=get_text("manual_input_prompt", user_info.language),
         reply_markup=None
     )
-    await state.set_state(AdminPanelStates.manual_input_data)
+    await state.set_state(PDFmanualInput.amount)
 
 
-@generate_file_id_router.message(StateFilter(AdminPanelStates.manual_input_data), UserInfo())
+@generate_file_id_router.message(StateFilter(PDFmanualInput.amount), UserInfo())
 async def process_manual_input(message: Message, state: FSMContext, user_info: User):
     try:
         text = message.text.split()
@@ -90,7 +90,7 @@ async def process_manual_input(message: Message, state: FSMContext, user_info: U
             f"✅ {get_text('manual_input_success', user_info.language)}",
             reply_markup=get_check_type_select()
         )
-        await state.set_state(AdminPanelStates)  
+        await state.clear()
     except Exception as e:
         logger.error(f"Error in manual input for user {message.from_user.id} - {e}")
         await message.reply(get_text("manual_input_error", user_info.language))
@@ -147,7 +147,6 @@ async def handle_generate_check_type(callback: CallbackQuery, callback_data: Che
         type=callback_data.type,
     )
     await state.update_data(last_message_id=last_message.message_id)
-    await state.set_state(CreateCheckStatesWithUploadedPDF.description)
 
 
 @generate_file_id_router.callback_query(CheckOwnExpenseCallback.filter(), UserInfo())

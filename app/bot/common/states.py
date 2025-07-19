@@ -88,3 +88,6 @@ class ProficAccountingStates(StatesGroup):
 class CreateCheckStatesWithUploadedPDF(StatesGroup):
     own_expense = State() 
     
+class PDFmanualInput(StatesGroup):
+    input = State() 
+    amount = State()
