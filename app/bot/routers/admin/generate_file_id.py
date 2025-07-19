@@ -83,11 +83,6 @@ async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_in
         text=get_text("manual_input_prompt", user_info.language),
     )
     await state.set_state(PDFmanualInput.amount)
-    await state.update_data(
-        file_id=data.get("file_id"),
-        amount=None,
-        description=data.get("description")
-    )
 
 
 @generate_file_id_router.message(StateFilter(PDFmanualInput.amount), UserInfo())
@@ -103,7 +98,7 @@ async def process_manual_input(message: Message, state: FSMContext, user_info: U
             f"{get_text('manual_input_success', user_info.language)}",
             reply_markup=get_check_type_select()
         )
-        await state.clear()
+        await state.set_state(None)  
     except Exception as e:
         logger.error(f"Error in manual input for user {message.from_user.id} - {e}")
         await message.reply(get_text("manual_input_error", user_info.language))
