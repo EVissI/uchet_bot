@@ -14,7 +14,7 @@ from app.bot.common.fsm_managment import StateHistoryMixin, DialogMessageManager
 from app.db.database import async_session_maker
 from app.db.dao import ObjectDAO, ObjectDocumentDAO
 from app.db.schemas import ObjectDocumentModel, ObjectModel
-from app.config import bot
+from app.bot.init import bot
 
 from app.db.models import ObjectDocument, User
 

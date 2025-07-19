@@ -1,9 +1,5 @@
 ﻿import os
 from loguru import logger
-from aiogram import Bot, Dispatcher
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.client.default import DefaultBotProperties
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
@@ -33,10 +29,6 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-
-bot = Bot(token=settings.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-dp = Dispatcher(storage=MemoryStorage())
-admins = settings.ROOT_ADMIN_IDS
 
 def setup_logger(app_name: str):
     

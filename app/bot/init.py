@@ -1,12 +1,22 @@
 ﻿import asyncio
 from app.bot.middlewares.logs import FSMStateLoggerMiddleware
 from app.bot.routers.setup_router import main_router
+from aiogram import Bot, Dispatcher
+from aiogram.enums import ParseMode
+from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
+from aiogram.client.default import DefaultBotProperties
 
 from app.config import setup_logger
 setup_logger("bot")
 
 from loguru import logger
-from app.config import bot, admins, dp
+from app.db.redis import redis_client
+from app.config import settings
+
+bot = Bot(
+    token=settings.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+admins = settings.ROOT_ADMIN_IDS
 # async def set_commands():
 #     commands = [
 #         BotCommand(command="user_command", description="комманда юзера"),
@@ -25,7 +35,6 @@ from app.config import bot, admins, dp
 
 
 async def start_bot():
-    # await set_commands()
     for admin_id in admins:
         try:
             await bot.send_message(admin_id, f"Я запущен🥳.")
@@ -35,6 +44,7 @@ async def start_bot():
 
 
 async def stop_bot():
+    await redis_client.close()
     try:
         for admin_id in admins:
             await bot.send_message(admin_id, "Бот остановлен. За что?😔")
@@ -44,6 +54,12 @@ async def stop_bot():
 
 
 async def main():
+    await redis_client.connect()
+    storage = RedisStorage(
+        redis_client.redis,
+        key_builder=DefaultKeyBuilder(with_bot_id=True, with_destiny=True)
+    )
+    dp = Dispatcher(storage=storage)
     dp.include_router(main_router)
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)

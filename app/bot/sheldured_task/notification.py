@@ -4,7 +4,7 @@ from apscheduler.triggers.cron import CronTrigger
 from loguru import logger
 
 
-from app.config import bot
+from app.bot.init import bot
 from app.db.database import async_session_maker
 from app.db.models import WorkerNotification, ForemanNotification, User
 from app.db.dao import UserDAO,ForemanNotificationDAO,WorkerNotificationDAO
