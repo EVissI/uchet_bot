@@ -45,4 +45,5 @@
     command: ["redis-server", "--appendonly", "yes"]
 
 volumes:
+  redis_data:
   pgdata:
