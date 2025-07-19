@@ -1,7 +1,7 @@
 ﻿from typing import Any, Optional
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardMarkup
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from app.db.models import Object, ObjectDocument, User, ProficAccounting
 from app.bot.common.texts import get_text
 
@@ -883,3 +883,9 @@ def get_check_own_expense_kbd(object_id: int, lang: str = "ru") -> InlineKeyboar
     )
     kb.adjust(1)
     return kb.as_markup()
+
+def get_manual_input_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Ввести дату и сумму", callback_data="manual_input_start")]
+    ])
+    return keyboard

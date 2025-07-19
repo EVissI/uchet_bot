@@ -1,5 +1,6 @@
 ﻿import asyncio
 from io import BytesIO
+import re
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile
@@ -11,7 +12,7 @@ from app.bot.common.texts import get_text
 from app.bot.common.utils import convert_pdf_to_jpg_bytes, extract_receipt_data
 from app.bot.common.waiting_message import WaitingMessageManager
 from app.bot.filters.user_info import UserInfo
-from app.bot.kbds.inline_kbds import CheckOwnExpenseCallback, CheckTypeCallback, ObjListCallback, build_paginated_list_kbd, get_check_own_expense_kbd, get_check_type_select
+from app.bot.kbds.inline_kbds import CheckOwnExpenseCallback, CheckTypeCallback, ObjListCallback, build_paginated_list_kbd, get_check_own_expense_kbd, get_check_type_select, get_manual_input_keyboard
 from app.bot.kbds.markup_kbds import MainKeyboard
 from app.db.models import User
 from app.db.database import async_session_maker
@@ -33,9 +34,22 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
         loop = asyncio.get_running_loop()
         jpg_bytes, _ = await loop.run_in_executor(None, convert_pdf_to_jpg_bytes, file_bytes.read())
         data = await loop.run_in_executor(None, extract_receipt_data, jpg_bytes)
+
+        if not data.get("amount"):
+            await waiting_manager.stop()
+            description = "Чек сгенерирован автоматически из PDF"
+            if message.caption:
+                description = message.caption.strip()
+            await message.reply(
+                "Не смог определить формат чека. Давай заполним в ручную!",
+                reply_markup=get_manual_input_keyboard()
+            )
+            await state.set_state(AdminPanelStates.manual_input)
+            return
+
         photo = await message.answer_photo(
             photo=BufferedInputFile(jpg_bytes, filename="converted.jpg"),
-            caption=f"🧾 Дата транкзакции: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽",
+            caption=f"🧾 Дата транкзакции: {data.get('date')}\n💸 Сумма: {data.get('amount')} ₽\n🏦 Банк: {data.get('bank', 'Не определён')}",
             reply_markup=get_check_type_select()
         )
         description = "Чек сгенерирован автоматически из PDF"
@@ -45,14 +59,41 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
             file_id=photo.photo[-1].file_id,
             date=data.get("date"),
             amount=data.get("amount"),
-            description=description
+            description=description,
+            bank=data.get("bank")
         )
         await waiting_manager.stop()
     except Exception as e:
         logger.error(f"Error processing PDF for user {message.from_user.id} - {e}")
+        await message.reply("Ошибка конвертации пдф")
+
+
+@generate_file_id_router.callback_query(F.data == "manual_input_start", StateFilter(AdminPanelStates.manual_input), UserInfo())
+async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_info: User):
+    await callback.message.edit_text(
+        text=get_text("manual_input_prompt", user_info.language),
+        reply_markup=None
+    )
+    await state.set_state(AdminPanelStates.manual_input_data)
+
+
+@generate_file_id_router.message(StateFilter(AdminPanelStates.manual_input_data), UserInfo())
+async def process_manual_input(message: Message, state: FSMContext, user_info: User):
+    try:
+        text = message.text.split()
+        if not re.match(r'^\d+(?:\.\d{2})?$', text):
+            await message.reply(get_text("manual_input_error_amount", user_info.language))
+            return
+
+        await state.update_data(amount=text)
         await message.reply(
-            "Ошибка конвертации пдф"
+            f"✅ {get_text('manual_input_success', user_info.language)}",
+            reply_markup=get_check_type_select()
         )
+        await state.set_state(AdminPanelStates)  
+    except Exception as e:
+        logger.error(f"Error in manual input for user {message.from_user.id} - {e}")
+        await message.reply(get_text("manual_input_error", user_info.language))
 
 
 @generate_file_id_router.callback_query(CheckTypeCallback.filter(F.type == "object"), UserInfo())
