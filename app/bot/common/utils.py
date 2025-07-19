@@ -59,21 +59,41 @@ def convert_pdf_to_jpg_bytes(pdf_file: bytes) -> Tuple[bytes, str]:
 
 def extract_receipt_data(image_bytes: bytes) -> dict:
     """
-    Извлекает дату и сумму из изображения чека.
+    Извлекает дату и сумму из изображения чека для разных банков.
     """
     image = Image.open(BytesIO(image_bytes))
     text = pytesseract.image_to_string(image, lang='rus+eng')
+    logger.debug(f"Извлечённый текст: {text}")
 
     data = {}
 
-    date_match = re.search(r'(\d{2}\.\d{2}\.\d{4}(?:\s+\d{2}:\d{2}:\d{2})?)', text)
-    if date_match:
-        data['date'] = date_match.group(1)
+    # Паттерны для разных банков
+    bank_patterns = {
+        "tinkoff": {
+            "date": r'(\d{2}\.\d{2}\.\d{4}(?:\s+\d{2}:\d{2}:\d{2})?)',
+            "amount": r'(?:Сумма|Итого)\s+([\d\s]+(?:[.,]\d{2})?)\s*[₽Р]'
+        },
+        "sberbank": {
+            "date": r'Дата:\s*(\d{2}\.\d{2}\.\d{4})',
+            "amount": r'ИТОГ\s+([\d\s]+(?:[.,]\d{2})?)\s*₽'
+        },
+        "alfa": {
+            "date": r'Дата операции:\s*(\d{2}\.\d{2}\.\d{4})',
+            "amount": r'Сумма к оплате:\s*([\d\s]+(?:[.,]\d{2})?)\s*₽'
+        }
+    }
 
-    # Ищем сумму по "Сумма" или "Итого", с пробелами, "₽" или "Р"
-    amount_match = re.search(r'(?:Сумма|Итого)\s+([\d\s]+(?:[.,]\d{2})?)\s*[₽Р]', text, re.IGNORECASE)
-    if amount_match:
-        amount = amount_match.group(1).replace(' ', '').replace(',', '.')
-        data['amount'] = amount
+    # Пробуем определить банк и извлечь данные
+    for bank, patterns in bank_patterns.items():
+        date_match = re.search(patterns["date"], text)
+        if date_match:
+            data['date'] = date_match.group(1)
+            amount_match = re.search(patterns["amount"], text, re.IGNORECASE)
+            if amount_match:
+                amount = amount_match.group(1).replace(' ', '').replace(',', '.')
+                data['amount'] = amount
+                data['bank'] = bank
+                break
 
-    return data
+    logger.debug(f"Извлечённые данные: {data}")
+    return data if data else {"date": None, "amount": None}
