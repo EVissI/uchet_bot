@@ -87,14 +87,14 @@ async def process_manual_input(message: Message, state: FSMContext, user_info: U
 
         await state.update_data(amount=text)
         await message.reply(
-            f"✅ {get_text('manual_input_success', user_info.language)}",
+            f"{get_text('manual_input_success', user_info.language)}",
             reply_markup=get_check_type_select()
         )
         await state.clear()
     except Exception as e:
         logger.error(f"Error in manual input for user {message.from_user.id} - {e}")
         await message.reply(get_text("manual_input_error", user_info.language))
-        
+
 
 @generate_file_id_router.callback_query(CheckTypeCallback.filter(F.type == "object"), UserInfo())
 async def handle_object_check_type(callback: CallbackQuery, callback_data: CheckTypeCallback, state: FSMContext, user_info: User):
