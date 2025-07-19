@@ -49,7 +49,6 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
                 file_id=photo.photo[-1].file_id,
                 amount=data.get("amount"),
             )
-            await state.set_state(PDFmanualInput.input)
             return
 
         photo = await message.answer_photo(
@@ -73,11 +72,13 @@ async def handle_pdf(message: Message, bot: Bot, state: FSMContext, user_info: U
         await message.reply("Ошибка конвертации пдф")
 
 
-@generate_file_id_router.callback_query(F.data == "manual_input_start", StateFilter(PDFmanualInput.input), UserInfo())
+@generate_file_id_router.callback_query(F.data == "manual_input_start", UserInfo())
 async def start_manual_input(callback: CallbackQuery, state: FSMContext, user_info: User):
-    await callback.message.edit_caption(
-        text=get_text("manual_input_prompt", user_info.language),
+    await callback.message.reply_markup(
         reply_markup=None
+    )
+    await callback.message.answer(
+        text=get_text("manual_input_prompt", user_info.language),
     )
     await state.set_state(PDFmanualInput.amount)
 
