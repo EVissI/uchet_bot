@@ -172,7 +172,9 @@ async def notify_object_members(message: Message, state: FSMContext, user_info: 
             except TelegramBadRequest as e:
                 logger.error(f"Failed to send message to user {member.telegram_id}: {e}")
                 failed_count += 1
-
+            except TelegramForbiddenError as e:
+                logger.warning(f"User {member.telegram_id} has blocked the bot: {e}")
+                failed_count += 1
             if i % 5 == 0:
                 await status_msg.edit_text(
                     text=get_text(
