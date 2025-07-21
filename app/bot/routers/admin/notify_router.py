@@ -2,7 +2,7 @@
 from aiogram.types import Message,CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
-from aiogram.exceptions import TelegramBadRequest
+from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
 
 from loguru import logger
 
@@ -66,7 +66,9 @@ async def notify_all_users(message:Message,state:FSMContext,user_info:User):
             except TelegramBadRequest as e:
                 logger.error(f"Failed to send message to user {user.telegram_id}: {e}")
                 failed_count += 1
-
+            except TelegramForbiddenError as e:
+                logger.warning(f"User {user.telegram_id} has blocked the bot: {e}")
+                failed_count += 1
             if i % 5 == 0:  # Update status every 5 messages
                 await status_msg.edit_text(
                     text=get_text(
